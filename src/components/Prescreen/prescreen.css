@@ -1,0 +1,9 @@
+.option-button {
+    margin: 2px;
+}
+
+.option-button-selected {
+    margin: 2px;
+    background-color: blueviolet;
+    color: white;
+}
