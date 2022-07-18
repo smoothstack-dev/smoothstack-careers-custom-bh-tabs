@@ -1,4 +1,4 @@
-import { getPrescreenData, saveForm } from "../../helpers/api";
+import * as API from "../../helpers/api";
 import { FormEntry, FORM_TYPE, PrescreenForm } from "../../types/forms";
 import {
   AnswerType,
@@ -9,11 +9,11 @@ import {
 } from "./prescreen.constant";
 
 export const getCandidatePrescreenData = async (candidateId: string) => {
-  const data = await getPrescreenData(candidateId);
+  const data = await API.getPrescreenData(candidateId);
   const prescreenData = [
     ...prescreenLabelOrder,
     ...prescreenQuestionOrder,
-  ].reduce((map, questionId) => {
+  ].reduce((map, questionId: string) => {
     const question = prescreenFieldQuestions.get(questionId);
     const existingAns = data[questionId];
     if (question) {
@@ -31,7 +31,7 @@ export const savePrescreenForm = async (
   formItems: Map<string, QuestionItem>
 ) => {
   const constructedForm = constructPrescreenMessage(formItems);
-  return await saveForm(FORM_TYPE.PRESCREEN, constructedForm);
+  return await API.savePrescreenForm(FORM_TYPE.PRESCREEN, constructedForm);
 };
 
 const clearDegreeFields = (
@@ -80,7 +80,5 @@ const constructPrescreenMessage = (
     question: "updatedTime",
     answer: new Date().toLocaleString("en-US"),
   } as FormEntry;
-
-  console.log("prescreenForm", prescreenForm);
   return prescreenForm as PrescreenForm;
 };

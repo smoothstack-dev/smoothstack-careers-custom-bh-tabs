@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { cloneDeep, delay } from "lodash";
+import { cloneDeep } from "lodash";
 import {
   QuestionItem,
   prescreenQuestionOrder,
@@ -49,11 +49,9 @@ export const Prescreen: React.FC = () => {
   const savePrescreen = async () => {
     if (!prescreenData) return;
     setSavingData(true);
-    await savePrescreenForm(prescreenData);
+    const response = await savePrescreenForm(prescreenData);
     setSavingData(false);
-    // need to wait a couple of second for BH to save the data
     setLoadingData(true);
-    delay(() => loadPrescreenForm(), 3000);
   };
 
   const prescreenQuestionsToShow = prescreenData
