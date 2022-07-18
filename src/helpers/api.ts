@@ -1,8 +1,7 @@
 import axios, { AxiosResponse } from "axios";
 import { FORM, FORM_TYPE, PrescreenForm, TechScreenForm } from "../types/forms";
 
-const endpoint =
-  "https://1syp4w9c5h.execute-api.us-east-1.amazonaws.com/prod/form-events";
+const endpoint = "https://1syp4w9c5h.execute-api.us-east-1.amazonaws.com/prod/";
 // const endpoint = "http://localhost:3000/local/";
 const prescreenUrl = endpoint + "prescreen";
 
