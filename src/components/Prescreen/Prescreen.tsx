@@ -49,7 +49,8 @@ export const Prescreen: React.FC = () => {
   const savePrescreen = async () => {
     if (!prescreenData) return;
     setSavingData(true);
-    const response = await savePrescreenForm(prescreenData);
+    await savePrescreenForm(prescreenData);
+    // TODO: discuss how to handle pass/not pass
     setSavingData(false);
     setLoadingData(true);
   };
