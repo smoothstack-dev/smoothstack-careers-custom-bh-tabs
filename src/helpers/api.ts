@@ -1,8 +1,8 @@
 import axios, { AxiosResponse } from "axios";
 import { FORM, FORM_TYPE, PrescreenForm, TechScreenForm } from "../types/forms";
 
-const endpoint = "https://1syp4w9c5h.execute-api.us-east-1.amazonaws.com/prod/";
-// const endpoint = "http://localhost:3000/local/";
+// const endpoint = "https://1syp4w9c5h.execute-api.us-east-1.amazonaws.com/prod/";
+const endpoint = "http://localhost:3000/local/";
 const prescreenUrl = endpoint + "prescreen";
 
 export const getPrescreenData = async (candidateId: string) => {
@@ -24,9 +24,8 @@ export const savePrescreenForm = async (
 ) => {
   try {
     const response: AxiosResponse = await axios.post(
-      `${prescreenUrl}?formType=${FORM[formType].type}&data=${JSON.stringify(
-        form
-      )}`
+      `${prescreenUrl}?formType=${FORM[formType].type}`,
+      form
     );
     return response.data;
   } catch (err) {

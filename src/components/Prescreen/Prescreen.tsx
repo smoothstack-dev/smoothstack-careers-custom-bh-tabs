@@ -33,6 +33,7 @@ export const Prescreen: React.FC = () => {
   const loadPrescreenForm = async () => {
     setLoadingData(true);
     const queryParams = new URLSearchParams(window.location.search);
+    console.log("queryParams", queryParams);
     const candidateId = queryParams.get("EntityID") || "24833"; // TODO: for testing purpose
     setCandidateId(candidateId);
     const prescreenData = await getCandidatePrescreenData(candidateId);
@@ -44,15 +45,17 @@ export const Prescreen: React.FC = () => {
     loadPrescreenForm();
   }, []);
 
-  if (isLoadingData) return <Spinner animation="border" variant="primary" />;
+  if (isLoadingData || isSavingData)
+    return <Spinner animation="border" variant="primary" />;
 
   const savePrescreen = async () => {
     if (!prescreenData) return;
     setSavingData(true);
-    await savePrescreenForm(prescreenData);
+    const response = await savePrescreenForm(prescreenData);
+    console.log("response", response);
     // TODO: discuss how to handle pass/not pass
     setSavingData(false);
-    setLoadingData(true);
+    loadPrescreenForm();
   };
 
   const prescreenQuestionsToShow = prescreenData
