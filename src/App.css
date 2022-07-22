@@ -41,3 +41,11 @@
     transform: rotate(360deg);
   }
 }
+
+.date-picker{
+  max-width: 7em;
+}
+
+td {
+  vertical-align: middle;
+}

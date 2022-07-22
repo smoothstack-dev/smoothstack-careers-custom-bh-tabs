@@ -6,6 +6,7 @@ export enum AnswerType {
   "MULTIPLE" = "MULTIPLE",
   "DATE" = "DATE",
   "DROPDOWN" = "DROPDOWN",
+  "PROJECT" = "PROJECT",
 }
 
 export type dependenceField = {
@@ -18,6 +19,7 @@ export type QuestionItem = {
   options?: AnswerItem[];
   questionId: string;
   answer?: string | string[];
+  otherAnswer?: string;
   answerType: AnswerType;
   dependenceIds?: dependenceField[];
 };
@@ -33,7 +35,7 @@ export const showOnTimeOptions: AnswerItem[] = [
   { key: "NoShow", value: "No Show" },
 ];
 
-export const newRelocationOptions: AnswerItem[] = [
+export const relocationOptions: AnswerItem[] = [
   { key: "Yes", value: "Yes" },
   { key: "No", value: "No" },
   { key: "Undecided", value: "Undecided" },
@@ -82,6 +84,36 @@ export const programmingLanguagesOptions: AnswerItem[] = [
   { key: "Other", value: "Other" },
 ];
 
+export const referralOptions: AnswerItem[] = [
+  { key: "Indeed", value: "Indeed" },
+  { key: "Zip", value: "Zip" },
+  { key: "Recruiter", value: "Recruiter" },
+  { key: "Glassdoor", value: "Glassdoor" },
+  { key: "LinkedIn", value: "LinkedIn" },
+  { key: "Internal Referral", value: "Internal Referral" },
+  { key: "Sourced by Recruiter", value: "Sourced by Recruiter" },
+  { key: "Handshake", value: "Handshake" },
+  { key: "Monster", value: "Monster" },
+  { key: "Career Builder", value: "Career Builder" },
+  { key: "Dice", value: "Dice" },
+  { key: "Website", value: "Website" },
+  { key: "Facebook", value: "Facebook" },
+  { key: "Twitter", value: "Twitter" },
+  { key: "Instagram", value: "Instagram" },
+  { key: "Resume Library", value: "Resume Library" },
+  { key: "Free Job Board", value: "Free Job Board" },
+  { key: "Referral", value: "Referral" },
+  { key: "Trilogy", value: "Trilogy" },
+  { key: "Flat Iron", value: "Flat Iron" },
+  { key: "APUS", value: "APUS" },
+  { key: "George Mason", value: "George Mason" },
+  { key: "Corporate Web Site", value: "Corporate Web Site" },
+  { key: "Job Fair", value: "Job Fair" },
+  { key: "Partner Resumes", value: "Partner Resumes" },
+  { key: "Reddit", value: "Reddit" },
+  { key: "Other", value: "Other" },
+];
+
 export const commitmentOptions: AnswerItem[] = [
   { key: "Yes", value: "Can Commit" },
   { key: "No", value: "Will be a Challenge" },
@@ -107,11 +139,11 @@ export const workAuthorizationOptions: AnswerItem[] = [
 ];
 
 export const isVaccinatedOptions: AnswerItem[] = [
-  { key: "booster", value: "Booster" },
-  { key: "full", value: "Full" },
-  { key: "partial", value: "Partial" },
-  { key: "no", value: "No" },
-  { key: "undisclosed", value: "Undisclosed" },
+  { key: "Boosted", value: "Boosted" },
+  { key: "Full", value: "Full" },
+  { key: "Partial", value: "Partial" },
+  { key: "No", value: "No" },
+  { key: "Undisclosed", value: "Undisclosed" },
 ];
 
 export const willVaccinateOptions: AnswerItem[] = [
@@ -191,6 +223,19 @@ export const communicationSkillsOptions: AnswerItem[] = [
   { key: "3", value: "3-Excellent" },
 ];
 
+export const candidateRankOptions: AnswerItem[] = [
+  { key: "1", value: "1" },
+  { key: "2", value: "2" },
+  { key: "3", value: "3" },
+  { key: "4", value: "4" },
+  { key: "5", value: "5" },
+  { key: "6", value: "6" },
+  { key: "7", value: "7" },
+  { key: "8", value: "8" },
+  { key: "9", value: "9" },
+  { key: "10", value: "10" },
+];
+
 export const resultOptions: AnswerItem[] = [
   { key: "Pass", value: "Pass" },
   { key: "Snooze-Timing", value: "Snooze-Timing" },
@@ -215,13 +260,13 @@ export const allPrescreenFields: string[] = [];
 // Only show as lable - not changable
 export const prescreenLabelOrder: string[] = [
   "candidateName",
-  "candidateEmail",
-  "relocation",
+  // "candidateEmail",
+  // "relocation",
 ];
 
 export const prescreenQuestionOrder: string[] = [
   "showOnTime",
-  "newRelocation",
+  "relocation",
   "aboutYourself",
   "otherApplications",
   "isStudent",
@@ -230,7 +275,7 @@ export const prescreenQuestionOrder: string[] = [
   "highestDegree",
   "graduationDate",
   "projects",
-  "monthsOfExperience",
+  // "monthsOfExperience",
   "programmingLanguages",
   "goodFit",
   "referral",
@@ -256,6 +301,7 @@ export const prescreenQuestionOrder: string[] = [
   "questions",
   "referFriend",
   "communicationSkills",
+  "candidateRank",
   "result",
   "additionalNotes",
 ];
@@ -293,14 +339,14 @@ export const prescreenFieldQuestions: Map<string, QuestionItem> = new Map([
       answerType: AnswerType.LABEL,
     },
   ],
-  [
-    "relocation",
-    {
-      questionId: "relocation",
-      question: "Willingness to Relocate from the application",
-      answerType: AnswerType.LABEL,
-    },
-  ],
+  // [
+  //   "relocation",
+  //   {
+  //     questionId: "relocation",
+  //     question: "Willingness to Relocate from the application",
+  //     answerType: AnswerType.LABEL,
+  //   },
+  // ],
   [
     "showOnTime",
     {
@@ -311,12 +357,12 @@ export const prescreenFieldQuestions: Map<string, QuestionItem> = new Map([
     },
   ],
   [
-    "newRelocation",
+    "relocation",
     {
-      questionId: "newRelocation",
+      questionId: "relocation", //"newRelocation",
       question:
-        "To get to this point in the interview process, you have previously indicated your willingness to relocate. Once things open up, post COVID, our clients will expect our employees to be back on the client site. Are you actually prepared to relocate?",
-      options: newRelocationOptions,
+        "Will you be willing to relocate for this opportunity if necessary?",
+      options: relocationOptions,
       answerType: AnswerType.SINGLE,
       dependenceIds: [showOnTimeDependence],
     },
@@ -409,7 +455,7 @@ export const prescreenFieldQuestions: Map<string, QuestionItem> = new Map([
       questionId: "projects",
       question:
         "Any internships? Personal projects? School related projects? Boot Camps? Professional experience (Note: included date ranges)",
-      answerType: AnswerType.TEXTBLOCK,
+      answerType: AnswerType.PROJECT,
       dependenceIds: [showOnTimeDependence],
     },
   ],
@@ -449,7 +495,8 @@ export const prescreenFieldQuestions: Map<string, QuestionItem> = new Map([
     {
       questionId: "referral",
       question: "How did you hear about us?",
-      answerType: AnswerType.TEXT, // TODO: options
+      options: referralOptions,
+      answerType: AnswerType.SINGLE,
       dependenceIds: [showOnTimeDependence],
     },
   ],
@@ -539,10 +586,13 @@ export const prescreenFieldQuestions: Map<string, QuestionItem> = new Map([
     "willVaccinate",
     {
       questionId: "willVaccinate",
-      question: "Vaccination Notes",
+      question: "Will you get vaccinated?",
       options: willVaccinateOptions,
       answerType: AnswerType.SINGLE,
-      dependenceIds: [showOnTimeDependence],
+      dependenceIds: [
+        showOnTimeDependence,
+        { questionId: "isVaccinated", expectedAnswer: ["No"] },
+      ],
     },
   ],
   [
@@ -664,6 +714,16 @@ export const prescreenFieldQuestions: Map<string, QuestionItem> = new Map([
       questionId: "communicationSkills",
       question: "Recruiter: Please rank candidates communication skills.",
       options: communicationSkillsOptions,
+      answerType: AnswerType.SINGLE,
+      dependenceIds: [showOnTimeDependence],
+    },
+  ],
+  [
+    "candidateRank",
+    {
+      questionId: "candidateRank",
+      question: " Rank Candidate from a scale of 1-10 (Highest).",
+      options: candidateRankOptions,
       answerType: AnswerType.SINGLE,
       dependenceIds: [showOnTimeDependence],
     },

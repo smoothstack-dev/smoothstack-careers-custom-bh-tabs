@@ -1,29 +1,58 @@
 import * as API from "../../helpers/api";
 import { FormEntry, FORM_TYPE, PrescreenForm } from "../../types/forms";
 import {
+  AnswerItem,
   AnswerType,
-  prescreenLabelOrder,
-  prescreenQuestionOrder,
   prescreenFieldQuestions,
   QuestionItem,
 } from "./prescreen.constant";
 
 export const getCandidatePrescreenData = async (candidateId: string) => {
   const data = await API.getPrescreenData(candidateId);
-  const prescreenData = [
-    ...prescreenLabelOrder,
-    ...prescreenQuestionOrder,
-  ].reduce((map, questionId: string) => {
-    const question = prescreenFieldQuestions.get(questionId);
-    const existingAns = data[questionId];
-    if (question) {
-      if (existingAns) {
-        question.answer = existingAns;
+  const prescreenData = Array.from(prescreenFieldQuestions.keys()).reduce(
+    (map, questionId: string) => {
+      const question = prescreenFieldQuestions.get(questionId);
+      const existingAns = data[questionId];
+      if (question) {
+        if (existingAns) {
+          question.answer = existingAns;
+        }
+
+        // Constract Other option
+        if (
+          (question.answerType === AnswerType.SINGLE ||
+            question.answerType === AnswerType.MULTIPLE) &&
+          question.answer &&
+          question.options
+        ) {
+          const optionList: string[] = getOptionList(question.options);
+          if (optionList.includes("Other")) {
+            const otherAnswer = checkMatchedAns(optionList, question.answer);
+            if (otherAnswer !== undefined) {
+              question.otherAnswer = otherAnswer || "";
+              if (question.answerType === AnswerType.SINGLE) {
+                question.answer = "Other";
+              }
+              if (
+                question.answerType === AnswerType.MULTIPLE &&
+                Array.isArray(question.answer)
+              ) {
+                // Remove other answer from answer (has been saved to otherAnswer)
+                question.answer = removeInvalidANswer(
+                  question.options,
+                  question.answer
+                );
+              }
+            }
+          }
+        }
+
+        map.set(questionId, question);
       }
-      map.set(questionId, question);
-    }
-    return map;
-  }, new Map());
+      return map;
+    },
+    new Map()
+  );
   return prescreenData as Map<string, QuestionItem>;
 };
 
@@ -59,10 +88,26 @@ const constructPrescreenMessage = (
 
     switch (item.answerType) {
       case AnswerType.MULTIPLE: {
+        if (
+          Array.isArray(item.answer) &&
+          item.answer.includes("Other") &&
+          item.otherAnswer
+        )
+          item.answer.push(item.otherAnswer);
         const ans = Array.isArray(item.answer) ? item.answer.join(",") : "";
         prescreenForm[item.questionId] = {
           question: item.question,
           answer: ans,
+        } as FormEntry;
+        break;
+      }
+      case AnswerType.SINGLE: {
+        prescreenForm[item.questionId] = {
+          question: item.question,
+          answer:
+            item.answer === "Other" && item.otherAnswer
+              ? item.otherAnswer
+              : (item.answer as string),
         } as FormEntry;
         break;
       }
@@ -81,4 +126,39 @@ const constructPrescreenMessage = (
     answer: new Date().toLocaleString("en-US"),
   } as FormEntry;
   return prescreenForm as PrescreenForm;
+};
+
+const getOptionList = (options: AnswerItem[]): string[] => {
+  const optionList: string[] = options.map((option) => option.key);
+  return optionList;
+};
+
+const checkMatchedAns = (
+  optionsList: string[],
+  answer: string | string[]
+): string | undefined => {
+  if (typeof answer === "string") {
+    if (!optionsList.includes(answer)) return answer;
+    if (answer === "Other") return "";
+    return undefined;
+  } else {
+    // string[]
+    if (answer.includes("Other")) {
+      const otherValues = answer.filter((ans: string) => {
+        return !optionsList.includes(ans);
+      });
+      return otherValues.join(", ") || "";
+    }
+
+    return undefined;
+  }
+};
+
+const removeInvalidANswer = (options: AnswerItem[], answers: string[]) => {
+  let updatedAns: string[] = [];
+  const optionList = getOptionList(options);
+  answers.forEach((ans) => {
+    if (optionList.includes(ans)) updatedAns.push(ans);
+  });
+  return updatedAns;
 };

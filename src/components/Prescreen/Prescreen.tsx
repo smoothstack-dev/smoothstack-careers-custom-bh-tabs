@@ -7,7 +7,7 @@ import {
 } from "./prescreen.constant";
 import { Button, Spinner } from "react-bootstrap";
 import "./prescreen.css";
-import { PrescreenQuestion } from "./PrescreenQuestion";
+import { Questions } from "../Questions/Questions";
 import {
   getCandidatePrescreenData,
   savePrescreenForm,
@@ -19,21 +19,27 @@ export const Prescreen: React.FC = () => {
   const [isLoadingData, setLoadingData] = useState<boolean>(false);
   const [isSavingData, setSavingData] = useState<boolean>(false);
   const [candidateId, setCandidateId] = useState<string>("");
+  const [saveFailedMsg, setSaveFailedMsg] = useState<boolean>(false);
 
-  const updateAnser = (questionId: string, answer: string | string[]) => {
-    const updatedDate = cloneDeep(prescreenData);
+  const updateAnser = (
+    questionId: string,
+    answer: string | string[],
+    otherAnswer?: string
+  ) => {
+    if (saveFailedMsg) setSaveFailedMsg(false);
+    const updatedData = cloneDeep(prescreenData);
     let question = cloneDeep(prescreenData?.get(questionId) || undefined);
-    if (updatedDate && question) {
+    if (updatedData && question) {
       question.answer = answer;
-      updatedDate.set(question.questionId, question);
-      setPrescreenData(updatedDate);
+      question.otherAnswer = otherAnswer;
+      updatedData.set(question.questionId, question);
+      setPrescreenData(updatedData);
     }
   };
 
   const loadPrescreenForm = async () => {
     setLoadingData(true);
     const queryParams = new URLSearchParams(window.location.search);
-    console.log("queryParams", queryParams);
     const candidateId = queryParams.get("EntityID") || "24833"; // TODO: for testing purpose
     setCandidateId(candidateId);
     const prescreenData = await getCandidatePrescreenData(candidateId);
@@ -45,17 +51,20 @@ export const Prescreen: React.FC = () => {
     loadPrescreenForm();
   }, []);
 
-  if (isLoadingData || isSavingData)
-    return <Spinner animation="border" variant="primary" />;
+  if (isLoadingData) return <Spinner animation="border" variant="primary" />;
 
   const savePrescreen = async () => {
     if (!prescreenData) return;
     setSavingData(true);
+    setSaveFailedMsg(false);
     const response = await savePrescreenForm(prescreenData);
-    console.log("response", response);
-    // TODO: discuss how to handle pass/not pass
     setSavingData(false);
-    loadPrescreenForm();
+    if (response.statusCode && response.statusCode > 300) {
+      console.error("Failed saving data");
+      setSaveFailedMsg(true);
+    } else {
+      loadPrescreenForm();
+    }
   };
 
   const prescreenQuestionsToShow = prescreenData
@@ -100,7 +109,7 @@ export const Prescreen: React.FC = () => {
           })}
       </div>
       <br />
-      <div>
+      <div aria-disabled={isSavingData}>
         {prescreenQuestionsToShow &&
           prescreenQuestionsToShow.map((question: QuestionItem, index) => {
             return (
@@ -108,11 +117,11 @@ export const Prescreen: React.FC = () => {
                 <label>{`${index + 1}. ${question.question} (ref: ${
                   question.questionId
                 })`}</label>
-                <PrescreenQuestion
+                <Questions
                   index={index}
                   question={question}
                   updateAnser={updateAnser}
-                ></PrescreenQuestion>
+                ></Questions>
                 <br />
               </div>
             );
@@ -125,6 +134,9 @@ export const Prescreen: React.FC = () => {
       >
         Save
       </Button>
+      {isSavingData && <Spinner animation="border" variant="secondary" />}
+      <br />
+      {saveFailedMsg && <span>Failed to save data</span>}
     </React.Fragment>
   );
 };
