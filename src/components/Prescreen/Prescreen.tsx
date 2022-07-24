@@ -55,20 +55,26 @@ export const Prescreen: React.FC<{
     const queryParams = new URLSearchParams(window.location.search);
     const test = `${window.location.search} ${JSON.stringify(queryParams)}`;
     setTestingString(test);
-    const id = queryParams.get("EntityID") || "24833"; // TODO: for testing purpose
-    setCandidateId(id);
-    const prescreenResponse = await getCandidatePrescreenData(id);
-    if (
-      prescreenResponse.statusCode &&
-      Number(prescreenResponse.statusCode) < 300
-    ) {
-      setPrescreenData(prescreenResponse.body);
-      setLoadingData(false);
-    } else {
-      console.error("failed loding prescreen form");
-      setLoadingFailed(true);
-      setLoadingData(false);
+    const id = queryParams.get("EntityID"); // TODO:|| "24833";  for testing purpose
+    let prescreenResponse;
+    if (id) {
+      setCandidateId(id);
+      prescreenResponse = await getCandidatePrescreenData(id);
+      if (
+        prescreenResponse.statusCode &&
+        Number(prescreenResponse.statusCode) < 300
+      ) {
+        setPrescreenData(prescreenResponse.body);
+        setLoadingData(false);
+        return;
+      }
     }
+    console.error("failed loding prescreen form");
+    setHeaderLabel(
+      `${test}, ID:${id}, DATA:${JSON.stringify(prescreenResponse)}`
+    );
+    setLoadingFailed(true);
+    setLoadingData(false);
   };
 
   useEffect(() => {
