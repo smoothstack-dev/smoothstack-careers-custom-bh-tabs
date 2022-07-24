@@ -88,8 +88,8 @@ export const Prescreen: React.FC<{
   };
 
   useEffect(() => {
-    loadPrescreenForm();
-  }, []);
+    if (!prescreenData) loadPrescreenForm();
+  });
 
   useEffect(() => {
     if (prescreenData) {
