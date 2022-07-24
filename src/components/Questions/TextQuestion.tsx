@@ -13,7 +13,10 @@ export const TextQuestion: React.FC<{
           type="text"
           className="form-control"
           onChange={(e: any) =>
-            updateAnser(question.questionId, e.target.value)
+            updateAnser({
+              questionId: question.questionId,
+              answer: e.target.value,
+            })
           }
           value={question.answer || ""}
         ></input>
@@ -23,7 +26,10 @@ export const TextQuestion: React.FC<{
         <textarea
           className="form-control"
           onChange={(e: any) =>
-            updateAnser(question.questionId, e.target.value)
+            updateAnser({
+              questionId: question.questionId,
+              answer: e.target.value,
+            })
           }
           rows={(question.answer?.length || 0) / 80 + 2}
           value={question.answer || ""}

@@ -1,6 +1,6 @@
 import { cloneDeep } from "lodash";
 import React from "react";
-import { Button, Table } from "react-bootstrap";
+import { Button, Dropdown, DropdownButton, Table } from "react-bootstrap";
 import DatePicker from "react-datepicker";
 import { QuestionItem } from "../Prescreen/prescreen.constant";
 
@@ -18,6 +18,10 @@ export const ProjectQuestion: React.FC<{
 }> = ({ index, question, updateAnser }) => {
   const [projectItems, setProjectItems] = React.useState<ProjectItem[]>([]);
   const [experience, setExperience] = React.useState<number>(0);
+  const [showInvalidExperience, setShowInvalidExperience] =
+    React.useState<boolean>(false);
+  const [showInvalidDates, setShowInvalidDates] =
+    React.useState<boolean>(false);
 
   React.useEffect(() => {
     if (question.answer && typeof question.answer === "string") {
@@ -28,7 +32,7 @@ export const ProjectQuestion: React.FC<{
         const parsedJSON = JSON.parse(question.answer);
         if (Array.isArray(parsedJSON)) {
           let projectList: ProjectItem[] = [];
-          parsedJSON.forEach((item) => {
+          parsedJSON.forEach((item, index) => {
             projectList.push({
               type: item.type || "",
               description: item.description || "",
@@ -43,15 +47,35 @@ export const ProjectQuestion: React.FC<{
     }
   }, [question.answer]);
 
+  React.useEffect(() => {
+    let emptyAnswer: boolean = false;
+    let invalidDate: boolean = false;
+    projectItems.forEach((project) => {
+      emptyAnswer = emptyAnswer || !project.type || !project.description;
+      invalidDate = invalidDate || project.startDate > project.endDate;
+    });
+    setShowInvalidDates(invalidDate);
+    setShowInvalidExperience(emptyAnswer);
+  }, [projectItems]);
+
   const updateProjects = (projectIndex: number, project: ProjectItem) => {
     const updatedProjectItems = cloneDeep(projectItems);
     updatedProjectItems[projectIndex] = project;
     setProjectItems(updatedProjectItems);
-    updateAnser(question.questionId, JSON.stringify(updatedProjectItems));
-    calculateMonthsOfExperience(updatedProjectItems);
+    const calculatedMonths = calculateMonthsOfExperience(updatedProjectItems);
+    updateAnser(
+      {
+        questionId: question.questionId,
+        answer: JSON.stringify(updatedProjectItems),
+      },
+      {
+        questionId: "monthsOfProjectExperience",
+        answer: String(calculatedMonths),
+      }
+    );
   };
 
-  const calculateMonthsOfExperience = (projects: ProjectItem[]) => {
+  const calculateMonthsOfExperience = (projects: ProjectItem[]): number => {
     // calculate total month
     let month = 0;
     projects.forEach((project: ProjectItem) => {
@@ -61,6 +85,7 @@ export const ProjectQuestion: React.FC<{
       month += Math.abs(Math.round(diff));
     });
     setExperience(month);
+    return month;
   };
 
   const removeProject = (projectIndex: number) => {
@@ -70,6 +95,7 @@ export const ProjectQuestion: React.FC<{
   };
 
   const addProjectRow = () => {
+    setShowInvalidExperience(true);
     setProjectItems([
       ...projectItems,
       {
@@ -80,6 +106,14 @@ export const ProjectQuestion: React.FC<{
       },
     ]);
   };
+
+  const projectTypeList: string[] = [
+    "Internship",
+    "Personal Project",
+    "School Project",
+    "BootCamp",
+    "Work Experience",
+  ];
 
   return (
     <div>
@@ -101,15 +135,25 @@ export const ProjectQuestion: React.FC<{
               <tr key={`project-${projectIndex}`}>
                 <td>{projectIndex + 1}</td>
                 <td>
-                  <input
-                    type="text"
-                    className="form-control"
-                    onChange={(e: any) => {
-                      updatedProject.type = e.target.value;
-                      updateProjects(projectIndex, updatedProject);
-                    }}
-                    value={project.type}
-                  ></input>
+                  <DropdownButton
+                    id={`dropdown-${question.questionId}`}
+                    variant="light"
+                    title={updatedProject.type || "Selete a type"}
+                  >
+                    {projectTypeList.map((option) => {
+                      return (
+                        <Dropdown.Item
+                          key={`dropdownItem-${question.questionId}-${option}`}
+                          onClick={() => {
+                            updatedProject.type = option;
+                            updateProjects(projectIndex, updatedProject);
+                          }}
+                        >
+                          {option}
+                        </Dropdown.Item>
+                      );
+                    })}
+                  </DropdownButton>
                 </td>
                 <td>
                   <textarea
@@ -160,18 +204,37 @@ export const ProjectQuestion: React.FC<{
           })}
         </tbody>
       </Table>
-      <span>
-        <strong>{`Total months of experience: ${experience}`}</strong>
-      </span>
-      <br />
-      <br />
-      <Button
-        variant="outline-primary"
-        size="sm"
-        onClick={() => addProjectRow()}
-      >
-        Add More
-      </Button>
+      {showInvalidDates && (
+        <div>
+          <span className="warning-msg">
+            End date must be after start date!
+          </span>
+          <br />
+        </div>
+      )}
+      {showInvalidExperience && (
+        <div>
+          <span className="warning-msg">
+            Experience with empty type or description will not be saved.
+          </span>
+          <br />
+        </div>
+      )}
+      <div className="float-div">
+        <Button
+          className="float-left"
+          variant="outline-primary"
+          size="sm"
+          onClick={() => addProjectRow()}
+          disabled={projectItems.length >= 10}
+        >
+          {projectItems.length >= 10 ? "Max experience reached" : "Add More"}
+        </Button>
+
+        <span className="float-right">
+          <strong>{`Total months of experience: ${experience}`}</strong>
+        </span>
+      </div>
     </div>
   );
 };

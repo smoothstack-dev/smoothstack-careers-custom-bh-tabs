@@ -15,7 +15,10 @@ export const DateQuestion: React.FC<{
       <DatePicker
         selected={date}
         onChange={(date) => {
-          updateAnser(question.questionId, date);
+          updateAnser({
+            questionId: question.questionId,
+            answer: date,
+          });
         }}
       />
       <br />

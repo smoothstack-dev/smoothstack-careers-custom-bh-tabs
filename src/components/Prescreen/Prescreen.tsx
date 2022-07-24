@@ -1,10 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { cloneDeep } from "lodash";
-import {
-  QuestionItem,
-  prescreenQuestionOrder,
-  prescreenLabelOrder,
-} from "./prescreen.constant";
+import { QuestionItem, prescreenQuestionOrder } from "./prescreen.constant";
 import { Button, Spinner } from "react-bootstrap";
 import "./prescreen.css";
 import { Questions } from "../Questions/Questions";
@@ -12,45 +8,99 @@ import {
   getCandidatePrescreenData,
   savePrescreenForm,
 } from "./prescreenHelper";
+import { ErrorMsg } from "../ErrorMsg";
 
-export const Prescreen: React.FC = () => {
+export type UpdateAnswerType = {
+  questionId: string;
+  answer: string | string[];
+  otherAnswer?: string;
+};
+
+export const Prescreen: React.FC<{
+  setHeaderLabel: any;
+}> = ({ setHeaderLabel }) => {
   const [prescreenData, setPrescreenData] =
     useState<Map<string, QuestionItem>>();
   const [isLoadingData, setLoadingData] = useState<boolean>(false);
+  const [isLoadingFailed, setLoadingFailed] = useState<boolean>(false);
   const [isSavingData, setSavingData] = useState<boolean>(false);
-  const [candidateId, setCandidateId] = useState<string>("");
   const [saveFailedMsg, setSaveFailedMsg] = useState<boolean>(false);
+  const [candidateId, setCandidateId] = useState<string>("");
+  const [showAllQuestions, setShowAllQuestions] = useState<boolean>(false);
+  const [candidateName, setCandidateName] = useState<string>("");
+  const [testingString, setTestingString] = useState<string>("");
 
-  const updateAnser = (
-    questionId: string,
-    answer: string | string[],
-    otherAnswer?: string
-  ) => {
+  const updateAnser = (answers: UpdateAnswerType | UpdateAnswerType[]) => {
     if (saveFailedMsg) setSaveFailedMsg(false);
-    const updatedData = cloneDeep(prescreenData);
-    let question = cloneDeep(prescreenData?.get(questionId) || undefined);
-    if (updatedData && question) {
-      question.answer = answer;
-      question.otherAnswer = otherAnswer;
-      updatedData.set(question.questionId, question);
+    if (prescreenData) {
+      const updatedData = cloneDeep(prescreenData);
+      if (!Array.isArray(answers)) answers = [answers];
+      answers.forEach((ans) => {
+        let question = cloneDeep(
+          prescreenData.get(ans.questionId) || undefined
+        );
+        if (question) {
+          question.answer = ans.answer;
+          question.otherAnswer = ans.otherAnswer;
+          updatedData.set(question.questionId, question);
+        }
+      });
       setPrescreenData(updatedData);
     }
   };
 
   const loadPrescreenForm = async () => {
+    setLoadingFailed(false);
     setLoadingData(true);
     const queryParams = new URLSearchParams(window.location.search);
-    const candidateId = queryParams.get("EntityID") || "24833"; // TODO: for testing purpose
-    setCandidateId(candidateId);
-    const prescreenData = await getCandidatePrescreenData(candidateId);
-    setPrescreenData(prescreenData);
-    setLoadingData(false);
+    const test = `${window.location.search} ${JSON.stringify(queryParams)}`;
+    setTestingString(test);
+    const id = queryParams.get("EntityID") || "24833"; // TODO: for testing purpose
+    setCandidateId(id);
+    const prescreenResponse = await getCandidatePrescreenData(id);
+    if (
+      prescreenResponse.statusCode &&
+      Number(prescreenResponse.statusCode) < 300
+    ) {
+      setPrescreenData(prescreenResponse.body);
+      setLoadingData(false);
+    } else {
+      console.error("failed loding prescreen form");
+      setLoadingFailed(true);
+      setLoadingData(false);
+    }
   };
 
   useEffect(() => {
     loadPrescreenForm();
   }, []);
 
+  useEffect(() => {
+    if (prescreenData) {
+      const first = prescreenData?.get("firstName")?.answer || "";
+      const last = prescreenData?.get("lastName")?.answer || "";
+      const nick = prescreenData?.get("nickName")?.answer
+        ? `(${prescreenData?.get("nickName")?.answer})`
+        : "";
+      const headerLabel = `Prescreen for ${first} ${last} ${nick} #${candidateId} - ${testingString}`;
+      setHeaderLabel(headerLabel);
+      setCandidateName(`${first} ${nick}`);
+      const answer = prescreenData.get("showOnTime")?.answer;
+      if (answer && ["Yes", "Late"].includes(answer as string)) {
+        setShowAllQuestions(true);
+      } else {
+        setShowAllQuestions(false);
+      }
+    }
+  }, [prescreenData, candidateId, setHeaderLabel, testingString]);
+
+  if (isLoadingFailed)
+    return (
+      <ErrorMsg
+        message="Something went wrong. Please reload the page"
+        reload={loadPrescreenForm}
+      ></ErrorMsg>
+    );
   if (isLoadingData) return <Spinner animation="border" variant="primary" />;
 
   const savePrescreen = async () => {
@@ -92,31 +142,24 @@ export const Prescreen: React.FC = () => {
 
   return (
     <React.Fragment>
-      <h3>Prescreen for candidate #{candidateId}</h3>
-      <div>
-        {prescreenData &&
-          prescreenLabelOrder?.map((questionId: string, index) => {
-            const item = prescreenData.get(questionId);
-            if (item)
-              return (
-                <div key={`questionLabel-${index}`}>
-                  <label>
-                    <strong>{`${item.question}: ${item.answer}`}</strong>
-                  </label>
-                  <br />
-                </div>
-              );
-          })}
-      </div>
-      <br />
       <div aria-disabled={isSavingData}>
-        {prescreenQuestionsToShow &&
+        {prescreenData && prescreenData.has("showOnTime") && (
+          <div key="question-1">
+            <label>{`1. Did ${candidateName} show up for prescreen on time?`}</label>
+            <Questions
+              index={1}
+              question={prescreenData.get("showOnTime") as QuestionItem}
+              updateAnser={updateAnser}
+            ></Questions>
+            <br />
+          </div>
+        )}
+        {showAllQuestions &&
+          prescreenQuestionsToShow &&
           prescreenQuestionsToShow.map((question: QuestionItem, index) => {
             return (
               <div key={`question-${index + 1}`}>
-                <label>{`${index + 1}. ${question.question} (ref: ${
-                  question.questionId
-                })`}</label>
+                <label>{`${index + 2}. ${question.question}`}</label>
                 <Questions
                   index={index}
                   question={question}
@@ -129,14 +172,16 @@ export const Prescreen: React.FC = () => {
       </div>
       <Button
         variant="outline-primary"
-        onClick={savePrescreen}
+        onClick={() => savePrescreen()}
         disabled={!prescreenData?.get("result")?.answer || isSavingData}
       >
         Save
       </Button>
       {isSavingData && <Spinner animation="border" variant="secondary" />}
       <br />
-      {saveFailedMsg && <span>Failed to save data</span>}
+      {saveFailedMsg && (
+        <span className="warning-msg">Failed to save data</span>
+      )}
     </React.Fragment>
   );
 };

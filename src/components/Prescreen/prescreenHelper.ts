@@ -1,3 +1,4 @@
+import { cloneDeep } from "lodash";
 import * as API from "../../helpers/api";
 import { FormEntry, FORM_TYPE, PrescreenForm } from "../../types/forms";
 import {
@@ -8,52 +9,65 @@ import {
 } from "./prescreen.constant";
 
 export const getCandidatePrescreenData = async (candidateId: string) => {
-  const data = await API.getPrescreenData(candidateId);
-  const prescreenData = Array.from(prescreenFieldQuestions.keys()).reduce(
-    (map, questionId: string) => {
-      const question = prescreenFieldQuestions.get(questionId);
-      const existingAns = data[questionId];
-      if (question) {
-        if (existingAns) {
-          question.answer = existingAns;
-        }
+  const response = await API.getPrescreenData(candidateId);
+  if (response.statusCode && Number(response.statusCode) < 300) {
+    const data = response.body;
+    const prescreenData = Array.from(prescreenFieldQuestions.keys()).reduce(
+      (map, questionId: string) => {
+        const question = prescreenFieldQuestions.get(questionId);
+        const existingAns = data[questionId];
+        if (question) {
+          if (existingAns) {
+            // Construct customEncryptedText1: clearanceStatus
+            if (question.questionId === "clearanceStatus") {
+              question.answer = existingAns.split(",");
+            } else {
+              question.answer = existingAns;
+            }
+          }
 
-        // Constract Other option
-        if (
-          (question.answerType === AnswerType.SINGLE ||
-            question.answerType === AnswerType.MULTIPLE) &&
-          question.answer &&
-          question.options
-        ) {
-          const optionList: string[] = getOptionList(question.options);
-          if (optionList.includes("Other")) {
-            const otherAnswer = checkMatchedAns(optionList, question.answer);
-            if (otherAnswer !== undefined) {
-              question.otherAnswer = otherAnswer || "";
-              if (question.answerType === AnswerType.SINGLE) {
-                question.answer = "Other";
-              }
-              if (
-                question.answerType === AnswerType.MULTIPLE &&
-                Array.isArray(question.answer)
-              ) {
-                // Remove other answer from answer (has been saved to otherAnswer)
-                question.answer = removeInvalidANswer(
-                  question.options,
-                  question.answer
-                );
+          // Constract Other option
+          if (
+            (question.answerType === AnswerType.SINGLE ||
+              question.answerType === AnswerType.MULTIPLE) &&
+            question.answer &&
+            question.options
+          ) {
+            const optionList: string[] = getOptionList(question.options);
+            if (optionList.includes("Other")) {
+              const otherAnswer = checkMatchedAns(optionList, question.answer);
+              if (otherAnswer !== undefined) {
+                question.otherAnswer = otherAnswer || "";
+                if (question.answerType === AnswerType.SINGLE) {
+                  question.answer = "Other";
+                }
+                if (
+                  question.answerType === AnswerType.MULTIPLE &&
+                  Array.isArray(question.answer)
+                ) {
+                  // Remove other answer from answer (has been saved to otherAnswer)
+                  question.answer = removeInvalidANswer(
+                    question.options,
+                    question.answer
+                  );
+                }
               }
             }
           }
-        }
 
-        map.set(questionId, question);
-      }
-      return map;
-    },
-    new Map()
-  );
-  return prescreenData as Map<string, QuestionItem>;
+          map.set(questionId, question);
+        }
+        return map;
+      },
+      new Map()
+    );
+    return {
+      statusCode: response.statusCode,
+      body: prescreenData as Map<string, QuestionItem>,
+    };
+  } else {
+    return response;
+  }
 };
 
 export const savePrescreenForm = async (
@@ -111,6 +125,21 @@ const constructPrescreenMessage = (
         } as FormEntry;
         break;
       }
+      case AnswerType.PROJECT: {
+        const finalAnswer = cloneDeep(item.answer as string);
+        const parsedJSON = JSON.parse(finalAnswer);
+        if (Array.isArray(parsedJSON)) {
+          parsedJSON.filter((item) => {
+            return item.type && item.description;
+          });
+        }
+        prescreenForm[item.questionId] = {
+          question: item.question,
+          answer: JSON.stringify(parsedJSON),
+        } as FormEntry;
+        break;
+      }
+
       default: {
         prescreenForm[item.questionId] = {
           question: item.question,

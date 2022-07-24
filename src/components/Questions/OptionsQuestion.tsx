@@ -35,21 +35,21 @@ export const OptionsQuestion: React.FC<{
       case "ADD": {
         updatedAnswer.push(optionKey);
         if (optionKey === "Other") question.otherAnswer = "";
-        return updateAnser(
-          question.questionId,
-          updatedAnswer,
-          question.otherAnswer
-        );
+        return updateAnser({
+          questionId: question.questionId,
+          answer: updatedAnswer,
+          otherAnswer: question.otherAnswer,
+        });
       }
       case "REMOVE": {
         const optionIndex = updatedAnswer.indexOf(optionKey);
         if (index > -1) updatedAnswer.splice(optionIndex, 1);
         if (optionKey === "Other") question.otherAnswer = undefined;
-        return updateAnser(
-          question.questionId,
-          updatedAnswer,
-          question.otherAnswer
-        );
+        return updateAnser({
+          questionId: question.questionId,
+          answer: updatedAnswer,
+          otherAnswer: question.otherAnswer,
+        });
       }
     }
   };
@@ -59,6 +59,7 @@ export const OptionsQuestion: React.FC<{
       return (
         <>
           <div>
+            {question.questionId === "candidateRank" && <span>(Lowest)</span>}
             {question.options?.map((option: AnswerItem, id) => {
               const isSelected =
                 question.answer && question.answer === option.key;
@@ -78,7 +79,11 @@ export const OptionsQuestion: React.FC<{
                       const otherAnswer =
                         option.key === "Other" ? "" : undefined;
                       setOtherAnswerText(otherAnswer);
-                      updateAnser(question.questionId, option.key, otherAnswer);
+                      updateAnser({
+                        questionId: question.questionId,
+                        answer: option.key,
+                        otherAnswer: otherAnswer,
+                      });
                     }
                   }}
                 >
@@ -86,6 +91,7 @@ export const OptionsQuestion: React.FC<{
                 </Button>
               );
             })}
+            {question.questionId === "candidateRank" && <span>(Highest)</span>}
           </div>
           {otherAnswerText !== undefined && (
             <>
@@ -97,7 +103,11 @@ export const OptionsQuestion: React.FC<{
                 onChange={(e: any) => {
                   const ans = e.target.value;
                   setOtherAnswerText(ans);
-                  updateAnser(question.questionId, question.answer, ans);
+                  updateAnser({
+                    questionId: question.questionId,
+                    answer: question.answer,
+                    otherAnswer: ans,
+                  });
                 }}
                 value={otherAnswerText}
               ></input>
@@ -145,7 +155,11 @@ export const OptionsQuestion: React.FC<{
                 onChange={(e: any) => {
                   const value = e.target.value;
                   setOtherAnswerText(e.target.value);
-                  updateAnser(question.questionId, question.answer, value);
+                  updateAnser({
+                    questionId: question.questionId,
+                    answer: question.answer,
+                    otherAnswer: value,
+                  });
                 }}
                 value={otherAnswerText}
               ></input>

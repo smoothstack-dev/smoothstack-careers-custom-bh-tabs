@@ -23,7 +23,12 @@ export const DropdownQuestion: React.FC<{
             return (
               <Dropdown.Item
                 key={`dropdownItem-${question.questionId}-${option.key}`}
-                onClick={() => updateAnser(question.questionId, option.key)}
+                onClick={() =>
+                  updateAnser({
+                    questionId: question.questionId,
+                    answer: option.key,
+                  })
+                }
               >
                 {option.value}
               </Dropdown.Item>

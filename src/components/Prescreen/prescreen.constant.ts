@@ -64,11 +64,6 @@ export const highestDegreeOptions = [
   { key: "PhD", value: "PhD" },
 ];
 
-export const monthsOfExperienceOptions: AnswerItem[] = [
-  { key: "<20", value: "<20" },
-  { key: ">=20", value: ">=20" },
-];
-
 export const programmingLanguagesOptions: AnswerItem[] = [
   { key: "Java", value: "Java" },
   { key: "C", value: "C" },
@@ -138,11 +133,25 @@ export const workAuthorizationOptions: AnswerItem[] = [
   { key: "Not authorized", value: "Not authorized" },
 ];
 
+export const clearanceStatusOptions: AnswerItem[] = [
+  { key: "Potentially Eligible", value: "Potentially Eligible" },
+  { key: "Submitted", value: "Submitted" },
+  { key: "Provisional", value: "Provisional" },
+  { key: "Public Trust", value: "Public Trust" },
+  { key: "Confidential", value: "Confidential" },
+  { key: "Secret", value: "Secret" },
+  { key: "Top Secret", value: "Top Secret" },
+  { key: "Compartmented", value: "Compartmented" },
+  { key: "Expired", value: "Expired" },
+  { key: "Not Eligible", value: "Not Eligible" },
+];
+
 export const isVaccinatedOptions: AnswerItem[] = [
   { key: "Boosted", value: "Boosted" },
   { key: "Full", value: "Full" },
   { key: "Partial", value: "Partial" },
-  { key: "No", value: "No" },
+  { key: "Not Vaccinated", value: "Not Vaccinated" },
+  { key: "Against Vaccination", value: "Against Vaccination" },
   { key: "Undisclosed", value: "Undisclosed" },
 ];
 
@@ -257,15 +266,8 @@ export const resultOptions: AnswerItem[] = [
 //
 export const allPrescreenFields: string[] = [];
 
-// Only show as lable - not changable
-export const prescreenLabelOrder: string[] = [
-  "candidateName",
-  // "candidateEmail",
-  // "relocation",
-];
-
 export const prescreenQuestionOrder: string[] = [
-  "showOnTime",
+  // "showOnTime",
   "relocation",
   "aboutYourself",
   "otherApplications",
@@ -275,7 +277,6 @@ export const prescreenQuestionOrder: string[] = [
   "highestDegree",
   "graduationDate",
   "projects",
-  // "monthsOfExperience",
   "programmingLanguages",
   "goodFit",
   "referral",
@@ -285,6 +286,7 @@ export const prescreenQuestionOrder: string[] = [
   "opportunityRank",
   "workAuthorization",
   "backgroundCheck",
+  "clearanceStatus",
   "drugScreen",
   "isVaccinated",
   "willVaccinate",
@@ -306,11 +308,6 @@ export const prescreenQuestionOrder: string[] = [
   "additionalNotes",
 ];
 
-const showOnTimeDependence: dependenceField = {
-  questionId: "showOnTime",
-  expectedAnswer: ["Yes", "Late"],
-};
-
 const graduactionDateDependence: dependenceField = {
   questionId: "highestDegree",
   expectedAnswer: [
@@ -324,10 +321,26 @@ const graduactionDateDependence: dependenceField = {
 
 export const prescreenFieldQuestions: Map<string, QuestionItem> = new Map([
   [
-    "candidateName",
+    "firstName",
     {
-      questionId: "candidateName",
-      question: "Candidate Name",
+      questionId: "firstName",
+      question: "First Name",
+      answerType: AnswerType.LABEL,
+    },
+  ],
+  [
+    "lastName",
+    {
+      questionId: "lastName",
+      question: "Last Name",
+      answerType: AnswerType.LABEL,
+    },
+  ],
+  [
+    "nickName",
+    {
+      questionId: "nickName",
+      question: "Nick Name",
       answerType: AnswerType.LABEL,
     },
   ],
@@ -339,19 +352,11 @@ export const prescreenFieldQuestions: Map<string, QuestionItem> = new Map([
       answerType: AnswerType.LABEL,
     },
   ],
-  // [
-  //   "relocation",
-  //   {
-  //     questionId: "relocation",
-  //     question: "Willingness to Relocate from the application",
-  //     answerType: AnswerType.LABEL,
-  //   },
-  // ],
   [
     "showOnTime",
     {
       questionId: "showOnTime",
-      question: "Does candidate show up for prescreen on time?",
+      question: "Did candidate show up for prescreen on time?",
       options: showOnTimeOptions,
       answerType: AnswerType.SINGLE,
     },
@@ -364,7 +369,6 @@ export const prescreenFieldQuestions: Map<string, QuestionItem> = new Map([
         "Will you be willing to relocate for this opportunity if necessary?",
       options: relocationOptions,
       answerType: AnswerType.SINGLE,
-      dependenceIds: [showOnTimeDependence],
     },
   ],
   [
@@ -374,7 +378,6 @@ export const prescreenFieldQuestions: Map<string, QuestionItem> = new Map([
       question:
         "Tell me about yourself and what influenced you to pursue a career in IT.",
       answerType: AnswerType.TEXTBLOCK,
-      dependenceIds: [showOnTimeDependence],
     },
   ],
   [
@@ -384,7 +387,6 @@ export const prescreenFieldQuestions: Map<string, QuestionItem> = new Map([
       question:
         "Where else have you applied & what roadblocks, if any, have you been experiencing?",
       answerType: AnswerType.TEXTBLOCK,
-      dependenceIds: [showOnTimeDependence],
     },
   ],
   [
@@ -394,7 +396,6 @@ export const prescreenFieldQuestions: Map<string, QuestionItem> = new Map([
       question: "Are you currently a student?",
       options: isStudentOption,
       answerType: AnswerType.SINGLE,
-      dependenceIds: [showOnTimeDependence],
     },
   ],
   [
@@ -404,10 +405,7 @@ export const prescreenFieldQuestions: Map<string, QuestionItem> = new Map([
       question: "If you are currently a student, what degree are you pursuing?",
       options: expectedDegreeOptions,
       answerType: AnswerType.SINGLE,
-      dependenceIds: [
-        showOnTimeDependence,
-        { questionId: "isStudent", expectedAnswer: ["Yes"] },
-      ],
+      dependenceIds: [{ questionId: "isStudent", expectedAnswer: ["Yes"] }],
     },
   ],
   [
@@ -417,7 +415,6 @@ export const prescreenFieldQuestions: Map<string, QuestionItem> = new Map([
       question: "If you are a student, what is your expected graduation date?",
       answerType: AnswerType.DATE,
       dependenceIds: [
-        showOnTimeDependence,
         { questionId: "isStudent", expectedAnswer: ["Yes"] },
         { questionId: "expectedDegree" },
       ],
@@ -430,10 +427,7 @@ export const prescreenFieldQuestions: Map<string, QuestionItem> = new Map([
       question: "What is your highest level of education?",
       options: highestDegreeOptions,
       answerType: AnswerType.SINGLE,
-      dependenceIds: [
-        showOnTimeDependence,
-        { questionId: "isStudent", expectedAnswer: ["No"] },
-      ],
+      dependenceIds: [{ questionId: "isStudent", expectedAnswer: ["No"] }],
     },
   ],
   [
@@ -443,7 +437,6 @@ export const prescreenFieldQuestions: Map<string, QuestionItem> = new Map([
       question: "What was your Graduation Date?",
       answerType: AnswerType.DATE,
       dependenceIds: [
-        showOnTimeDependence,
         { questionId: "isStudent", expectedAnswer: ["No"] },
         graduactionDateDependence,
       ],
@@ -456,18 +449,15 @@ export const prescreenFieldQuestions: Map<string, QuestionItem> = new Map([
       question:
         "Any internships? Personal projects? School related projects? Boot Camps? Professional experience (Note: included date ranges)",
       answerType: AnswerType.PROJECT,
-      dependenceIds: [showOnTimeDependence],
     },
   ],
   [
-    "monthsOfExperience",
+    "monthsOfProjectExperience",
     {
-      questionId: "monthsOfExperience",
+      questionId: "monthsOfProjectExperience",
       question:
         "Recruiter: # of Months of Experience (Recruiter will determine this based on previous answer)",
-      options: monthsOfExperienceOptions,
-      answerType: AnswerType.SINGLE,
-      dependenceIds: [showOnTimeDependence],
+      answerType: AnswerType.TEXT,
     },
   ],
   [
@@ -478,7 +468,6 @@ export const prescreenFieldQuestions: Map<string, QuestionItem> = new Map([
         "What is your strongest object oriented language? What programming languages do you feel the most comfortable with? ",
       options: programmingLanguagesOptions,
       answerType: AnswerType.MULTIPLE,
-      dependenceIds: [showOnTimeDependence],
     },
   ],
   [
@@ -487,7 +476,6 @@ export const prescreenFieldQuestions: Map<string, QuestionItem> = new Map([
       questionId: "goodFit",
       question: "Why do you feel like you would be a good fit for Smoothstack?",
       answerType: AnswerType.TEXTBLOCK,
-      dependenceIds: [showOnTimeDependence],
     },
   ],
   [
@@ -497,7 +485,6 @@ export const prescreenFieldQuestions: Map<string, QuestionItem> = new Map([
       question: "How did you hear about us?",
       options: referralOptions,
       answerType: AnswerType.SINGLE,
-      dependenceIds: [showOnTimeDependence],
     },
   ],
   [
@@ -508,7 +495,6 @@ export const prescreenFieldQuestions: Map<string, QuestionItem> = new Map([
         "Our internal training program is pretty intense. If selected, you are going to learn a lot in a short amount of time. Is this something that you feel like you can commit to or will this be a challenge for you?",
       options: commitmentOptions,
       answerType: AnswerType.SINGLE,
-      dependenceIds: [showOnTimeDependence],
     },
   ],
   [
@@ -518,7 +504,6 @@ export const prescreenFieldQuestions: Map<string, QuestionItem> = new Map([
       question:
         "Can you give me an example of time when you had to learn a lot in a short period of time?",
       answerType: AnswerType.TEXTBLOCK,
-      dependenceIds: [showOnTimeDependence],
     },
   ],
   [
@@ -528,7 +513,6 @@ export const prescreenFieldQuestions: Map<string, QuestionItem> = new Map([
       question:
         "Tell me about a challenging situation that you have found yourself in?",
       answerType: AnswerType.TEXTBLOCK,
-      dependenceIds: [showOnTimeDependence],
     },
   ],
   [
@@ -539,7 +523,6 @@ export const prescreenFieldQuestions: Map<string, QuestionItem> = new Map([
         "Where does Smoothstack rate compared to other companies that you are interested in?",
       options: opportunityRankOptions,
       answerType: AnswerType.SINGLE,
-      dependenceIds: [showOnTimeDependence],
     },
   ],
   [
@@ -550,7 +533,6 @@ export const prescreenFieldQuestions: Map<string, QuestionItem> = new Map([
         "Are you authorized to work in the US for any employer? Do you require sponsorship now or in the future? ",
       options: workAuthorizationOptions,
       answerType: AnswerType.SINGLE,
-      dependenceIds: [showOnTimeDependence],
     },
   ],
   [
@@ -559,7 +541,16 @@ export const prescreenFieldQuestions: Map<string, QuestionItem> = new Map([
       questionId: "backgroundCheck",
       question: "Do you have any concerns about passing a background check?",
       answerType: AnswerType.TEXT,
-      dependenceIds: [showOnTimeDependence],
+    },
+  ],
+  [
+    "clearanceStatus",
+    {
+      questionId: "clearanceStatus",
+      question:
+        "In the event that our client requires a security clearance, is there anything that would prevent you from obtaining one?",
+      options: clearanceStatusOptions,
+      answerType: AnswerType.MULTIPLE,
     },
   ],
   [
@@ -569,7 +560,6 @@ export const prescreenFieldQuestions: Map<string, QuestionItem> = new Map([
       question:
         "Our clients require drug screening, do you have any concerns passing a drug screen even if certain drugs are legal in your state?",
       answerType: AnswerType.TEXT,
-      dependenceIds: [showOnTimeDependence],
     },
   ],
   [
@@ -579,7 +569,6 @@ export const prescreenFieldQuestions: Map<string, QuestionItem> = new Map([
       question: "Are you currently vaccinated?",
       options: isVaccinatedOptions,
       answerType: AnswerType.SINGLE,
-      dependenceIds: [showOnTimeDependence],
     },
   ],
   [
@@ -589,10 +578,7 @@ export const prescreenFieldQuestions: Map<string, QuestionItem> = new Map([
       question: "Will you get vaccinated?",
       options: willVaccinateOptions,
       answerType: AnswerType.SINGLE,
-      dependenceIds: [
-        showOnTimeDependence,
-        { questionId: "isVaccinated", expectedAnswer: ["No"] },
-      ],
+      dependenceIds: [{ questionId: "isVaccinated", expectedAnswer: ["No"] }],
     },
   ],
   [
@@ -601,7 +587,6 @@ export const prescreenFieldQuestions: Map<string, QuestionItem> = new Map([
       questionId: "vaccinationNotes",
       question: "Vaccination Notes",
       answerType: AnswerType.TEXTBLOCK,
-      dependenceIds: [showOnTimeDependence],
     },
   ],
   [
@@ -610,7 +595,6 @@ export const prescreenFieldQuestions: Map<string, QuestionItem> = new Map([
       questionId: "githubLink",
       question: "GitHub Link",
       answerType: AnswerType.TEXT,
-      dependenceIds: [showOnTimeDependence],
     },
   ],
   [
@@ -619,7 +603,6 @@ export const prescreenFieldQuestions: Map<string, QuestionItem> = new Map([
       questionId: "linkedinLink",
       question: "LinkedIn Link",
       answerType: AnswerType.TEXT,
-      dependenceIds: [showOnTimeDependence],
     },
   ],
   [
@@ -630,7 +613,6 @@ export const prescreenFieldQuestions: Map<string, QuestionItem> = new Map([
         "To clarify the opportunity, this is a (2) year commitment. We invest a lot of time and money into our new-hires so that our employees may gain valuable on-the-job work experience working on real projects with real clients. Are you prepared to commit to 2 years as an investment in your future?",
       options: canCommitOptions,
       answerType: AnswerType.SINGLE,
-      dependenceIds: [showOnTimeDependence],
     },
   ],
   [
@@ -639,7 +621,6 @@ export const prescreenFieldQuestions: Map<string, QuestionItem> = new Map([
       questionId: "address1",
       question: "Address Line 1",
       answerType: AnswerType.TEXT,
-      dependenceIds: [showOnTimeDependence],
     },
   ],
   [
@@ -648,7 +629,6 @@ export const prescreenFieldQuestions: Map<string, QuestionItem> = new Map([
       questionId: "address2",
       question: "Address Line 2 (Optional)",
       answerType: AnswerType.TEXT,
-      dependenceIds: [showOnTimeDependence],
     },
   ],
   [
@@ -657,7 +637,6 @@ export const prescreenFieldQuestions: Map<string, QuestionItem> = new Map([
       questionId: "city",
       question: "City",
       answerType: AnswerType.TEXT,
-      dependenceIds: [showOnTimeDependence],
     },
   ],
   [
@@ -667,7 +646,6 @@ export const prescreenFieldQuestions: Map<string, QuestionItem> = new Map([
       question: "State",
       options: stateOptions,
       answerType: AnswerType.DROPDOWN,
-      dependenceIds: [showOnTimeDependence],
     },
   ],
   [
@@ -676,7 +654,6 @@ export const prescreenFieldQuestions: Map<string, QuestionItem> = new Map([
       questionId: "zip",
       question: "Zip Code",
       answerType: AnswerType.TEXT,
-      dependenceIds: [showOnTimeDependence],
     },
   ],
   [
@@ -685,7 +662,6 @@ export const prescreenFieldQuestions: Map<string, QuestionItem> = new Map([
       questionId: "county",
       question: "What county do you live in?",
       answerType: AnswerType.TEXT,
-      dependenceIds: [showOnTimeDependence],
     },
   ],
   [
@@ -695,7 +671,6 @@ export const prescreenFieldQuestions: Map<string, QuestionItem> = new Map([
       question:
         "Do you have any outstanding questions regarding this opportunity that I may help clarify?",
       answerType: AnswerType.TEXTBLOCK,
-      dependenceIds: [showOnTimeDependence],
     },
   ],
   [
@@ -705,7 +680,6 @@ export const prescreenFieldQuestions: Map<string, QuestionItem> = new Map([
       question:
         "Is there anyone you can think of that would be a good fit for this program?",
       answerType: AnswerType.TEXT,
-      dependenceIds: [showOnTimeDependence],
     },
   ],
   [
@@ -715,7 +689,6 @@ export const prescreenFieldQuestions: Map<string, QuestionItem> = new Map([
       question: "Recruiter: Please rank candidates communication skills.",
       options: communicationSkillsOptions,
       answerType: AnswerType.SINGLE,
-      dependenceIds: [showOnTimeDependence],
     },
   ],
   [
@@ -725,7 +698,6 @@ export const prescreenFieldQuestions: Map<string, QuestionItem> = new Map([
       question: " Rank Candidate from a scale of 1-10 (Highest).",
       options: candidateRankOptions,
       answerType: AnswerType.SINGLE,
-      dependenceIds: [showOnTimeDependence],
     },
   ],
   [
@@ -735,7 +707,6 @@ export const prescreenFieldQuestions: Map<string, QuestionItem> = new Map([
       question: "Recruiter: Please select pre-screen result below.",
       options: resultOptions,
       answerType: AnswerType.SINGLE,
-      dependenceIds: [showOnTimeDependence],
     },
   ],
   [
@@ -745,7 +716,6 @@ export const prescreenFieldQuestions: Map<string, QuestionItem> = new Map([
       question:
         "Recruiter: Please include any additional notes that you feel may be useful.",
       answerType: AnswerType.TEXTBLOCK,
-      dependenceIds: [showOnTimeDependence],
     },
   ],
 ]);

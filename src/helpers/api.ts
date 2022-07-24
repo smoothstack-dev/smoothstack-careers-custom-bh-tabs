@@ -6,16 +6,15 @@ const endpoint = "https://1syp4w9c5h.execute-api.us-east-1.amazonaws.com/prod/";
 const prescreenUrl = endpoint + "prescreen";
 
 export const getPrescreenData = async (candidateId: string) => {
-  let prescreenData;
   try {
     const response: AxiosResponse = await axios.get(
       `${prescreenUrl}?candidateId=${candidateId}`
     );
-    prescreenData = response.data.body;
+    return response.data;
   } catch (err) {
     console.error("Error getting prescreen data", err);
   }
-  return prescreenData;
+  return undefined;
 };
 
 export const savePrescreenForm = async (

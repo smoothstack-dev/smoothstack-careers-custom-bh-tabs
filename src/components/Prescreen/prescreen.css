@@ -7,3 +7,28 @@
     background-color: blueviolet;
     color: white;
 }
+
+
+.float-div {
+    float: lieft;
+}
+
+.float-left {
+    float: lieft;
+}
+
+.float-right {
+    float: right;
+}
+
+.warning-msg {
+    color:red;
+    font-weight: 600;
+    margin-left: 3px;
+}
+
+.warning-msg-small {
+    color:red;
+    font-weight: 300;
+    font-size: 10px;
+}
