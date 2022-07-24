@@ -49,6 +49,14 @@ export const Prescreen: React.FC<{
     }
   };
 
+  const loadingFailed = (msg: string) => {
+    console.error("failed loding prescreen form");
+    setHeaderLabel(msg);
+    setTestingString(msg);
+    setLoadingFailed(true);
+    setLoadingData(false);
+  };
+
   const loadPrescreenForm = async () => {
     setLoadingFailed(false);
     setLoadingData(true);
@@ -67,14 +75,16 @@ export const Prescreen: React.FC<{
         setPrescreenData(prescreenResponse.body);
         setLoadingData(false);
         return;
+      } else {
+        loadingFailed(
+          `${test}, ID:${id}, DATA: ${JSON.stringify(prescreenResponse)}`
+        );
       }
+    } else {
+      loadingFailed(
+        `${test}, ID:${id}, DATA: ${JSON.stringify(prescreenResponse)}`
+      );
     }
-    console.error("failed loding prescreen form");
-    setHeaderLabel(
-      `${test}, ID:${id}, DATA:${JSON.stringify(prescreenResponse)}`
-    );
-    setLoadingFailed(true);
-    setLoadingData(false);
   };
 
   useEffect(() => {
@@ -102,10 +112,7 @@ export const Prescreen: React.FC<{
 
   if (isLoadingFailed)
     return (
-      <ErrorMsg
-        message="Something went wrong. Please reload the page"
-        reload={loadPrescreenForm}
-      ></ErrorMsg>
+      <ErrorMsg message={testingString} reload={loadPrescreenForm}></ErrorMsg>
     );
   if (isLoadingData) return <Spinner animation="border" variant="primary" />;
 
