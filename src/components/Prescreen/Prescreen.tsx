@@ -28,7 +28,7 @@ export const Prescreen: React.FC<{
   const [candidateId, setCandidateId] = useState<string>("");
   const [showAllQuestions, setShowAllQuestions] = useState<boolean>(false);
   const [candidateName, setCandidateName] = useState<string>("");
-  const [testingString, setTestingString] = useState<string>("");
+  const [errorString, setErrorString] = useState<string>("");
 
   const updateAnser = (answers: UpdateAnswerType | UpdateAnswerType[]) => {
     if (saveFailedMsg) setSaveFailedMsg(false);
@@ -51,8 +51,7 @@ export const Prescreen: React.FC<{
 
   const loadingFailed = (msg: string) => {
     console.error("failed loding prescreen form");
-    setHeaderLabel(msg);
-    setTestingString(msg);
+    setErrorString(msg);
     setLoadingFailed(true);
     setLoadingData(false);
   };
@@ -62,8 +61,8 @@ export const Prescreen: React.FC<{
     setLoadingData(true);
     const queryParams = new URLSearchParams(window.location.search);
     const test = `${window.location.search} ${JSON.stringify(queryParams)}`;
-    setTestingString(test);
-    const id = queryParams.get("EntityID"); // TODO:|| "24833";  for testing purpose
+    setErrorString(test);
+    const id = queryParams.get("EntityID");
     let prescreenResponse;
     if (id) {
       setCandidateId(id);
@@ -77,18 +76,19 @@ export const Prescreen: React.FC<{
         return;
       } else {
         loadingFailed(
-          `${test}, ID:${id}, DATA: ${JSON.stringify(prescreenResponse)}`
+          `Faild: ${test}, ID:${id}, DATA: ${JSON.stringify(prescreenResponse)}`
         );
       }
     } else {
       loadingFailed(
-        `${test}, ID:${id}, DATA: ${JSON.stringify(prescreenResponse)}`
+        `Faild: ${test}, ID:${id}, DATA: ${JSON.stringify(prescreenResponse)}`
       );
     }
   };
 
   useEffect(() => {
-    if (!prescreenData && !isLoadingData) loadPrescreenForm();
+    if (!prescreenData && !isLoadingData && !isLoadingFailed)
+      loadPrescreenForm();
   });
 
   useEffect(() => {
@@ -98,7 +98,7 @@ export const Prescreen: React.FC<{
       const nick = prescreenData?.get("nickName")?.answer
         ? `(${prescreenData?.get("nickName")?.answer})`
         : "";
-      const headerLabel = `Prescreen for ${first} ${last} ${nick} #${candidateId} - ${testingString}`;
+      const headerLabel = `Prescreen for ${first} ${last} ${nick} #${candidateId}`;
       setHeaderLabel(headerLabel);
       setCandidateName(`${first} ${nick}`);
       const answer = prescreenData.get("showOnTime")?.answer;
@@ -108,11 +108,11 @@ export const Prescreen: React.FC<{
         setShowAllQuestions(false);
       }
     }
-  }, [prescreenData, candidateId, setHeaderLabel, testingString]);
+  }, [prescreenData, candidateId, setHeaderLabel, errorString]);
 
   if (isLoadingFailed)
     return (
-      <ErrorMsg message={testingString} reload={loadPrescreenForm}></ErrorMsg>
+      <ErrorMsg message={errorString} reload={loadPrescreenForm}></ErrorMsg>
     );
   if (isLoadingData) return <Spinner animation="border" variant="primary" />;
 
@@ -163,6 +163,7 @@ export const Prescreen: React.FC<{
               index={1}
               question={prescreenData.get("showOnTime") as QuestionItem}
               updateAnser={updateAnser}
+              prescreenData={prescreenData}
             ></Questions>
             <br />
           </div>
@@ -177,6 +178,7 @@ export const Prescreen: React.FC<{
                   index={index}
                   question={question}
                   updateAnser={updateAnser}
+                  prescreenData={prescreenData}
                 ></Questions>
                 <br />
               </div>

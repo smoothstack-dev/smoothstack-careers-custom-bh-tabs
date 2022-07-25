@@ -20,7 +20,6 @@
   background-color: rgb(245, 245, 245);
   display: flex;
   align-items: center;
-  justify-content: center;
   font-size: 2em;
   color: black;
   padding: 10px;
@@ -51,4 +50,14 @@
 
 td {
   vertical-align: middle;
+}
+
+.header-logo{
+  max-height: 1em;
+}
+
+
+.header-text{
+  position: fixed;
+  left: 35%;
 }

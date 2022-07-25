@@ -5,12 +5,14 @@ import { DropdownQuestion } from "./DropdownQuestion";
 import { OptionsQuestion } from "./OptionsQuestion";
 import { ProjectQuestion } from "./ProjectQuestion";
 import { TextQuestion } from "./TextQuestion";
+import { ViewAndEditQuestion } from "./ViewAndEditQuestion";
 
 export const Questions: React.FC<{
   index: number;
   question: QuestionItem;
   updateAnser: any;
-}> = ({ index, question, updateAnser }) => {
+  prescreenData?: Map<string, QuestionItem>;
+}> = ({ index, question, updateAnser, prescreenData }) => {
   switch (question.answerType) {
     case AnswerType.TEXT:
     case AnswerType.TEXTBLOCK: {
@@ -57,6 +59,16 @@ export const Questions: React.FC<{
           question={question}
           updateAnser={updateAnser}
         ></ProjectQuestion>
+      );
+    }
+    case AnswerType.VIEWANDEDIT: {
+      return (
+        <ViewAndEditQuestion
+          index={index}
+          question={question}
+          updateAnser={updateAnser}
+          prescreenData={prescreenData}
+        ></ViewAndEditQuestion>
       );
     }
     default:

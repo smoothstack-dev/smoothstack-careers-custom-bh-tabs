@@ -35,7 +35,6 @@ export const DropdownQuestion: React.FC<{
             );
           })}
       </DropdownButton>
-      <br />
     </>
   );
 };

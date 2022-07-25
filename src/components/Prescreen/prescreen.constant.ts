@@ -7,6 +7,7 @@ export enum AnswerType {
   "DATE" = "DATE",
   "DROPDOWN" = "DROPDOWN",
   "PROJECT" = "PROJECT",
+  "VIEWANDEDIT" = "VIEWANDEDIT",
 }
 
 export type dependenceField = {
@@ -16,12 +17,13 @@ export type dependenceField = {
 
 export type QuestionItem = {
   question: string;
-  options?: AnswerItem[];
   questionId: string;
-  answer?: string | string[];
-  otherAnswer?: string;
   answerType: AnswerType;
-  dependenceIds?: dependenceField[];
+  answer?: string | string[];
+  options?: AnswerItem[]; // for SINGLE/MULTIPLE
+  otherAnswer?: string; // for SINGLE/MULTIPLE fields that has "Other" option
+  dependenceIds?: dependenceField[]; // for fields that depend on other fields' answer to display or hide
+  viewGroupIds?: string[]; // for VIEWANDEDIT to group fields and view/edit in one block
 };
 
 export type AnswerItem = {
@@ -294,12 +296,7 @@ export const prescreenQuestionOrder: string[] = [
   "githubLink",
   "linkedinLink",
   "canCommit",
-  "address1",
-  "address2",
-  "city",
-  "state",
-  "zip",
-  "county",
+  "nameAndAddress",
   "questions",
   "referFriend",
   "communicationSkills",
@@ -325,7 +322,7 @@ export const prescreenFieldQuestions: Map<string, QuestionItem> = new Map([
     {
       questionId: "firstName",
       question: "First Name",
-      answerType: AnswerType.LABEL,
+      answerType: AnswerType.TEXT,
     },
   ],
   [
@@ -333,7 +330,7 @@ export const prescreenFieldQuestions: Map<string, QuestionItem> = new Map([
     {
       questionId: "lastName",
       question: "Last Name",
-      answerType: AnswerType.LABEL,
+      answerType: AnswerType.TEXT,
     },
   ],
   [
@@ -341,7 +338,7 @@ export const prescreenFieldQuestions: Map<string, QuestionItem> = new Map([
     {
       questionId: "nickName",
       question: "Nick Name",
-      answerType: AnswerType.LABEL,
+      answerType: AnswerType.TEXT,
     },
   ],
   [
@@ -613,6 +610,25 @@ export const prescreenFieldQuestions: Map<string, QuestionItem> = new Map([
         "To clarify the opportunity, this is a (2) year commitment. We invest a lot of time and money into our new-hires so that our employees may gain valuable on-the-job work experience working on real projects with real clients. Are you prepared to commit to 2 years as an investment in your future?",
       options: canCommitOptions,
       answerType: AnswerType.SINGLE,
+    },
+  ],
+  [
+    "nameAndAddress",
+    {
+      questionId: "nameAndAddress",
+      question: "Name and Address Verification",
+      answerType: AnswerType.VIEWANDEDIT,
+      viewGroupIds: [
+        "firstName",
+        "lastName",
+        "nickName",
+        "address1",
+        "address2",
+        "city",
+        "state",
+        "zip",
+        "county",
+      ],
     },
   ],
   [
