@@ -10,6 +10,10 @@ export const DateQuestion: React.FC<{
   const date = question.answer
     ? new Date(question.answer as string)
     : undefined;
+  const startDate =
+    question.questionId === "expectedGraduationDate" ? new Date() : undefined;
+  const endDate =
+    question.questionId === "graduationDate" ? new Date() : undefined;
   return (
     <>
       <DatePicker
@@ -20,6 +24,8 @@ export const DateQuestion: React.FC<{
             answer: date,
           });
         }}
+        minDate={startDate}
+        maxDate={endDate}
       />
       <br />
     </>

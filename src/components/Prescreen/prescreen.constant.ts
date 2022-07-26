@@ -83,8 +83,7 @@ export const programmingLanguagesOptions: AnswerItem[] = [
 
 export const referralOptions: AnswerItem[] = [
   { key: "Indeed", value: "Indeed" },
-  { key: "Zip", value: "Zip" },
-  { key: "Recruiter", value: "Recruiter" },
+  { key: "Zip Recruiter", value: "Zip Recruiter" },
   { key: "Glassdoor", value: "Glassdoor" },
   { key: "LinkedIn", value: "LinkedIn" },
   { key: "Internal Referral", value: "Internal Referral" },
@@ -228,10 +227,10 @@ export const stateOptions: AnswerItem[] = [
 ];
 
 export const communicationSkillsOptions: AnswerItem[] = [
-  { key: "0", value: "0-Poor" },
-  { key: "1", value: "1-Satisfactory" },
-  { key: "2", value: "2-Good" },
-  { key: "3", value: "3-Excellent" },
+  { key: "0", value: "Poor" },
+  { key: "1", value: "Satisfactory" },
+  { key: "2", value: "Good" },
+  { key: "3", value: "Excellent" },
 ];
 
 export const candidateRankOptions: AnswerItem[] = [
@@ -251,6 +250,7 @@ export const resultOptions: AnswerItem[] = [
   { key: "Pass", value: "Pass" },
   { key: "Snooze-Timing", value: "Snooze-Timing" },
   { key: "Snooze-Education", value: "Snooze-Education" },
+  { key: "Reject-Prescreen No Show", value: "Reject-Prescreen No Show" },
   { key: "Reject-Education", value: "Reject-Education" },
   { key: "Reject-Work Authorization", value: "Reject-Work Authorization" },
   { key: "Reject-Relocation", value: "Reject-Relocation" },
@@ -399,7 +399,7 @@ export const prescreenFieldQuestions: Map<string, QuestionItem> = new Map([
     "expectedDegree",
     {
       questionId: "expectedDegree",
-      question: "If you are currently a student, what degree are you pursuing?",
+      question: "What degree are you pursuing?",
       options: expectedDegreeOptions,
       answerType: AnswerType.SINGLE,
       dependenceIds: [{ questionId: "isStudent", expectedAnswer: ["Yes"] }],
@@ -409,7 +409,7 @@ export const prescreenFieldQuestions: Map<string, QuestionItem> = new Map([
     "expectedGraduationDate",
     {
       questionId: "expectedGraduationDate",
-      question: "If you are a student, what is your expected graduation date?",
+      question: "What is your expected graduation date?",
       answerType: AnswerType.DATE,
       dependenceIds: [
         { questionId: "isStudent", expectedAnswer: ["Yes"] },
@@ -711,7 +711,7 @@ export const prescreenFieldQuestions: Map<string, QuestionItem> = new Map([
     "candidateRank",
     {
       questionId: "candidateRank",
-      question: " Rank Candidate from a scale of 1-10 (Highest).",
+      question: " Rank Candidate from a scale of 1-10.",
       options: candidateRankOptions,
       answerType: AnswerType.SINGLE,
     },

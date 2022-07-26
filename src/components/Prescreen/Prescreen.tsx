@@ -9,6 +9,7 @@ import {
   savePrescreenForm,
 } from "./prescreenHelper";
 import { ErrorMsg } from "../ErrorMsg";
+import { HeaderBtnType } from "../../App";
 
 export type UpdateAnswerType = {
   questionId: string;
@@ -17,15 +18,17 @@ export type UpdateAnswerType = {
 };
 
 export const Prescreen: React.FC<{
+  headerMsg: string;
+  setHeaderMsg: any;
   setHeaderLabel: any;
-}> = ({ setHeaderLabel }) => {
+  setHeaderBtn: any;
+}> = ({ headerMsg, setHeaderMsg, setHeaderLabel, setHeaderBtn }) => {
   const [prescreenData, setPrescreenData] =
     useState<Map<string, QuestionItem>>();
   const [isLoadingData, setLoadingData] = useState<boolean>(false);
   const [isLoadingFailed, setLoadingFailed] = useState<boolean>(false);
-  const [isSavingData, setSavingData] = useState<boolean>(false);
+  const [isDataSaved, setDataSaved] = useState<boolean>(false);
   const [saveFailedMsg, setSaveFailedMsg] = useState<boolean>(false);
-  const [candidateId, setCandidateId] = useState<string>("");
   const [showAllQuestions, setShowAllQuestions] = useState<boolean>(false);
   const [candidateName, setCandidateName] = useState<string>("");
   const [errorString, setErrorString] = useState<string>("");
@@ -46,6 +49,15 @@ export const Prescreen: React.FC<{
         }
       });
       setPrescreenData(updatedData);
+      if (headerMsg === "") {
+        setHeaderMsg(
+          "Please save the changes before navigating away from the prescreen tab!"
+        );
+        setHeaderBtn({
+          text: "Save",
+          func: savePrescreen,
+        } as HeaderBtnType);
+      }
     }
   };
 
@@ -65,7 +77,6 @@ export const Prescreen: React.FC<{
     const id = queryParams.get("EntityID");
     let prescreenResponse;
     if (id) {
-      setCandidateId(id);
       prescreenResponse = await getCandidatePrescreenData(id);
       if (
         prescreenResponse.statusCode &&
@@ -73,6 +84,7 @@ export const Prescreen: React.FC<{
       ) {
         setPrescreenData(prescreenResponse.body);
         setLoadingData(false);
+        setHeaderLabel("");
         return;
       } else {
         loadingFailed(
@@ -92,14 +104,17 @@ export const Prescreen: React.FC<{
   });
 
   useEffect(() => {
+    if (isLoadingData) {
+      setHeaderLabel("Loading Candidate Prescreen Data...");
+    } else setHeaderLabel("");
+  }, [isLoadingData, setHeaderLabel]);
+
+  useEffect(() => {
     if (prescreenData) {
       const first = prescreenData?.get("firstName")?.answer || "";
-      const last = prescreenData?.get("lastName")?.answer || "";
       const nick = prescreenData?.get("nickName")?.answer
         ? `(${prescreenData?.get("nickName")?.answer})`
         : "";
-      const headerLabel = `Prescreen for ${first} ${last} ${nick} #${candidateId}`;
-      setHeaderLabel(headerLabel);
       setCandidateName(`${first} ${nick}`);
       const answer = prescreenData.get("showOnTime")?.answer;
       if (answer && ["Yes", "Late"].includes(answer as string)) {
@@ -108,26 +123,22 @@ export const Prescreen: React.FC<{
         setShowAllQuestions(false);
       }
     }
-  }, [prescreenData, candidateId, setHeaderLabel, errorString]);
+  }, [prescreenData, errorString]);
+
+  if (isDataSaved) return <h3>Prescreen Data Saved!</h3>;
 
   if (isLoadingFailed)
     return (
       <ErrorMsg message={errorString} reload={loadPrescreenForm}></ErrorMsg>
     );
+
   if (isLoadingData) return <Spinner animation="border" variant="primary" />;
 
   const savePrescreen = async () => {
     if (!prescreenData) return;
-    setSavingData(true);
-    setSaveFailedMsg(false);
-    const response = await savePrescreenForm(prescreenData);
-    setSavingData(false);
-    if (response.statusCode && response.statusCode > 300) {
-      console.error("Failed saving data");
-      setSaveFailedMsg(true);
-    } else {
-      loadPrescreenForm();
-    }
+    await savePrescreenForm(prescreenData);
+    setDataSaved(true);
+    setHeaderMsg("");
   };
 
   const prescreenQuestionsToShow = prescreenData
@@ -155,10 +166,10 @@ export const Prescreen: React.FC<{
 
   return (
     <React.Fragment>
-      <div aria-disabled={isSavingData}>
+      <div>
         {prescreenData && prescreenData.has("showOnTime") && (
           <div key="question-1">
-            <label>{`1. Did ${candidateName} show up for prescreen on time?`}</label>
+            <label className="question-title">{`1. Did ${candidateName} show up for prescreen on time?`}</label>
             <Questions
               index={1}
               question={prescreenData.get("showOnTime") as QuestionItem}
@@ -173,7 +184,9 @@ export const Prescreen: React.FC<{
           prescreenQuestionsToShow.map((question: QuestionItem, index) => {
             return (
               <div key={`question-${index + 1}`}>
-                <label>{`${index + 2}. ${question.question}`}</label>
+                <label className="question-title">{`${index + 2}. ${
+                  question.question
+                }`}</label>
                 <Questions
                   index={index}
                   question={question}
@@ -185,14 +198,9 @@ export const Prescreen: React.FC<{
             );
           })}
       </div>
-      <Button
-        variant="outline-primary"
-        onClick={() => savePrescreen()}
-        disabled={!prescreenData?.get("result")?.answer || isSavingData}
-      >
+      <Button variant="outline-primary" onClick={() => savePrescreen()}>
         Save
       </Button>
-      {isSavingData && <Spinner animation="border" variant="secondary" />}
       <br />
       {saveFailedMsg && (
         <span className="warning-msg">Failed to save data</span>

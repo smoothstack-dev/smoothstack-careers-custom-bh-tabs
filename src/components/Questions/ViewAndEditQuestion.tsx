@@ -31,9 +31,7 @@ export const ViewAndEditQuestion: React.FC<{
               if (!item) return null;
               return (
                 <div key={`question-${index}`}>
-                  <label>
-                    <strong>{item.question}</strong>
-                  </label>
+                  <label className="question-title">{item.question}</label>
                   <Questions
                     index={index}
                     question={item}
@@ -51,10 +49,7 @@ export const ViewAndEditQuestion: React.FC<{
       // Name
       const first = prescreenData?.get("firstName")?.answer || "";
       const last = prescreenData?.get("lastName")?.answer || "";
-      const nick = prescreenData?.get("nickName")?.answer
-        ? `(${prescreenData?.get("nickName")?.answer})`
-        : "";
-      const name = `${first} ${last} ${nick}`;
+      const nick = prescreenData?.get("nickName")?.answer || "";
 
       // Address
       const address1 = prescreenData?.get("address1")?.answer || "";
@@ -62,7 +57,11 @@ export const ViewAndEditQuestion: React.FC<{
       const city = prescreenData?.get("city")?.answer || "";
       const state = prescreenData?.get("state")?.answer || "";
       const zip = prescreenData?.get("zip")?.answer || "";
-      const address = `${address1} ${address2}, ${city}, ${state}, ${zip}`;
+      const addressLine1 = address2 ? `${address1} ${address2}` : address1;
+      const addressLine2 = [city, state, zip]
+        .filter((i) => i !== "")
+        .join(", ");
+      const county = prescreenData?.get("county")?.answer || "";
 
       return (
         <div className="view-and-edit-container">
@@ -76,15 +75,26 @@ export const ViewAndEditQuestion: React.FC<{
               Edit
             </Button>
           </div>
-          <span>
-            <strong>Name: </strong>
-            {name}
-          </span>
+          <div>
+            <strong>First Name: </strong>
+            {first} <br />
+            <strong>Last Name: </strong> {last} <br />
+            <strong>Nick Name: </strong> {nick} <br />
+          </div>
           <br />
-          <span>
-            <strong>Address: </strong>
-            {address}
-          </span>
+          <div>
+            <span>
+              <strong>Address: </strong>
+            </span>
+            <div>
+              {addressLine1}
+              {addressLine1 && addressLine2 && <br />}
+              {addressLine2}
+            </div>
+            <br />
+            <strong>County: </strong>
+            {county}
+          </div>
         </div>
       );
     }

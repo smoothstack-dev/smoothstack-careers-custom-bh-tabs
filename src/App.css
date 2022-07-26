@@ -22,7 +22,7 @@
   align-items: center;
   font-size: 2em;
   color: black;
-  padding: 10px;
+  padding: 15px;
 }
 
 .App-link {
@@ -56,8 +56,12 @@ td {
   max-height: 1em;
 }
 
-
 .header-text{
   position: fixed;
-  left: 35%;
+  right: 5%;
+  top:2%
+}
+
+.question-title {
+  font-weight: 600;
 }

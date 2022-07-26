@@ -154,6 +154,15 @@ const constructPrescreenMessage = (
     question: "updatedTime",
     answer: new Date().toLocaleString("en-US"),
   } as FormEntry;
+
+  // for NoShow candidate
+  if (prescreenForm["showOnTime"]?.answer === "NoShow") {
+    prescreenForm["result"] = {
+      question: "result",
+      answer: "Reject-Prescreen No Show",
+    } as FormEntry;
+  }
+
   return prescreenForm as PrescreenForm;
 };
 
