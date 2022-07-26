@@ -24,12 +24,12 @@ const App: React.FC = () => {
         />
         <h5 className="float-right header-text">{headerLabel}</h5>
         {headerMsg && headerBtn && (
-          <h5 className="float-right header-text warning-msg">
+          <h6 className="float-right header-text warning-msg">
             {headerMsg}
             <Button variant="outline-primary" onClick={() => headerBtn.func()}>
               {headerBtn.text}
             </Button>
-          </h5>
+          </h6>
         )}
       </div>
       <div className="container App-container-wrapper">

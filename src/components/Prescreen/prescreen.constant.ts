@@ -547,7 +547,7 @@ export const prescreenFieldQuestions: Map<string, QuestionItem> = new Map([
       question:
         "In the event that our client requires a security clearance, is there anything that would prevent you from obtaining one?",
       options: clearanceStatusOptions,
-      answerType: AnswerType.MULTIPLE,
+      answerType: AnswerType.SINGLE,
     },
   ],
   [

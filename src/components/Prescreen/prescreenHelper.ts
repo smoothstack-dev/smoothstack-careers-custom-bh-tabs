@@ -18,12 +18,7 @@ export const getCandidatePrescreenData = async (candidateId: string) => {
         const existingAns = data[questionId];
         if (question) {
           if (existingAns) {
-            // Construct customEncryptedText1: clearanceStatus
-            if (question.questionId === "clearanceStatus") {
-              question.answer = existingAns.split(",");
-            } else {
-              question.answer = existingAns;
-            }
+            question.answer = existingAns;
           }
 
           // Constract Other option
