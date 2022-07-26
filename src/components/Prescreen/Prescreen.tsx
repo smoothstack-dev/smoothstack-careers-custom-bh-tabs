@@ -32,6 +32,7 @@ export const Prescreen: React.FC<{
   const [showAllQuestions, setShowAllQuestions] = useState<boolean>(false);
   const [candidateName, setCandidateName] = useState<string>("");
   const [errorString, setErrorString] = useState<string>("");
+  const [startSaving, setStartSaving] = useState<boolean>(false);
 
   const updateAnser = (answers: UpdateAnswerType | UpdateAnswerType[]) => {
     if (saveFailedMsg) setSaveFailedMsg(false);
@@ -55,7 +56,7 @@ export const Prescreen: React.FC<{
         );
         setHeaderBtn({
           text: "Save",
-          func: savePrescreen,
+          func: () => setStartSaving(true),
         } as HeaderBtnType);
       }
     }
@@ -103,6 +104,17 @@ export const Prescreen: React.FC<{
       loadPrescreenForm();
   });
 
+  const savePrescreen = async () => {
+    if (!prescreenData) return;
+    await savePrescreenForm(prescreenData);
+    setDataSaved(true);
+    setHeaderMsg("");
+  };
+
+  useEffect(() => {
+    if (startSaving) savePrescreen();
+  }, [startSaving]);
+
   useEffect(() => {
     if (isLoadingData) {
       setHeaderLabel("Loading Candidate Prescreen Data...");
@@ -133,13 +145,6 @@ export const Prescreen: React.FC<{
     );
 
   if (isLoadingData) return <Spinner animation="border" variant="primary" />;
-
-  const savePrescreen = async () => {
-    if (!prescreenData) return;
-    await savePrescreenForm(prescreenData);
-    setDataSaved(true);
-    setHeaderMsg("");
-  };
 
   const prescreenQuestionsToShow = prescreenData
     ? prescreenQuestionOrder?.reduce(
@@ -198,7 +203,7 @@ export const Prescreen: React.FC<{
             );
           })}
       </div>
-      <Button variant="outline-primary" onClick={() => savePrescreen()}>
+      <Button variant="outline-primary" onClick={() => setStartSaving(true)}>
         Save
       </Button>
       <br />

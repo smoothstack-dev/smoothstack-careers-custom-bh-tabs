@@ -7,7 +7,7 @@ import { Button } from "react-bootstrap";
 
 export type HeaderBtnType = {
   text: string;
-  func: () => {};
+  func: any;
 };
 
 const App: React.FC = () => {
