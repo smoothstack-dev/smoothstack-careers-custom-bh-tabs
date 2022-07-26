@@ -92,6 +92,17 @@ export const ProjectQuestion: React.FC<{
     const updatedProjectItems = cloneDeep(projectItems);
     updatedProjectItems.splice(projectIndex, 1);
     setProjectItems(updatedProjectItems);
+    const calculatedMonths = calculateMonthsOfExperience(updatedProjectItems);
+    updateAnser(
+      {
+        questionId: question.questionId,
+        answer: JSON.stringify(updatedProjectItems),
+      },
+      {
+        questionId: "monthsOfProjectExperience",
+        answer: String(calculatedMonths),
+      }
+    );
   };
 
   const addProjectRow = () => {

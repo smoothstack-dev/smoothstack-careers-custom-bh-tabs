@@ -122,10 +122,15 @@ const constructPrescreenMessage = (
       }
       case AnswerType.PROJECT: {
         const finalAnswer = cloneDeep(item.answer as string);
-        const parsedJSON = JSON.parse(finalAnswer);
+        if (!finalAnswer) break;
+        let parsedJSON = JSON.parse(finalAnswer);
         if (Array.isArray(parsedJSON)) {
-          parsedJSON.filter((item) => {
-            return item.type && item.description;
+          parsedJSON = parsedJSON.filter((item) => {
+            return (
+              item.type !== "" &&
+              item.description !== "" &&
+              new Date(item.startDate) < new Date(item.endDate)
+            );
           });
         }
         prescreenForm[item.questionId] = {
@@ -144,19 +149,20 @@ const constructPrescreenMessage = (
       }
     }
   });
-  // add updatedTime to the form
-  prescreenForm["updatedTime"] = {
-    question: "updatedTime",
-    answer: new Date().toLocaleString("en-US"),
-  } as FormEntry;
 
-  // for NoShow candidate
-  if (prescreenForm["showOnTime"]?.answer === "NoShow") {
+  // For no show
+  if (formItems.get("showOnTime")?.answer === "NoShow") {
     prescreenForm["result"] = {
       question: "result",
       answer: "Reject-Prescreen No Show",
     } as FormEntry;
   }
+
+  // add updatedTime to the form
+  prescreenForm["updatedTime"] = {
+    question: "updatedTime",
+    answer: new Date().toLocaleString("en-US"),
+  } as FormEntry;
 
   return prescreenForm as PrescreenForm;
 };
