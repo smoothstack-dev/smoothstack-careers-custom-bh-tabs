@@ -104,16 +104,16 @@ export const Prescreen: React.FC<{
       loadPrescreenForm();
   });
 
-  const savePrescreen = async () => {
-    if (!prescreenData) return;
-    await savePrescreenForm(prescreenData);
-    setDataSaved(true);
-    setHeaderMsg("");
-  };
+  React.useEffect(() => {
+    const savePrescreen = async () => {
+      if (!prescreenData) return;
+      await savePrescreenForm(prescreenData);
+      setDataSaved(true);
+      setHeaderMsg("");
+    };
 
-  useEffect(() => {
     if (startSaving) savePrescreen();
-  }, [startSaving]);
+  }, [startSaving, prescreenData, setDataSaved, setHeaderMsg]);
 
   useEffect(() => {
     if (isLoadingData) {
