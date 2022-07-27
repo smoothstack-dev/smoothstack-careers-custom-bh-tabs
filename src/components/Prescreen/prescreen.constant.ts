@@ -158,13 +158,13 @@ export const isVaccinatedOptions: AnswerItem[] = [
 
 export const willVaccinateOptions: AnswerItem[] = [
   { key: "Yes", value: "Yes" },
-  { key: "Nono", value: "No" },
+  { key: "No", value: "No" },
   { key: "Undisclosed", value: "Undisclosed" },
 ];
 
 export const canCommitOptions: AnswerItem[] = [
   { key: "Yes", value: "Yes" },
-  { key: "Nono", value: "No" },
+  { key: "No", value: "No" },
   { key: "Undisclosed", value: "Undisclosed" },
 ];
 
