@@ -24,6 +24,7 @@ export type QuestionItem = {
   otherAnswer?: string; // for SINGLE/MULTIPLE fields that has "Other" option
   dependenceIds?: dependenceField[]; // for fields that depend on other fields' answer to display or hide
   viewGroupIds?: string[]; // for VIEWANDEDIT to group fields and view/edit in one block
+  textCountLimit?: number;
 };
 
 export type AnswerItem = {
@@ -375,6 +376,7 @@ export const prescreenFieldQuestions: Map<string, QuestionItem> = new Map([
       question:
         "Tell me about yourself and what influenced you to pursue a career in IT.",
       answerType: AnswerType.TEXTBLOCK,
+      textCountLimit: 500,
     },
   ],
   [
@@ -383,7 +385,8 @@ export const prescreenFieldQuestions: Map<string, QuestionItem> = new Map([
       questionId: "otherApplications",
       question:
         "Where else have you applied & what roadblocks, if any, have you been experiencing?",
-      answerType: AnswerType.TEXTBLOCK,
+      answerType: AnswerType.TEXT,
+      textCountLimit: 100,
     },
   ],
   [
@@ -455,6 +458,7 @@ export const prescreenFieldQuestions: Map<string, QuestionItem> = new Map([
       question:
         "Recruiter: # of Months of Experience (Recruiter will determine this based on previous answer)",
       answerType: AnswerType.TEXT,
+      textCountLimit: 100,
     },
   ],
   [
@@ -472,7 +476,8 @@ export const prescreenFieldQuestions: Map<string, QuestionItem> = new Map([
     {
       questionId: "goodFit",
       question: "Why do you feel like you would be a good fit for Smoothstack?",
-      answerType: AnswerType.TEXTBLOCK,
+      answerType: AnswerType.TEXT,
+      textCountLimit: 100,
     },
   ],
   [
@@ -501,6 +506,7 @@ export const prescreenFieldQuestions: Map<string, QuestionItem> = new Map([
       question:
         "Can you give me an example of time when you had to learn a lot in a short period of time?",
       answerType: AnswerType.TEXTBLOCK,
+      textCountLimit: 500,
     },
   ],
   [
@@ -510,6 +516,7 @@ export const prescreenFieldQuestions: Map<string, QuestionItem> = new Map([
       question:
         "Tell me about a challenging situation that you have found yourself in?",
       answerType: AnswerType.TEXTBLOCK,
+      textCountLimit: 500,
     },
   ],
   [
@@ -538,6 +545,7 @@ export const prescreenFieldQuestions: Map<string, QuestionItem> = new Map([
       questionId: "backgroundCheck",
       question: "Do you have any concerns about passing a background check?",
       answerType: AnswerType.TEXT,
+      textCountLimit: 100,
     },
   ],
   [
@@ -557,6 +565,7 @@ export const prescreenFieldQuestions: Map<string, QuestionItem> = new Map([
       question:
         "Our clients require drug screening, do you have any concerns passing a drug screen even if certain drugs are legal in your state?",
       answerType: AnswerType.TEXT,
+      textCountLimit: 100,
     },
   ],
   [
@@ -583,7 +592,8 @@ export const prescreenFieldQuestions: Map<string, QuestionItem> = new Map([
     {
       questionId: "vaccinationNotes",
       question: "Vaccination Notes",
-      answerType: AnswerType.TEXTBLOCK,
+      answerType: AnswerType.TEXT,
+      textCountLimit: 100,
     },
   ],
   [
@@ -592,6 +602,7 @@ export const prescreenFieldQuestions: Map<string, QuestionItem> = new Map([
       questionId: "githubLink",
       question: "GitHub Link",
       answerType: AnswerType.TEXT,
+      textCountLimit: 100,
     },
   ],
   [
@@ -600,6 +611,7 @@ export const prescreenFieldQuestions: Map<string, QuestionItem> = new Map([
       questionId: "linkedinLink",
       question: "LinkedIn Link",
       answerType: AnswerType.TEXT,
+      textCountLimit: 100,
     },
   ],
   [
@@ -637,6 +649,7 @@ export const prescreenFieldQuestions: Map<string, QuestionItem> = new Map([
       questionId: "address1",
       question: "Address Line 1",
       answerType: AnswerType.TEXT,
+      textCountLimit: 100,
     },
   ],
   [
@@ -645,6 +658,7 @@ export const prescreenFieldQuestions: Map<string, QuestionItem> = new Map([
       questionId: "address2",
       question: "Address Line 2 (Optional)",
       answerType: AnswerType.TEXT,
+      textCountLimit: 100,
     },
   ],
   [
@@ -653,6 +667,7 @@ export const prescreenFieldQuestions: Map<string, QuestionItem> = new Map([
       questionId: "city",
       question: "City",
       answerType: AnswerType.TEXT,
+      textCountLimit: 100,
     },
   ],
   [
@@ -670,6 +685,7 @@ export const prescreenFieldQuestions: Map<string, QuestionItem> = new Map([
       questionId: "zip",
       question: "Zip Code",
       answerType: AnswerType.TEXT,
+      textCountLimit: 100,
     },
   ],
   [
@@ -678,6 +694,7 @@ export const prescreenFieldQuestions: Map<string, QuestionItem> = new Map([
       questionId: "county",
       question: "What county do you live in?",
       answerType: AnswerType.TEXT,
+      textCountLimit: 100,
     },
   ],
   [
@@ -687,6 +704,7 @@ export const prescreenFieldQuestions: Map<string, QuestionItem> = new Map([
       question:
         "Do you have any outstanding questions regarding this opportunity that I may help clarify?",
       answerType: AnswerType.TEXTBLOCK,
+      textCountLimit: 500,
     },
   ],
   [
@@ -696,6 +714,7 @@ export const prescreenFieldQuestions: Map<string, QuestionItem> = new Map([
       question:
         "Is there anyone you can think of that would be a good fit for this program?",
       answerType: AnswerType.TEXT,
+      textCountLimit: 100,
     },
   ],
   [
@@ -731,7 +750,8 @@ export const prescreenFieldQuestions: Map<string, QuestionItem> = new Map([
       questionId: "additionalNotes",
       question:
         "Recruiter: Please include any additional notes that you feel may be useful.",
-      answerType: AnswerType.TEXTBLOCK,
+      answerType: AnswerType.TEXT,
+      textCountLimit: 100,
     },
   ],
 ]);

@@ -37,3 +37,8 @@
     background-color: rgb(247, 245, 245);
     padding: 1em;
 }
+
+.text-count {
+    float: right;
+    color: gray;
+}
