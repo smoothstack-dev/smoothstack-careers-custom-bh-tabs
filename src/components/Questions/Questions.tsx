@@ -11,8 +11,15 @@ export const Questions: React.FC<{
   index: number;
   question: QuestionItem;
   updateAnser: any;
+  setSubmitBtnDisabled: (disabled: boolean) => void;
   prescreenData?: Map<string, QuestionItem>;
-}> = ({ index, question, updateAnser, prescreenData }) => {
+}> = ({
+  index,
+  question,
+  updateAnser,
+  setSubmitBtnDisabled,
+  prescreenData,
+}) => {
   switch (question.answerType) {
     case AnswerType.TEXT:
     case AnswerType.TEXTBLOCK: {
@@ -55,9 +62,9 @@ export const Questions: React.FC<{
     case AnswerType.PROJECT: {
       return (
         <ProjectQuestion
-          index={index}
           question={question}
           updateAnser={updateAnser}
+          setSubmitBtnDisabled={setSubmitBtnDisabled}
         ></ProjectQuestion>
       );
     }
@@ -67,6 +74,7 @@ export const Questions: React.FC<{
           index={index}
           question={question}
           updateAnser={updateAnser}
+          setSubmitBtnDisabled={setSubmitBtnDisabled}
           prescreenData={prescreenData}
         ></ViewAndEditQuestion>
       );

@@ -9,6 +9,7 @@ export const ErrorMsg: React.FC<{
     <>
       <span className="warning-msg">{message}</span>
       <br />
+      <br />
       <Button variant="outline-primary" onClick={() => reload()}>
         Reload the page
       </Button>

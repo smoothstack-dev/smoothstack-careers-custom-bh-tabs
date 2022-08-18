@@ -129,7 +129,8 @@ const constructPrescreenMessage = (
             return (
               item.type !== "" &&
               item.description !== "" &&
-              new Date(item.startDate) < new Date(item.endDate)
+              item.months &&
+              item.months > 0
             );
           });
         }

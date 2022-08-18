@@ -10,6 +10,7 @@ import {
 } from "./prescreenHelper";
 import { ErrorMsg } from "../ErrorMsg";
 import { HeaderBtnType } from "../../App";
+import { CORPORATION, CORP_TYPE } from "../../types/corporation";
 
 export type UpdateAnswerType = {
   questionId: string;
@@ -33,6 +34,7 @@ export const Prescreen: React.FC<{
   const [candidateName, setCandidateName] = useState<string>("");
   const [errorString, setErrorString] = useState<string>("");
   const [startSaving, setStartSaving] = useState<boolean>(false);
+  const [isSubmitBtnDisabled, setSubmitBtnDisabled] = useState<boolean>(false);
 
   const updateAnser = (answers: UpdateAnswerType | UpdateAnswerType[]) => {
     if (saveFailedMsg) setSaveFailedMsg(false);
@@ -54,9 +56,11 @@ export const Prescreen: React.FC<{
         setHeaderMsg(
           "Please save the changes before navigating away from the prescreen tab!"
         );
+        console.log("isSubmitBtnDisabled", isSubmitBtnDisabled);
         setHeaderBtn({
           text: "Save",
           func: () => setStartSaving(true),
+          isDisabled: isSubmitBtnDisabled,
         } as HeaderBtnType);
       }
     }
@@ -75,6 +79,28 @@ export const Prescreen: React.FC<{
     const queryParams = new URLSearchParams(window.location.search);
     const test = `${window.location.search} ${JSON.stringify(queryParams)}`;
     setErrorString(test);
+
+    // Check if prescreen is loading on BH
+    const currentBullhornUrl = queryParams.get("currentBullhornUrl");
+    if (
+      !currentBullhornUrl ||
+      !currentBullhornUrl.includes(CORPORATION[CORP_TYPE.APPRENTICESHIP].corpId)
+    ) {
+      loadingFailed(
+        `Error: Please load prescreen information through Bullhorn portal.`
+      );
+      return;
+    }
+
+    // Check if prescreen is loading for Candidate Entity
+    const entityType = queryParams.get("EntityType");
+    if (!entityType || entityType !== "Candidate") {
+      loadingFailed(
+        `Error: This custom tab is design for Candidate entity only`
+      );
+      return;
+    }
+
     const id = queryParams.get("EntityID");
     let prescreenResponse;
     if (id) {
@@ -103,6 +129,14 @@ export const Prescreen: React.FC<{
     if (!prescreenData && !isLoadingData && !isLoadingFailed)
       loadPrescreenForm();
   });
+
+  useEffect(() => {
+    setHeaderBtn({
+      text: "Save",
+      func: () => setStartSaving(true),
+      isDisabled: isSubmitBtnDisabled,
+    } as HeaderBtnType);
+  }, [setHeaderBtn, setStartSaving, isSubmitBtnDisabled]);
 
   React.useEffect(() => {
     const savePrescreen = async () => {
@@ -180,6 +214,7 @@ export const Prescreen: React.FC<{
               question={prescreenData.get("showOnTime") as QuestionItem}
               updateAnser={updateAnser}
               prescreenData={prescreenData}
+              setSubmitBtnDisabled={setSubmitBtnDisabled}
             ></Questions>
             <br />
           </div>
@@ -197,13 +232,18 @@ export const Prescreen: React.FC<{
                   question={question}
                   updateAnser={updateAnser}
                   prescreenData={prescreenData}
+                  setSubmitBtnDisabled={setSubmitBtnDisabled}
                 ></Questions>
                 <br />
               </div>
             );
           })}
       </div>
-      <Button variant="outline-primary" onClick={() => setStartSaving(true)}>
+      <Button
+        variant="outline-primary"
+        onClick={() => setStartSaving(true)}
+        disabled={isSubmitBtnDisabled}
+      >
         Save
       </Button>
       <br />

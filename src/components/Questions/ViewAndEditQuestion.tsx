@@ -7,8 +7,9 @@ export const ViewAndEditQuestion: React.FC<{
   index: number;
   question: QuestionItem;
   updateAnser: any;
+  setSubmitBtnDisabled: (disabled: boolean) => void;
   prescreenData?: Map<string, QuestionItem>;
-}> = ({ question, updateAnser, prescreenData }) => {
+}> = ({ question, updateAnser, setSubmitBtnDisabled, prescreenData }) => {
   const [isEditMode, setIsEditMode] = React.useState<boolean>(false);
 
   switch (isEditMode) {
@@ -37,6 +38,7 @@ export const ViewAndEditQuestion: React.FC<{
                     question={item}
                     updateAnser={updateAnser}
                     prescreenData={prescreenData}
+                    setSubmitBtnDisabled={setSubmitBtnDisabled}
                   ></Questions>
                   <br />
                 </div>

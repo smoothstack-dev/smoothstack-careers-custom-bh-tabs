@@ -4,10 +4,12 @@ import Prescreen from "./components/Prescreen/Prescreen";
 import Techscreen from "./components/Techscreen/Techscreen";
 import { Route, Switch } from "react-router-dom";
 import { Button } from "react-bootstrap";
+import { ChangeJobIdAction } from "./components/Application-Menu-Action/ChangeJobIdAction";
 
 export type HeaderBtnType = {
   text: string;
   func: any;
+  isDisabled: boolean;
 };
 
 const App: React.FC = () => {
@@ -26,7 +28,11 @@ const App: React.FC = () => {
         {headerMsg && headerBtn && (
           <h6 className="float-right header-text warning-msg">
             {headerMsg}
-            <Button variant="outline-primary" onClick={() => headerBtn.func()}>
+            <Button
+              variant="outline-primary"
+              onClick={() => headerBtn.func()}
+              disabled={headerBtn.isDisabled}
+            >
               {headerBtn.text}
             </Button>
           </h6>
@@ -44,6 +50,9 @@ const App: React.FC = () => {
           </Route>
           <Route path="/techscreen">
             <Techscreen />
+          </Route>
+          <Route path="/changeJobIdAction">
+            <ChangeJobIdAction />
           </Route>
         </Switch>
       </div>
