@@ -1,26 +1,22 @@
 import { cloneDeep } from "lodash";
 import React from "react";
 import { Button, Dropdown, DropdownButton, Table } from "react-bootstrap";
-import DatePicker from "react-datepicker";
 import { QuestionItem } from "../Prescreen/prescreen.constant";
 
 type ProjectItem = {
   type: string;
   description: string;
-  startDate: Date;
-  endDate: Date;
+  months?: string | number;
 };
 
 export const ProjectQuestion: React.FC<{
-  index: number;
   question: QuestionItem;
   updateAnser: any;
-}> = ({ index, question, updateAnser }) => {
+  setSubmitBtnDisabled: (disabled: boolean) => void;
+}> = ({ question, updateAnser, setSubmitBtnDisabled }) => {
   const [projectItems, setProjectItems] = React.useState<ProjectItem[]>([]);
   const [experience, setExperience] = React.useState<number>(0);
   const [showInvalidExperience, setShowInvalidExperience] =
-    React.useState<boolean>(false);
-  const [showInvalidDates, setShowInvalidDates] =
     React.useState<boolean>(false);
 
   React.useEffect(() => {
@@ -36,8 +32,7 @@ export const ProjectQuestion: React.FC<{
             projectList.push({
               type: item.type || "",
               description: item.description || "",
-              startDate: new Date(item.startDate),
-              endDate: new Date(item.endDate),
+              months: item.months || 0,
             });
           });
           setProjectItems(projectList);
@@ -49,14 +44,17 @@ export const ProjectQuestion: React.FC<{
 
   React.useEffect(() => {
     let emptyAnswer: boolean = false;
-    let invalidDate: boolean = false;
     projectItems.forEach((project) => {
-      emptyAnswer = emptyAnswer || !project.type || !project.description;
-      invalidDate = invalidDate || project.startDate > project.endDate;
+      emptyAnswer =
+        emptyAnswer ||
+        !project.type ||
+        !project.description ||
+        !project.months ||
+        +project.months <= 0;
     });
-    setShowInvalidDates(invalidDate);
     setShowInvalidExperience(emptyAnswer);
-  }, [projectItems]);
+    setSubmitBtnDisabled(emptyAnswer);
+  }, [projectItems, setShowInvalidExperience, setSubmitBtnDisabled]);
 
   const updateProjects = (projectIndex: number, project: ProjectItem) => {
     const updatedProjectItems = cloneDeep(projectItems);
@@ -79,10 +77,7 @@ export const ProjectQuestion: React.FC<{
     // calculate total month
     let month = 0;
     projects.forEach((project: ProjectItem) => {
-      var diff =
-        (project.endDate.getTime() - project.startDate.getTime()) / 1000;
-      diff /= 60 * 60 * 24 * 7 * 4;
-      month += Math.abs(Math.round(diff));
+      month += isNaN(project.months as any) ? 0 : +(project.months || 0);
     });
     setExperience(month);
     return month;
@@ -112,8 +107,6 @@ export const ProjectQuestion: React.FC<{
       {
         type: "",
         description: "",
-        startDate: new Date(),
-        endDate: new Date(),
       },
     ]);
   };
@@ -134,8 +127,7 @@ export const ProjectQuestion: React.FC<{
             <th>#</th>
             <th>Type</th>
             <th>Description</th>
-            <th>Start Date</th>
-            <th>End Date</th>
+            <th>Months of Experience</th>
             <th>Remove</th>
           </tr>
         </thead>
@@ -178,28 +170,18 @@ export const ProjectQuestion: React.FC<{
                   ></textarea>
                 </td>
                 <td>
-                  <DatePicker
-                    selected={project.startDate}
-                    onChange={(date) => {
-                      if (date) {
-                        updatedProject.startDate = date;
-                        updateProjects(projectIndex, updatedProject);
-                      }
+                  <input
+                    type="text"
+                    className="form-control"
+                    onChange={(e: any) => {
+                      const inputMonth = e.target.value;
+                      updatedProject.months = isNaN(inputMonth)
+                        ? 0
+                        : inputMonth;
+                      updateProjects(projectIndex, updatedProject);
                     }}
-                    className="date-picker"
-                  />
-                </td>
-                <td>
-                  <DatePicker
-                    selected={project.endDate}
-                    onChange={(date) => {
-                      if (date) {
-                        updatedProject.endDate = date;
-                        updateProjects(projectIndex, updatedProject);
-                      }
-                    }}
-                    className="date-picker"
-                  />
+                    value={project.months || ""}
+                  ></input>
                 </td>
                 <td>
                   <Button
@@ -215,22 +197,15 @@ export const ProjectQuestion: React.FC<{
           })}
         </tbody>
       </Table>
-      {showInvalidDates && (
-        <div>
-          <span className="warning-msg">
-            End date must be after start date!
-          </span>
-          <br />
-        </div>
-      )}
       {showInvalidExperience && (
         <div>
-          <span className="warning-msg">
-            Experience with empty type or description will not be saved.
+          <span className="warning-msg-small">
+            Experience with empty type, description, or month will not be saved.
           </span>
           <br />
         </div>
       )}
+      <br />
       <div className="float-div">
         <Button
           className="float-left"

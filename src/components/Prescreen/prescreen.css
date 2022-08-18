@@ -24,13 +24,14 @@
 .warning-msg {
     color:red;
     font-weight: 600;
-    margin-left: 3px;
+    font-size: 1.5rem;
 }
 
 .warning-msg-small {
     color:red;
-    font-weight: 300;
-    font-size: 10px;
+    font-weight: 500;
+    font-size: 1rem;
+    margin: 5px;
 }
 
 .view-and-edit-container{
