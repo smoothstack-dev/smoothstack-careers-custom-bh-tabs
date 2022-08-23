@@ -117,7 +117,7 @@ export const commitmentOptions: AnswerItem[] = [
 ];
 
 export const opportunityRankOptions: AnswerItem[] = [
-  { key: "Top Choic", value: "Top Choice" },
+  { key: "Top Choice", value: "Top Choice" },
   { key: "Middle Choice", value: "Middle Choice" },
   { key: "Bottom Choice", value: "Bottom Choice" },
   { key: "Last Resort", value: "Last Resort" },
