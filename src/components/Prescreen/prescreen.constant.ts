@@ -300,9 +300,9 @@ export const prescreenQuestionOrder: string[] = [
   "nameAndAddress",
   "questions",
   "referFriend",
-  "communicationSkills",
   "teamWorkExperience",
   "agreeToBeResponsive",
+  "communicationSkills",
   "candidateRank",
   "result",
   "additionalNotes",
@@ -720,14 +720,6 @@ export const prescreenFieldQuestions: Map<string, QuestionItem> = new Map([
     },
   ],
   [
-    "communicationSkills",
-    {
-      questionId: "communicationSkills",
-      question: "Recruiter: Please rank candidates communication skills.",
-      answerType: AnswerType.TEXTBLOCK,
-    },
-  ],
-  [
     "teamWorkExperience",
     {
       questionId: "teamWorkExperience",
@@ -745,6 +737,15 @@ export const prescreenFieldQuestions: Map<string, QuestionItem> = new Map([
         "Being responsive to texts, emails, company messaging is also very important, not only for Smoothstack, but for our clients.  If hired by Smoothstack how would you ensure that you are responsive to both Smoothstack and the client you are placed with?",
       answerType: AnswerType.TEXTBLOCK,
       textCountLimit: 500,
+    },
+  ],
+  [
+    "communicationSkills",
+    {
+      questionId: "communicationSkills",
+      question: "Recruiter: Please rank candidates communication skills.",
+      options: communicationSkillsOptions,
+      answerType: AnswerType.SINGLE,
     },
   ],
   [
