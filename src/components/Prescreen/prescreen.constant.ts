@@ -227,13 +227,6 @@ export const stateOptions: AnswerItem[] = [
   { key: "Wyoming", value: "WY - Wyoming" },
 ];
 
-export const communicationSkillsOptions: AnswerItem[] = [
-  { key: "0", value: "Poor" },
-  { key: "1", value: "Satisfactory" },
-  { key: "2", value: "Good" },
-  { key: "3", value: "Excellent" },
-];
-
 export const candidateRankOptions: AnswerItem[] = [
   { key: "1", value: "1" },
   { key: "2", value: "2" },
@@ -302,7 +295,6 @@ export const prescreenQuestionOrder: string[] = [
   "referFriend",
   "teamWorkExperience",
   "agreeToBeResponsive",
-  "communicationSkills",
   "candidateRank",
   "result",
   "additionalNotes",
@@ -737,15 +729,6 @@ export const prescreenFieldQuestions: Map<string, QuestionItem> = new Map([
         "Being responsive to texts, emails, company messaging is also very important, not only for Smoothstack, but for our clients.  If hired by Smoothstack how would you ensure that you are responsive to both Smoothstack and the client you are placed with?",
       answerType: AnswerType.TEXTBLOCK,
       textCountLimit: 500,
-    },
-  ],
-  [
-    "communicationSkills",
-    {
-      questionId: "communicationSkills",
-      question: "Recruiter: Please rank candidates communication skills.",
-      options: communicationSkillsOptions,
-      answerType: AnswerType.SINGLE,
     },
   ],
   [
