@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { Droppable } from "react-beautiful-dnd";
 import { Button } from "react-bootstrap";
 import { JobDescriptionDetailsType } from "./jobDetailsManagementHelper";

@@ -23,11 +23,7 @@ export const JobDescirpiton: React.FC<{
 
   const handleSaveJobDescription = async () => {
     setSavingJobDescription(true);
-    const response = await saveJobDescirptionListHelper(
-      jobCorpType,
-      jobDescription,
-      jobId
-    );
+    await saveJobDescirptionListHelper(jobCorpType, jobDescription, jobId);
     setSavingJobDescription(false);
     setSavingJobDescriptionMsg("Saved!");
   };

@@ -1,4 +1,3 @@
-import { isNumber } from "lodash";
 import * as API from "./../../helpers/api";
 
 export enum CORP_TYPE {

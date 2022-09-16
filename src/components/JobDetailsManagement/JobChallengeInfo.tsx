@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { DragDropContext } from "react-beautiful-dnd";
 import { Droppable } from "react-beautiful-dnd";
 import { Button } from "react-bootstrap";
@@ -64,7 +64,7 @@ export const JobChallengeInfo: React.FC<{
         };
       }
     });
-    const response = await saveJobChallengeInfoHelper(constructed, jobId);
+    await saveJobChallengeInfoHelper(constructed, jobId);
     setSavingJobChallenge(false);
     setSavingJobChallengeMsg("Saved!");
   };

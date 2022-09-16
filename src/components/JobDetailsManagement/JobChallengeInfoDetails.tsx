@@ -73,7 +73,7 @@ const ViewOnlySectionDetails: React.FC<{
           sectionDetails.stringContents && (
             <div>
               {sectionDetails.stringContents.map((content, pIndex) => {
-                if (typeof content !== "string") return;
+                if (typeof content !== "string") return <></>;
                 return <p key={`p-${detailId}-${pIndex}`}>{content}</p>;
               })}
             </div>
@@ -81,7 +81,7 @@ const ViewOnlySectionDetails: React.FC<{
         {sectionDetails.contentType === "LIST" && sectionDetails.listContents && (
           <ul>
             {sectionDetails.listContents.map((content, listIndex) => {
-              if (typeof content === "string") return;
+              if (typeof content === "string") return <></>;
               return (
                 <>
                   <span key={`list-title-${detailId}-${listIndex}`}>
@@ -189,7 +189,7 @@ const EditSectionDetails: React.FC<{
             </span>
             {listContents.map(
               (c: string | JobChallengeListType, cIndex: number) => {
-                if (typeof c === "string") return;
+                if (typeof c === "string") return <></>;
                 return (
                   <>
                     <div>
@@ -268,7 +268,7 @@ const EditSectionDetails: React.FC<{
             </span>
             {stringContents.map(
               (c: string | JobChallengeListType, cIndex: number) => {
-                if (typeof c !== "string") return;
+                if (typeof c !== "string") return <></>;
                 return (
                   <div>
                     <input

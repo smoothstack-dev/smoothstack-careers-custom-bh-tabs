@@ -80,25 +80,25 @@ export const Prescreen: React.FC<{
     setErrorString(test);
 
     // Check if prescreen is loading on BH
-    // const currentBullhornUrl = queryParams.get("currentBullhornUrl");
-    // if (
-    //   !currentBullhornUrl ||
-    //   !currentBullhornUrl.includes(CORPORATION[CORP_TYPE.APPRENTICESHIP].corpId)
-    // ) {
-    //   loadingFailed(
-    //     `Error: Please load prescreen information through Bullhorn portal.`
-    //   );
-    //   return;
-    // }
+    const currentBullhornUrl = queryParams.get("currentBullhornUrl");
+    if (
+      !currentBullhornUrl ||
+      !currentBullhornUrl.includes(CORPORATION[CORP_TYPE.APPRENTICESHIP].corpId)
+    ) {
+      loadingFailed(
+        `Error: Please load prescreen information through Bullhorn portal.`
+      );
+      return;
+    }
 
     // Check if prescreen is loading for Candidate Entity
-    // const entityType = queryParams.get("EntityType");
-    // if (!entityType || entityType !== "Candidate") {
-    //   loadingFailed(
-    //     `Error: This custom tab is design for Candidate entity only`
-    //   );
-    //   return;
-    // }
+    const entityType = queryParams.get("EntityType");
+    if (!entityType || entityType !== "Candidate") {
+      loadingFailed(
+        `Error: This custom tab is design for Candidate entity only`
+      );
+      return;
+    }
 
     const id = queryParams.get("EntityID");
     let prescreenResponse;
