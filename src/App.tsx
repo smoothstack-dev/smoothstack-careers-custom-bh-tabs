@@ -1,10 +1,15 @@
 import React from "react";
 import "./App.css";
 import Prescreen from "./components/Prescreen/Prescreen";
-import Techscreen from "./components/Techscreen/Techscreen";
 import { Route, Switch } from "react-router-dom";
 import { Button } from "react-bootstrap";
-import { ChangeJobIdAction } from "./components/Application-Menu-Action/ChangeJobIdAction";
+import { JobDetailsManagement } from "./components/JobDetailsManagement/JobDetailsManagement";
+import {
+  AuthenticatedTemplate,
+  UnauthenticatedTemplate,
+} from "@azure/msal-react";
+import { MSLoginBtn } from "./components/MSLoginBtn/MSLoginBtn";
+import { MainPage } from "./components/MainPage/MainPage";
 
 export type HeaderBtnType = {
   text: string;
@@ -14,8 +19,12 @@ export type HeaderBtnType = {
 
 const App: React.FC = () => {
   const [headerLabel, setHeaderLabel] = React.useState<string>("");
+  // For Custom Button
   const [headerMsg, setHeaderMsg] = React.useState<string>("");
   const [headerBtn, setHeaderBtn] = React.useState<HeaderBtnType>();
+  // For MS Login Button
+  const [isMSLoginRequired, setIsMsLoginRequired] =
+    React.useState<boolean>(false);
   return (
     <>
       <div className="App-header float-div">
@@ -37,6 +46,7 @@ const App: React.FC = () => {
             </Button>
           </h6>
         )}
+        {!headerBtn && <MSLoginBtn />}
       </div>
       <div className="container App-container-wrapper">
         <Switch>
@@ -48,15 +58,30 @@ const App: React.FC = () => {
               setHeaderBtn={setHeaderBtn}
             />
           </Route>
-          <Route path="/techscreen">
-            <Techscreen />
+          <Route path="/jobDetailsManagement">
+            <MSAuth>
+              <JobDetailsManagement />
+            </MSAuth>
           </Route>
-          <Route path="/changeJobIdAction">
-            <ChangeJobIdAction />
+          <Route path="/">
+            <MSAuth>
+              <MainPage />
+            </MSAuth>
           </Route>
         </Switch>
       </div>
     </>
+  );
+};
+
+const MSAuth = (props: any) => {
+  return (
+    <div>
+      <AuthenticatedTemplate>{props.children}</AuthenticatedTemplate>
+      <UnauthenticatedTemplate>
+        Please log in to your Microsoft Account First!
+      </UnauthenticatedTemplate>
+    </div>
   );
 };
 

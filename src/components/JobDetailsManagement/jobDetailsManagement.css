@@ -1,0 +1,55 @@
+.section-container{
+    border: 1px;
+    border-style: solid;
+    padding: 10px;
+    margin: 10px 0px;
+    border-radius: 1%;
+    background-color: #f3eded;
+}
+
+.jobDetails-container{
+    border: 1px;
+    border-style: solid;
+    padding: 10px;
+    margin: 10px 0px;
+    border-radius: 1%;
+    background-color: #fffafa;
+}
+
+.text-input {
+    margin: 5px 0px;
+    max-width: 95%;
+}
+
+.remove-btn {
+    margin: 5px 0px;
+}
+
+.button-input {
+    margin: 0px 5px;
+}
+
+.detail-section {
+    margin:10px;
+    padding:10px;
+}
+
+.edit-sectionDetail-container {
+    min-height: 13rem;
+}
+
+.dropdown-box {
+    max-width:320px;
+}
+
+.float-div {
+    overflow: hidden;
+}
+
+.float-left {
+    float: left;
+}
+
+.float-right {
+    float: right;
+}
