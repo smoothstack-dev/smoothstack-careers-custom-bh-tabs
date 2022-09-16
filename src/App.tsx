@@ -22,9 +22,6 @@ const App: React.FC = () => {
   // For Custom Button
   const [headerMsg, setHeaderMsg] = React.useState<string>("");
   const [headerBtn, setHeaderBtn] = React.useState<HeaderBtnType>();
-  // For MS Login Button
-  const [isMSLoginRequired, setIsMsLoginRequired] =
-    React.useState<boolean>(false);
   return (
     <>
       <div className="App-header float-div">

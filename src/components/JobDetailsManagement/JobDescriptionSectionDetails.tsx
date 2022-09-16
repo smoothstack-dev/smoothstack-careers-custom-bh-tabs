@@ -320,8 +320,6 @@ const EditSectionDetails: React.FC<{
           </div>
         );
       }
-      case "VIDEO": {
-      }
       case "SALARY": {
         return (
           <p>

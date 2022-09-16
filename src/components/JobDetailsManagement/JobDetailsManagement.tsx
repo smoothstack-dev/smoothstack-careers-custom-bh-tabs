@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Accordion, Button, Dropdown, Form } from "react-bootstrap";
+import { Accordion, Dropdown, Form } from "react-bootstrap";
 import {
   CORPORATION,
   CORP_TYPE,
@@ -14,7 +14,7 @@ import "./jobDetailsManagement.css";
 import { JobDescirpiton } from "./JobDescription";
 import { JobChallengeInfo } from "./JobChallengeInfo";
 
-export const JobDetailsManagement: React.FC<{}> = ({}) => {
+export const JobDetailsManagement: React.FC<{}> = () => {
   const [isLoadingJobList, setLoadingJobList] = useState<boolean>(false);
 
   const [jobCorpType, setJobCorpType] = useState<CORP_TYPE>();
@@ -45,7 +45,7 @@ export const JobDetailsManagement: React.FC<{}> = ({}) => {
       if (jobCorpType === CORP_TYPE.APPRENTICESHIP)
         setJobChallenge(generateJobChallengeObject(selectedJob.challengeInfo));
     }
-  }, [selectedJob]);
+  }, [selectedJob, jobCorpType]);
 
   return (
     <div className="">
