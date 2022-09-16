@@ -56,7 +56,6 @@ export const Prescreen: React.FC<{
         setHeaderMsg(
           "Please save the changes before navigating away from the prescreen tab!"
         );
-        console.log("isSubmitBtnDisabled", isSubmitBtnDisabled);
         setHeaderBtn({
           text: "Save",
           func: () => setStartSaving(true),
