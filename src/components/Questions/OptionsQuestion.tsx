@@ -54,12 +54,16 @@ export const OptionsQuestion: React.FC<{
     }
   };
 
+  const isRequireScaleText = ["candidateRank", "communicationSkills"];
+
   switch (question.answerType) {
     case AnswerType.SINGLE:
       return (
         <>
           <div>
-            {question.questionId === "candidateRank" && <span>(Lowest)</span>}
+            {isRequireScaleText.includes(question.questionId) && (
+              <span>(Lowest)</span>
+            )}
             {question.options?.map((option: AnswerItem, id) => {
               const isSelected =
                 question.answer && question.answer === option.key;
@@ -91,7 +95,9 @@ export const OptionsQuestion: React.FC<{
                 </Button>
               );
             })}
-            {question.questionId === "candidateRank" && <span>(Highest)</span>}
+            {isRequireScaleText.includes(question.questionId) && (
+              <span>(Highest)</span>
+            )}
           </div>
           {otherAnswerText !== undefined && (
             <>
