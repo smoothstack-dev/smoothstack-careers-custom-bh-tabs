@@ -35,33 +35,33 @@ const App: React.FC = () => {
   const { instance, accounts } = useMsal();
   const isAuthenticated = useIsAuthenticated();
 
-  const requestProfileData = async () => {
-    // Silently acquires an access token which is then attached to a request for MS Graph data
-    instance
-      .acquireTokenSilent({
-        ...loginRequest,
-        account: accounts[0],
-      })
-      .then((response) => {
-        callMsGraph(response.accessToken).then(async (response) => {
-          setGraphData(response);
-          const email = response.mail;
-          const isAllowed = await validateMSEmailAccess(email);
-          setUserAccountAllowed(isAllowed);
-        });
-      })
-      .catch((error) => {
-        console.error("requestProfileData", error);
-        setUserAccountAllowed(false);
-      });
-  };
-
   // Once user logs in, auto retrieve user details
   React.useEffect(() => {
+    const requestProfileData = async () => {
+      // Silently acquires an access token which is then attached to a request for MS Graph data
+      instance
+        .acquireTokenSilent({
+          ...loginRequest,
+          account: accounts[0],
+        })
+        .then((response) => {
+          callMsGraph(response.accessToken).then(async (response) => {
+            setGraphData(response);
+            const email = response.mail;
+            const isAllowed = await validateMSEmailAccess(email);
+            setUserAccountAllowed(isAllowed);
+          });
+        })
+        .catch((error) => {
+          console.error("requestProfileData", error);
+          setUserAccountAllowed(false);
+        });
+    };
+
     if (isAuthenticated && !graphData) {
       requestProfileData();
     }
-  }, [isAuthenticated, graphData]);
+  }, [isAuthenticated, graphData, instance, accounts]);
 
   return (
     <>
