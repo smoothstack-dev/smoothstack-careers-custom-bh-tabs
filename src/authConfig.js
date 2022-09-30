@@ -15,7 +15,7 @@ export const msalConfig = {
         clientId: "e9c3461f-65a0-4db3-b07c-89d8676ad56c",
         authority: "https://login.microsoftonline.com/7824f42c-45bd-47d8-8d15-275c536fa0a2",
         // redirectUri: "http://localhost:4001/"
-        redirectUri: "https://d27mpv8gi53ehe.cloudfront.net"
+        redirectUri: "https://manage.smoothstack.com"
     },
     cache: {
         cacheLocation: "sessionStorage", // This configures where your cache will be stored

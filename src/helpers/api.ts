@@ -1,11 +1,14 @@
 import axios, { AxiosResponse } from "axios";
 import { FORM, FORM_TYPE, PrescreenForm, TechScreenForm } from "../types/forms";
 
-const endpoint = "https://1syp4w9c5h.execute-api.us-east-1.amazonaws.com/prod/";
-// const endpoint = "http://localhost:3000/local/";
-const prescreenUrl = endpoint + "prescreen";
-const prescreenPost = endpoint + "form-events";
-const jobDescriptionManagement = endpoint + "jobDescriptionDetail";
+const carearApiEndpoint =
+  "https://1syp4w9c5h.execute-api.us-east-1.amazonaws.com/prod/";
+const authApiEndpoint =
+  "https://tjco3r5z49.execute-api.us-east-1.amazonaws.com/prod/";
+const prescreenUrl = carearApiEndpoint + "prescreen";
+const prescreenPost = carearApiEndpoint + "form-events";
+const jobDescriptionManagement = carearApiEndpoint + "jobDescriptionDetail";
+const msEmailValidationPost = authApiEndpoint + "jobManageAllowedEmailList";
 
 export const getPrescreenData = async (candidateId: string) => {
   try {
@@ -60,6 +63,20 @@ export const saveJobDescription = async (
     else return false;
   } catch (err) {
     console.error("Error updating job description", err);
+    return false;
+  }
+};
+
+export const validateMSEmailAccess = async (email: string) => {
+  try {
+    const response: AxiosResponse = await axios.post(
+      `${msEmailValidationPost}?email=${email}`
+    );
+    if (response.status && response.status < 300) {
+      return response.data.body?.isAllowed;
+    } else return false;
+  } catch (err) {
+    console.error("Error validating MS Email Access", err);
     return false;
   }
 };
