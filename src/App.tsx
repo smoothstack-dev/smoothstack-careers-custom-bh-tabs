@@ -7,9 +7,14 @@ import { JobDetailsManagement } from "./components/JobDetailsManagement/JobDetai
 import {
   AuthenticatedTemplate,
   UnauthenticatedTemplate,
+  useIsAuthenticated,
+  useMsal,
 } from "@azure/msal-react";
 import { MSLoginBtn } from "./components/MSLoginBtn/MSLoginBtn";
 import { MainPage } from "./components/MainPage/MainPage";
+import { loginRequest } from "./authConfig";
+import { callMsGraph } from "./graph";
+import { validateMSEmailAccess } from "./helpers/api";
 
 export type HeaderBtnType = {
   text: string;
@@ -22,6 +27,42 @@ const App: React.FC = () => {
   // For Custom Button
   const [headerMsg, setHeaderMsg] = React.useState<string>("");
   const [headerBtn, setHeaderBtn] = React.useState<HeaderBtnType>();
+  const [graphData, setGraphData] = React.useState(undefined);
+  const [isUserAccountAllowed, setUserAccountAllowed] = React.useState<
+    undefined | boolean
+  >(undefined);
+
+  const { instance, accounts } = useMsal();
+  const isAuthenticated = useIsAuthenticated();
+
+  const requestProfileData = async () => {
+    // Silently acquires an access token which is then attached to a request for MS Graph data
+    instance
+      .acquireTokenSilent({
+        ...loginRequest,
+        account: accounts[0],
+      })
+      .then((response) => {
+        callMsGraph(response.accessToken).then(async (response) => {
+          setGraphData(response);
+          const email = response.mail;
+          const isAllowed = await validateMSEmailAccess(email);
+          setUserAccountAllowed(isAllowed);
+        });
+      })
+      .catch((error) => {
+        console.error("requestProfileData", error);
+        setUserAccountAllowed(false);
+      });
+  };
+
+  // Once user logs in, auto retrieve user details
+  React.useEffect(() => {
+    if (isAuthenticated && !graphData) {
+      requestProfileData();
+    }
+  }, [isAuthenticated, graphData]);
+
   return (
     <>
       <div className="App-header float-div">
@@ -56,12 +97,12 @@ const App: React.FC = () => {
             />
           </Route>
           <Route path="/jobDetailsManagement">
-            <MSAuth>
+            <MSAuth isUserAccountAllowed={isUserAccountAllowed}>
               <JobDetailsManagement />
             </MSAuth>
           </Route>
           <Route path="/">
-            <MSAuth>
+            <MSAuth isUserAccountAllowed={isUserAccountAllowed}>
               <MainPage />
             </MSAuth>
           </Route>
@@ -71,10 +112,19 @@ const App: React.FC = () => {
   );
 };
 
-const MSAuth = (props: any) => {
+const MSAuth: React.FC<{
+  isUserAccountAllowed: undefined | boolean;
+  children: any;
+}> = ({ isUserAccountAllowed, children }) => {
+  const msg =
+    isUserAccountAllowed === undefined
+      ? "Loading your credential..."
+      : "Sorry, you do not have permission to access to this portal";
   return (
     <div>
-      <AuthenticatedTemplate>{props.children}</AuthenticatedTemplate>
+      <AuthenticatedTemplate>
+        {isUserAccountAllowed ? children : msg}
+      </AuthenticatedTemplate>
       <UnauthenticatedTemplate>
         Please log in to your Microsoft Account First!
       </UnauthenticatedTemplate>
