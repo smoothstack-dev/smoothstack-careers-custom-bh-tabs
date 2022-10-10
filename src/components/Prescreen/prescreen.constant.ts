@@ -34,7 +34,7 @@ export type AnswerItem = {
 
 export const showOnTimeOptions: AnswerItem[] = [
   { key: "Yes", value: "Yes" },
-  { key: "Late", value: "Late" },
+  { key: "No", value: "Late" },
   { key: "NoShow", value: "No Show" },
 ];
 

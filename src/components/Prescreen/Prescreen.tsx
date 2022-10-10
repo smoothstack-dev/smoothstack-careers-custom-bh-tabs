@@ -162,7 +162,7 @@ export const Prescreen: React.FC<{
         : "";
       setCandidateName(`${first} ${nick}`);
       const answer = prescreenData.get("showOnTime")?.answer;
-      if (answer && ["Yes", "Late"].includes(answer as string)) {
+      if (answer && ["Yes", "No"].includes(answer as string)) {
         setShowAllQuestions(true);
       } else {
         setShowAllQuestions(false);
