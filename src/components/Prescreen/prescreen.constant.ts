@@ -32,6 +32,9 @@ export type AnswerItem = {
   value: string;
 };
 
+// show other text box if 'Yes' is selected for these questions
+export const questionsRequireTextForYesList = ["drugScreen", "backgroundCheck"];
+
 export const showOnTimeOptions: AnswerItem[] = [
   { key: "Yes", value: "Yes" },
   { key: "No", value: "Late" },
@@ -65,6 +68,11 @@ export const highestDegreeOptions = [
   { key: "Bachelor's", value: "Bachelor's" },
   { key: "Master's", value: "Master's" },
   { key: "PhD", value: "PhD" },
+];
+
+export const majorOptions = [
+  { key: "Computer Science", value: "Computer Science" },
+  { key: "Other", value: "Other" },
 ];
 
 export const programmingLanguagesOptions: AnswerItem[] = [
@@ -135,6 +143,11 @@ export const workAuthorizationOptions: AnswerItem[] = [
   { key: "Not authorized", value: "Not authorized" },
 ];
 
+export const backgroundCheckOptions: AnswerItem[] = [
+  { key: "No", value: "No" },
+  { key: "Yes", value: "Yes" },
+];
+
 export const clearanceStatusOptions: AnswerItem[] = [
   { key: "Potentially Eligible", value: "Potentially Eligible" },
   { key: "Submitted", value: "Submitted" },
@@ -146,6 +159,11 @@ export const clearanceStatusOptions: AnswerItem[] = [
   { key: "Compartmented", value: "Compartmented" },
   { key: "Expired", value: "Expired" },
   { key: "Not Eligible", value: "Not Eligible" },
+];
+
+export const drugScreenOptions: AnswerItem[] = [
+  { key: "No", value: "No" },
+  { key: "Yes", value: "Yes" },
 ];
 
 export const isVaccinatedOptions: AnswerItem[] = [
@@ -282,8 +300,10 @@ export const prescreenQuestionOrder: string[] = [
   "otherApplications",
   "isStudent",
   "expectedDegree",
+  "expectedMajor",
   "expectedGraduationDate",
   "highestDegree",
+  "major",
   "graduationDate",
   "projects",
   "programmingLanguages",
@@ -429,6 +449,38 @@ export const prescreenFieldQuestions: Map<string, QuestionItem> = new Map([
     },
   ],
   [
+    "expectedMajor",
+    {
+      questionId: "expectedMajor",
+      question: "What is the major?",
+      options: majorOptions,
+      answerType: AnswerType.SINGLE,
+      dependenceIds: [
+        { questionId: "isStudent", expectedAnswer: ["Yes"] },
+        {
+          questionId: "expectedDegree",
+          expectedAnswer: ["Associate's", "Bachelor's", "Master's", "PhD"],
+        },
+      ],
+    },
+  ],
+  [
+    "major",
+    {
+      questionId: "major",
+      question: "What is the major?",
+      options: majorOptions,
+      answerType: AnswerType.SINGLE,
+      dependenceIds: [
+        { questionId: "isStudent", expectedAnswer: ["No"] },
+        {
+          questionId: "highestDegree",
+          expectedAnswer: ["Associate's", "Bachelor's", "Master's", "PhD"],
+        },
+      ],
+    },
+  ],
+  [
     "highestDegree",
     {
       questionId: "highestDegree",
@@ -552,8 +604,8 @@ export const prescreenFieldQuestions: Map<string, QuestionItem> = new Map([
     {
       questionId: "backgroundCheck",
       question: "Do you have any concerns about passing a background check?",
-      answerType: AnswerType.TEXT,
-      textCountLimit: 100,
+      options: backgroundCheckOptions,
+      answerType: AnswerType.SINGLE,
     },
   ],
   [
@@ -572,8 +624,8 @@ export const prescreenFieldQuestions: Map<string, QuestionItem> = new Map([
       questionId: "drugScreen",
       question:
         "Our clients require drug screening, do you have any concerns passing a drug screen even if certain drugs are legal in your state?",
-      answerType: AnswerType.TEXT,
-      textCountLimit: 100,
+      options: drugScreenOptions,
+      answerType: AnswerType.SINGLE,
     },
   ],
   [

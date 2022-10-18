@@ -6,12 +6,16 @@ import {
   AnswerType,
   prescreenFieldQuestions,
   QuestionItem,
+  questionsRequireTextForYesList,
 } from "./prescreen.constant";
 
 export const getCandidatePrescreenData = async (candidateId: string) => {
   const response = await API.getPrescreenData(candidateId);
   if (response.statusCode && Number(response.statusCode) < 300) {
-    const data = response.body;
+    let data = response.body;
+    if (data["major"]) {
+      data["expectedMajor"] = data["major"];
+    }
     const prescreenData = Array.from(prescreenFieldQuestions.keys()).reduce(
       (map, questionId: string) => {
         const question = prescreenFieldQuestions.get(questionId);
@@ -29,12 +33,19 @@ export const getCandidatePrescreenData = async (candidateId: string) => {
             question.options
           ) {
             const optionList: string[] = getOptionList(question.options);
-            if (optionList.includes("Other")) {
+            if (
+              optionList.includes("Other") ||
+              questionsRequireTextForYesList.includes(question.questionId)
+            ) {
               const otherAnswer = checkMatchedAns(optionList, question.answer);
               if (otherAnswer !== undefined) {
                 question.otherAnswer = otherAnswer || "";
                 if (question.answerType === AnswerType.SINGLE) {
                   question.answer = "Other";
+                  if (
+                    questionsRequireTextForYesList.includes(question.questionId)
+                  )
+                    question.answer = "Yes";
                 }
                 if (
                   question.answerType === AnswerType.MULTIPLE &&
@@ -114,7 +125,10 @@ const constructPrescreenMessage = (
         prescreenForm[item.questionId] = {
           question: item.question,
           answer:
-            item.answer === "Other" && item.otherAnswer
+            (item.answer === "Other" ||
+              (questionsRequireTextForYesList.includes(item.questionId) &&
+                item.answer === "Yes")) &&
+            item.otherAnswer
               ? item.otherAnswer
               : (item.answer as string),
         } as FormEntry;

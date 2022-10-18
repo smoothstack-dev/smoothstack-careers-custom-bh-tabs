@@ -50,6 +50,19 @@ export const Prescreen: React.FC<{
           question.otherAnswer = ans.otherAnswer;
           updatedData.set(question.questionId, question);
         }
+        // Keep expectedMajor and major in sync
+        if (["expectedMajor", "major"].includes(ans.questionId)) {
+          const majorToUpdateId =
+            ans.questionId === "expectedMajor" ? "major" : "expectedMajor";
+          let questionToUpdate = cloneDeep(
+            prescreenData.get(majorToUpdateId) || undefined
+          );
+          if (questionToUpdate) {
+            questionToUpdate.answer = ans.answer;
+            questionToUpdate.otherAnswer = ans.otherAnswer;
+            updatedData.set(questionToUpdate.questionId, questionToUpdate);
+          }
+        }
       });
       setPrescreenData(updatedData);
       if (headerMsg === "") {

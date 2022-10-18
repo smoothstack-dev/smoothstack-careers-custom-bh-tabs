@@ -4,6 +4,7 @@ import {
   AnswerItem,
   QuestionItem,
   AnswerType,
+  questionsRequireTextForYesList,
 } from "../Prescreen/prescreen.constant";
 import { cloneDeep } from "lodash";
 
@@ -80,8 +81,14 @@ export const OptionsQuestion: React.FC<{
                   }
                   onClick={() => {
                     if (question.answer !== option.key) {
-                      const otherAnswer =
-                        option.key === "Other" ? "" : undefined;
+                      let otherAnswer = option.key === "Other" ? "" : undefined;
+                      if (
+                        questionsRequireTextForYesList.includes(
+                          question.questionId
+                        ) &&
+                        option.key === "Yes"
+                      )
+                        otherAnswer = "";
                       setOtherAnswerText(otherAnswer);
                       updateAnser({
                         questionId: question.questionId,
