@@ -4,9 +4,9 @@ import {
   AnswerItem,
   QuestionItem,
   AnswerType,
-  questionsRequireTextForYesList,
 } from "../Prescreen/prescreen.constant";
 import { cloneDeep } from "lodash";
+import { checkToShowOtherTextInput } from "../Prescreen/prescreenHelper";
 
 export const OptionsQuestion: React.FC<{
   index: number;
@@ -56,6 +56,7 @@ export const OptionsQuestion: React.FC<{
   };
 
   const isRequireScaleText = ["candidateRank", "communicationSkills"];
+  const textCountLimit = 100;
 
   switch (question.answerType) {
     case AnswerType.SINGLE:
@@ -83,10 +84,10 @@ export const OptionsQuestion: React.FC<{
                     if (question.answer !== option.key) {
                       let otherAnswer = option.key === "Other" ? "" : undefined;
                       if (
-                        questionsRequireTextForYesList.includes(
-                          question.questionId
-                        ) &&
-                        option.key === "Yes"
+                        checkToShowOtherTextInput(
+                          question.questionId,
+                          option.key
+                        )
                       )
                         otherAnswer = "";
                       setOtherAnswerText(otherAnswer);
@@ -112,18 +113,24 @@ export const OptionsQuestion: React.FC<{
               <input
                 type="text"
                 className="form-control"
-                placeholder="Please enter other answer here"
+                placeholder="Please enter your response here"
                 onChange={(e: any) => {
                   const ans = e.target.value;
-                  setOtherAnswerText(ans);
-                  updateAnser({
-                    questionId: question.questionId,
-                    answer: question.answer,
-                    otherAnswer: ans,
-                  });
+                  if (e.target.value.length <= textCountLimit) {
+                    setOtherAnswerText(ans);
+                    updateAnser({
+                      questionId: question.questionId,
+                      answer: question.answer,
+                      otherAnswer: ans,
+                    });
+                  }
                 }}
                 value={otherAnswerText}
               ></input>
+              <span className="text-count">{`${
+                question.otherAnswer?.length || 0
+              }/${textCountLimit}`}</span>
+              <br />
             </>
           )}
         </>

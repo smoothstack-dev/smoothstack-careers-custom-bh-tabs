@@ -6,7 +6,9 @@ import {
   AnswerType,
   prescreenFieldQuestions,
   QuestionItem,
+  questionsRequireTextForNoList,
   questionsRequireTextForYesList,
+  Submission,
 } from "./prescreen.constant";
 
 export const getCandidatePrescreenData = async (candidateId: string) => {
@@ -35,7 +37,8 @@ export const getCandidatePrescreenData = async (candidateId: string) => {
             const optionList: string[] = getOptionList(question.options);
             if (
               optionList.includes("Other") ||
-              questionsRequireTextForYesList.includes(question.questionId)
+              questionsRequireTextForYesList.includes(question.questionId) ||
+              questionsRequireTextForNoList.includes(question.questionId)
             ) {
               const otherAnswer = checkMatchedAns(optionList, question.answer);
               if (otherAnswer !== undefined) {
@@ -46,6 +49,10 @@ export const getCandidatePrescreenData = async (candidateId: string) => {
                     questionsRequireTextForYesList.includes(question.questionId)
                   )
                     question.answer = "Yes";
+                  if (
+                    questionsRequireTextForNoList.includes(question.questionId)
+                  )
+                    question.answer = "No";
                 }
                 if (
                   question.answerType === AnswerType.MULTIPLE &&
@@ -67,9 +74,16 @@ export const getCandidatePrescreenData = async (candidateId: string) => {
       },
       new Map()
     );
+
+    const submissionData = response.body?.submissions
+      ? response.body.submissions.filter((sub: Submission) =>
+          ["Prescreen Scheduled", "Webinar Passed"].includes(sub.status)
+        )
+      : [];
     return {
       statusCode: response.statusCode,
       body: prescreenData as Map<string, QuestionItem>,
+      submissions: submissionData,
     };
   } else {
     return response;
@@ -126,8 +140,7 @@ const constructPrescreenMessage = (
           question: item.question,
           answer:
             (item.answer === "Other" ||
-              (questionsRequireTextForYesList.includes(item.questionId) &&
-                item.answer === "Yes")) &&
+              checkToShowOtherTextInput(item.questionId, item.answer)) &&
             item.otherAnswer
               ? item.otherAnswer
               : (item.answer as string),
@@ -137,7 +150,12 @@ const constructPrescreenMessage = (
       case AnswerType.PROJECT: {
         const finalAnswer = cloneDeep(item.answer as string);
         if (!finalAnswer) break;
-        let parsedJSON = JSON.parse(finalAnswer);
+        let parsedJSON = [];
+        try {
+          parsedJSON = JSON.parse(finalAnswer);
+        } catch {
+          console.error("project format is incorrect");
+        }
         if (Array.isArray(parsedJSON)) {
           parsedJSON = parsedJSON.filter((item) => {
             return (
@@ -215,4 +233,14 @@ const removeInvalidANswer = (options: AnswerItem[], answers: string[]) => {
     if (optionList.includes(ans)) updatedAns.push(ans);
   });
   return updatedAns;
+};
+
+export const checkToShowOtherTextInput = (
+  questionId: string,
+  value: string | string[]
+) => {
+  return (
+    (questionsRequireTextForYesList.includes(questionId) && value === "Yes") ||
+    (questionsRequireTextForNoList.includes(questionId) && value === "No")
+  );
 };

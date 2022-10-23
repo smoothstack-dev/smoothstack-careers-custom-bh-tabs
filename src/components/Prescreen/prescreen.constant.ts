@@ -27,6 +27,19 @@ export type QuestionItem = {
   textCountLimit?: number;
 };
 
+export type JobOrder = {
+  customText5: string;
+  id: number;
+  title: string;
+  willRelocate: boolean;
+};
+
+export type Submission = {
+  id: number;
+  status: string;
+  jobOrder: JobOrder;
+};
+
 export type AnswerItem = {
   key: string;
   value: string;
@@ -34,6 +47,7 @@ export type AnswerItem = {
 
 // show other text box if 'Yes' is selected for these questions
 export const questionsRequireTextForYesList = ["drugScreen", "backgroundCheck"];
+export const questionsRequireTextForNoList = ["relocation"];
 
 export const showOnTimeOptions: AnswerItem[] = [
   { key: "Yes", value: "Yes" },
@@ -44,7 +58,6 @@ export const showOnTimeOptions: AnswerItem[] = [
 export const relocationOptions: AnswerItem[] = [
   { key: "Yes", value: "Yes" },
   { key: "No", value: "No" },
-  { key: "Undecided", value: "Undecided" },
 ];
 
 export const isStudentOption: AnswerItem[] = [

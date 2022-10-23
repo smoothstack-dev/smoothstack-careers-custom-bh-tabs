@@ -1,6 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { cloneDeep } from "lodash";
-import { QuestionItem, prescreenQuestionOrder } from "./prescreen.constant";
+import {
+  QuestionItem,
+  prescreenQuestionOrder,
+  Submission,
+} from "./prescreen.constant";
 import { Button, Spinner } from "react-bootstrap";
 import "./prescreen.css";
 import { Questions } from "../Questions/Questions";
@@ -26,6 +30,7 @@ export const Prescreen: React.FC<{
 }> = ({ headerMsg, setHeaderMsg, setHeaderLabel, setHeaderBtn }) => {
   const [prescreenData, setPrescreenData] =
     useState<Map<string, QuestionItem>>();
+  const [submissions, setSubmissions] = useState<Submission[]>([]);
   const [isLoadingData, setLoadingData] = useState<boolean>(false);
   const [isLoadingFailed, setLoadingFailed] = useState<boolean>(false);
   const [isDataSaved, setDataSaved] = useState<boolean>(false);
@@ -122,6 +127,7 @@ export const Prescreen: React.FC<{
         Number(prescreenResponse.statusCode) < 300
       ) {
         setPrescreenData(prescreenResponse.body);
+        setSubmissions(prescreenResponse.submissions);
         setLoadingData(false);
         setHeaderLabel("");
         return;
@@ -218,6 +224,29 @@ export const Prescreen: React.FC<{
   return (
     <React.Fragment>
       <div>
+        {submissions && (
+          <div>
+            <span>
+              <strong> Job Submissions</strong>
+            </span>
+            <br />
+            {submissions.map((submission) => {
+              return (
+                <>
+                  <span>
+                    {` - Job ${submission.jobOrder.id}(${
+                      submission.jobOrder.customText5
+                    }) ${submission.status}, Required Relocation: ${
+                      submission.jobOrder.willRelocate ? "Yes" : "No"
+                    }`}
+                  </span>
+                  <br />
+                </>
+              );
+            })}
+            <br />
+          </div>
+        )}
         {prescreenData && prescreenData.has("showOnTime") && (
           <div key="question-1">
             <label className="question-title">{`1. Did ${candidateName} show up for prescreen on time?`}</label>
