@@ -61,7 +61,7 @@ export const ProjectQuestion: React.FC<{
     updatedProjectItems[projectIndex] = project;
     setProjectItems(updatedProjectItems);
     const calculatedMonths = calculateMonthsOfExperience(updatedProjectItems);
-    updateAnser(
+    updateAnser([
       {
         questionId: question.questionId,
         answer: JSON.stringify(updatedProjectItems),
@@ -69,8 +69,8 @@ export const ProjectQuestion: React.FC<{
       {
         questionId: "monthsOfProjectExperience",
         answer: String(calculatedMonths),
-      }
-    );
+      },
+    ]);
   };
 
   const calculateMonthsOfExperience = (projects: ProjectItem[]): number => {
@@ -88,7 +88,7 @@ export const ProjectQuestion: React.FC<{
     updatedProjectItems.splice(projectIndex, 1);
     setProjectItems(updatedProjectItems);
     const calculatedMonths = calculateMonthsOfExperience(updatedProjectItems);
-    updateAnser(
+    updateAnser([
       {
         questionId: question.questionId,
         answer: JSON.stringify(updatedProjectItems),
@@ -96,8 +96,8 @@ export const ProjectQuestion: React.FC<{
       {
         questionId: "monthsOfProjectExperience",
         answer: String(calculatedMonths),
-      }
-    );
+      },
+    ]);
   };
 
   const addProjectRow = () => {
