@@ -8,6 +8,7 @@ export enum AnswerType {
   "DROPDOWN" = "DROPDOWN",
   "PROJECT" = "PROJECT",
   "VIEWANDEDIT" = "VIEWANDEDIT",
+  "RATING" = "RATING",
 }
 
 export type dependenceField = {
@@ -259,29 +260,19 @@ export const stateOptions: AnswerItem[] = [
 ];
 
 export const communicationSkillsOptions: AnswerItem[] = [
-  { key: "1", value: "1" },
-  { key: "2", value: "2" },
-  { key: "3", value: "3" },
-  { key: "4", value: "4" },
-  { key: "5", value: "5" },
-  { key: "6", value: "6" },
-  { key: "7", value: "7" },
-  { key: "8", value: "8" },
-  { key: "9", value: "9" },
-  { key: "10", value: "10" },
+  { key: "1", value: "Poor" },
+  { key: "2", value: "Fair" },
+  { key: "3", value: "Good" },
+  { key: "4", value: "Great" },
+  { key: "5", value: "Excellent" },
 ];
 
 export const candidateRankOptions: AnswerItem[] = [
-  { key: "1", value: "1" },
-  { key: "2", value: "2" },
-  { key: "3", value: "3" },
-  { key: "4", value: "4" },
-  { key: "5", value: "5" },
-  { key: "6", value: "6" },
-  { key: "7", value: "7" },
-  { key: "8", value: "8" },
-  { key: "9", value: "9" },
-  { key: "10", value: "10" },
+  { key: "1", value: "Poor" },
+  { key: "2", value: "Fair" },
+  { key: "3", value: "Good" },
+  { key: "4", value: "Great" },
+  { key: "5", value: "Excellent" },
 ];
 
 export const resultOptions: AnswerItem[] = [
@@ -341,6 +332,7 @@ export const prescreenQuestionOrder: string[] = [
   "referFriend",
   "teamWorkExperience",
   "agreeToBeResponsive",
+  "hobbies",
   "communicationSkills",
   "candidateRank",
   "result",
@@ -811,21 +803,30 @@ export const prescreenFieldQuestions: Map<string, QuestionItem> = new Map([
     },
   ],
   [
+    "hobbies",
+    {
+      questionId: "hobbies",
+      question: "Tell me about some of your hobbies.",
+      answerType: AnswerType.TEXTBLOCK,
+      textCountLimit: 500,
+    },
+  ],
+  [
     "communicationSkills",
     {
       questionId: "communicationSkills",
-      question: "Rank candidate's communication skills from a scale of 1-10.",
+      question: "Rank candidate's communication skills.",
       options: communicationSkillsOptions,
-      answerType: AnswerType.SINGLE,
+      answerType: AnswerType.RATING,
     },
   ],
   [
     "candidateRank",
     {
       questionId: "candidateRank",
-      question: "Rank Candidate from a scale of 1-10.",
+      question: "Rank Candidate.",
       options: candidateRankOptions,
-      answerType: AnswerType.SINGLE,
+      answerType: AnswerType.RATING,
     },
   ],
   [

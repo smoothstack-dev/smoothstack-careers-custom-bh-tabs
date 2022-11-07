@@ -55,7 +55,6 @@ export const OptionsQuestion: React.FC<{
     }
   };
 
-  const isRequireScaleText = ["candidateRank", "communicationSkills"];
   const textCountLimit = 100;
 
   switch (question.answerType) {
@@ -63,9 +62,6 @@ export const OptionsQuestion: React.FC<{
       return (
         <>
           <div>
-            {isRequireScaleText.includes(question.questionId) && (
-              <span>(Lowest)</span>
-            )}
             {question.options?.map((option: AnswerItem, id) => {
               const isSelected =
                 question.answer && question.answer === option.key;
@@ -103,9 +99,6 @@ export const OptionsQuestion: React.FC<{
                 </Button>
               );
             })}
-            {isRequireScaleText.includes(question.questionId) && (
-              <span>(Highest)</span>
-            )}
           </div>
           {otherAnswerText !== undefined && (
             <>

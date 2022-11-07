@@ -4,6 +4,7 @@ import { DateQuestion } from "./DateQuestion";
 import { DropdownQuestion } from "./DropdownQuestion";
 import { OptionsQuestion } from "./OptionsQuestion";
 import { ProjectQuestion } from "./ProjectQuestion";
+import { RatingQuestion } from "./RatingQuestion";
 import { TextQuestion } from "./TextQuestion";
 import { ViewAndEditQuestion } from "./ViewAndEditQuestion";
 
@@ -77,6 +78,15 @@ export const Questions: React.FC<{
           setSubmitBtnDisabled={setSubmitBtnDisabled}
           prescreenData={prescreenData}
         ></ViewAndEditQuestion>
+      );
+    }
+    case AnswerType.RATING: {
+      return (
+        <RatingQuestion
+          index={index}
+          question={question}
+          updateAnser={updateAnser}
+        ></RatingQuestion>
       );
     }
     default:
