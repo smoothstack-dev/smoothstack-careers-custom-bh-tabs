@@ -14,7 +14,7 @@ export const RatingQuestion: React.FC<{
       style={{
         position: "absolute",
         backgroundColor: "white",
-        color: "blakc",
+        color: "black",
         fontWeight: 600,
         fontSize: "0.8rem",
       }}
@@ -46,6 +46,7 @@ export const RatingQuestion: React.FC<{
                   value={{
                     color: iconColor,
                     size: "35px",
+                    style: { stroke: "black", strokeWidth: "10" },
                   }}
                 >
                   <div>
