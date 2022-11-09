@@ -1,5 +1,5 @@
 import React from "react";
-import { Button, OverlayTrigger, Tooltip } from "react-bootstrap";
+import { OverlayTrigger } from "react-bootstrap";
 import { AnswerItem, QuestionItem } from "../Prescreen/prescreen.constant";
 import { IconContext } from "react-icons";
 import { AiFillStar } from "react-icons/ai";
