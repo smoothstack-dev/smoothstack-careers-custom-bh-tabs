@@ -4,6 +4,7 @@ import Prescreen from "./components/Prescreen/Prescreen";
 import { Route, Switch } from "react-router-dom";
 import { Button } from "react-bootstrap";
 import { JobDetailsManagement } from "./components/JobDetailsManagement/JobDetailsManagement";
+import { MSSignature } from "./components/MSSignature/MSSignature";
 import {
   AuthenticatedTemplate,
   UnauthenticatedTemplate,
@@ -100,6 +101,9 @@ const App: React.FC = () => {
             <MSAuth isUserAccountAllowed={isUserAccountAllowed}>
               <JobDetailsManagement />
             </MSAuth>
+          </Route>
+          <Route path="/msSignature">
+            <MSSignature />
           </Route>
           <Route path="/">
             <MSAuth isUserAccountAllowed={isUserAccountAllowed}>
