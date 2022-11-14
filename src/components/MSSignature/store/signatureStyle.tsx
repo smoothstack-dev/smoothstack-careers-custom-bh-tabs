@@ -13,18 +13,36 @@ export default function useSignatureStyle() {
     useRecoilState(signatureStyleStore)
   );
 
-  const updateStyle = (props: _t.Update) => {
+  const updateStyle = (
+    field: "employeeName" | "title" | "additionalFields" | "socials",
+    key: "size" | "weight" | "color",
+    value: any
+  ) => {
     setStyle((draft) => {
+      const updatedStyle = { ...signatureStyle[field], [key]: value };
       const updatedSignatureStyle = {
         ...signatureStyle,
-        [props.key]: props.value,
+        [field]: updatedStyle,
       };
       return updatedSignatureStyle;
     });
   };
 
+  const getConvertedStyleValue = (
+    field: "size" | "weight",
+    rawSize: number
+  ) => {
+    return (
+      _l.SIZE_RANGE[field].min +
+      Math.floor(
+        ((_l.SIZE_RANGE[field].max - _l.SIZE_RANGE[field].min) / 100) * rawSize
+      )
+    );
+  };
+
   return {
     signatureStyle,
     updateStyle,
+    getConvertedStyleValue,
   };
 }

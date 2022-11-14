@@ -1,6 +1,8 @@
 export type Signature = {
+  photo: any;
   employeeId: number;
   employeeName: string;
+  company: string;
   title: string;
   additionalFields: AdditionalField[];
   socials: Social[];
