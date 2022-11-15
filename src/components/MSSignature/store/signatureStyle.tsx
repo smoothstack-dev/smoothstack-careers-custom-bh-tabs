@@ -15,7 +15,7 @@ export default function useSignatureStyle() {
 
   const updateStyle = (
     field: "employeeName" | "title" | "additionalFields" | "socials",
-    key: "size" | "weight" | "color",
+    key: "font" | "size" | "weight" | "color",
     value: any
   ) => {
     setStyle((draft) => {

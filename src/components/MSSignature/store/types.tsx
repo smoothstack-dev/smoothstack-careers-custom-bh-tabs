@@ -2,11 +2,23 @@ export type Signature = {
   photo: any;
   employeeId: number;
   employeeName: string;
-  company: string;
   title: string;
+  profileUrl: string;
+  companyLogoUrl: string;
   additionalFields: AdditionalField[];
   socials: Social[];
 };
+
+export type Font =
+  | "Arial"
+  | "Verdana"
+  | "Poppins"
+  | "Trebuchet MS"
+  | "Georgia"
+  | "Palatino"
+  | "Lucida Sans"
+  | "Times New Roman"
+  | "Courier New";
 
 export type SocialId =
   | "linkedin"
@@ -39,6 +51,7 @@ export type SignatureStyles = {
 };
 
 export type Styles = {
+  font: Font;
   size: number;
   weight: number;
   color: string;

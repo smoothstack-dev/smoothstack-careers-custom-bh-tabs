@@ -1,5 +1,5 @@
 import React from "react";
-import { Container, Row, Col } from "react-bootstrap";
+import { Container, Row, Col, Image } from "react-bootstrap";
 import styled from "styled-components";
 import { Icons } from "./Icons";
 import useSignature from "./store/signature";
@@ -20,18 +20,13 @@ export const Preview: React.FC<{}> = ({}) => {
   `;
 
   const CardContainer = styled.div`
+    display: flex;
     border: 0.1px;
     background-color: white;
     border-radius: 1%;
     padding: 10px;
-    width: 500px;
+    width: 600px;
     height: 200px;
-  `;
-
-  const Photo = styled.div`
-    color: blue;
-    font-weight: 800;
-    font-size: 20px;
   `;
 
   const NameSection = styled.span`
@@ -44,6 +39,7 @@ export const Preview: React.FC<{}> = ({}) => {
       "weight",
       signatureStyle.employeeName.weight
     )};
+    font-family: ${signatureStyle.employeeName.font};
   `;
 
   const TitleSection = styled.span`
@@ -53,6 +49,7 @@ export const Preview: React.FC<{}> = ({}) => {
       "weight",
       signatureStyle.title.weight
     )};
+    font-family: ${signatureStyle.title.font};
   `;
 
   const AdditionalSection = styled.span`
@@ -65,6 +62,7 @@ export const Preview: React.FC<{}> = ({}) => {
       "weight",
       signatureStyle.additionalFields.weight
     )};
+    font-family: ${signatureStyle.additionalFields.font};
   `;
 
   const SocialSection = styled.span`
@@ -74,6 +72,7 @@ export const Preview: React.FC<{}> = ({}) => {
       "weight",
       signatureStyle.socials.weight
     )};
+    font-family: ${signatureStyle.socials.font};
   `;
 
   return (
@@ -86,39 +85,63 @@ export const Preview: React.FC<{}> = ({}) => {
           <CardContainer>
             <Container>
               <Row>
-                <Col md={3}>
-                  <Photo>Photo Shown Here</Photo>
+                <Col md={5}>
+                  <div
+                    style={{
+                      height: "175px",
+                      maxWidth: "225px",
+                      overflow: "hidden",
+                    }}
+                  >
+                    <Image
+                      src={signature.companyLogoUrl}
+                      style={{
+                        padding: "2px",
+                        display: "block",
+                        height: "170px",
+                        width: "auto",
+                      }}
+                    />
+                  </div>
                 </Col>
-                <Col md={9}>
-                  <NameSection>{signature.employeeName}</NameSection>
-                  <br />
-                  <TitleSection>
-                    {signature.title}, {signature.company}
-                  </TitleSection>
-                  <br />
-                  {signature.additionalFields
-                    .filter((af: _t.AdditionalField) => af.fieldValue)
-                    .map((af: _t.AdditionalField) => {
-                      return (
-                        <>
-                          <Icons icon={af.id} />
-                          <AdditionalSection>
-                            {" "}
-                            {af.fieldValue}
-                          </AdditionalSection>
-                          <br />{" "}
-                        </>
-                      );
-                    })}
-                  {signature.socials
-                    .filter((s: _t.Social) => s.socialLink)
-                    .map((s: _t.Social) => {
-                      return (
-                        <a href={s.socialLink} target="_blank">
-                          <Icons icon={s.id} />
-                        </a>
-                      );
-                    })}
+                <Col md={7}>
+                  <div>
+                    <NameSection>{signature.employeeName}</NameSection>
+                    <br />
+                    <TitleSection>{signature.title}</TitleSection>
+                    <br />
+                    {signature.additionalFields
+                      .filter((af: _t.AdditionalField) => af.fieldValue)
+                      .map((af: _t.AdditionalField) => {
+                        return (
+                          <>
+                            <Icons icon={af.id} />
+                            <AdditionalSection>
+                              {" "}
+                              {af.fieldValue}
+                            </AdditionalSection>
+                            <br />{" "}
+                          </>
+                        );
+                      })}
+                    {signature.socials
+                      .filter((s: _t.Social) => s.socialLink)
+                      .map((s: _t.Social) => {
+                        return (
+                          <a href={s.socialLink} target="_blank">
+                            <Icons icon={s.id} />
+                          </a>
+                        );
+                      })}
+                    <Image
+                      src={signature.companyLogoUrl}
+                      style={{
+                        marginTop: "5px",
+                        height: "25px",
+                        width: "auto",
+                      }}
+                    />
+                  </div>
                 </Col>
               </Row>
             </Container>

@@ -3,6 +3,8 @@ import {
   Button,
   Col,
   Container,
+  Dropdown,
+  DropdownButton,
   FloatingLabel,
   Form,
   OverlayTrigger,
@@ -16,6 +18,7 @@ import { ChromePicker } from "react-color";
 import useSignature from "./store/signature";
 import useSignatureStyle from "./store/signatureStyle";
 import { AdditionalField, Social } from "./store/types";
+import { FontList } from "./store/literal";
 
 const SettingContainer = styled.div`
   max-height: 650px;
@@ -45,9 +48,6 @@ const DetailSection: React.FC<{}> = ({}) => {
   return (
     <div>
       <p>
-        <strong>Upload Photo: (TODO)</strong>
-      </p>
-      <p>
         <strong>Employee Info:</strong>
       </p>
       <FloatingLabel label="Employee Name" className="fieldLabel">
@@ -68,12 +68,21 @@ const DetailSection: React.FC<{}> = ({}) => {
           }}
         />
       </FloatingLabel>
-      <FloatingLabel label="Company" className="fieldLabel">
+      <FloatingLabel label="Profile Url" className="fieldLabel">
         <Form.Control
-          placeholder="Company"
-          value={signature.company}
+          placeholder="http://"
+          value={signature.profileUrl}
           onChange={(e) => {
-            updateSignature("company", e.target.value);
+            updateSignature("profileUrl", e.target.value);
+          }}
+        />
+      </FloatingLabel>
+      <FloatingLabel label="Company Logo Url" className="fieldLabel">
+        <Form.Control
+          placeholder="http://"
+          value={signature.companyLogoUrl}
+          onChange={(e) => {
+            updateSignature("companyLogoUrl", e.target.value);
           }}
         />
       </FloatingLabel>
@@ -141,6 +150,23 @@ const DesignSection: React.FC<{}> = ({}) => {
       <>
         <Container>
           <Row>
+            <Col md={3}>Font</Col>
+            <Col md={9}>
+              <DropdownButton
+                id="dropdown-basic-button"
+                title={signatureStyle[field].font}
+                size="sm"
+              >
+                {FontList.map((f) => (
+                  <Dropdown.Item onClick={() => updateStyle(field, "font", f)}>
+                    <span style={{ fontFamily: f }}>{f}</span>
+                  </Dropdown.Item>
+                ))}
+              </DropdownButton>
+            </Col>
+          </Row>
+          <br />
+          <Row>
             <Col md={3}>Size</Col>
             <Col md={9}>
               <Form.Range
@@ -151,6 +177,7 @@ const DesignSection: React.FC<{}> = ({}) => {
               />
             </Col>
           </Row>
+          <br />
           <Row>
             <Col md={3}>Weight</Col>
             <Col md={9}>
@@ -163,6 +190,7 @@ const DesignSection: React.FC<{}> = ({}) => {
               />
             </Col>
           </Row>
+          <br />
           <Row>
             <Col md={3}>Color</Col>
             <Col md={9}>
@@ -201,7 +229,7 @@ const DesignSection: React.FC<{}> = ({}) => {
       </div>
       <div>
         <p>
-          <strong>Title & Company</strong>
+          <strong>Title</strong>
         </p>
         {DesignSubsection("title")}
       </div>

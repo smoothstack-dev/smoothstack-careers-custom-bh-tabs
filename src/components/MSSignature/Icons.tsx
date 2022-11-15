@@ -1,6 +1,8 @@
 import React from "react";
 import * as FaIcon from "react-icons/fa";
 import * as AiIcon from "react-icons/ai";
+import * as HiIcon from "react-icons/hi";
+import * as TfiIcon from "react-icons/tfi";
 import * as _t from "./store/types";
 
 export const Icons: React.FC<{ icon: _t.Icons }> = ({ icon }) => {
@@ -19,10 +21,10 @@ export const Icons: React.FC<{ icon: _t.Icons }> = ({ icon }) => {
     case "website":
       return <AiIcon.AiOutlineGlobal />;
     case "phone":
-      return <AiIcon.AiOutlinePhone />;
+      return <TfiIcon.TfiMobile />;
     case "address":
-      return <AiIcon.AiOutlineHome />;
+      return <HiIcon.HiOutlineOfficeBuilding />;
     case "mobile":
-      return <AiIcon.AiOutlineMobile />;
+      return <TfiIcon.TfiMobile />;
   }
 };
