@@ -32,6 +32,10 @@ export default function useSignatureStyle() {
     field: "size" | "weight",
     rawSize: number
   ) => {
+    if (field === "weight") {
+      const w = (_l.SIZE_RANGE[field].max - _l.SIZE_RANGE[field].min) / 100;
+      return _l.SIZE_RANGE[field].min + Math.floor(rawSize / (100 / w)) * 100;
+    }
     return (
       _l.SIZE_RANGE[field].min +
       Math.floor(

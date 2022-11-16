@@ -111,8 +111,29 @@ export const Preview: React.FC<{}> = ({}) => {
                     <TitleSection>{signature.title}</TitleSection>
                     <br />
                     {signature.additionalFields
-                      .filter((af: _t.AdditionalField) => af.fieldValue)
-                      .map((af: _t.AdditionalField) => {
+                      .filter(
+                        (af: _t.AdditionalField) =>
+                          af.fieldValue && af.fieldName !== "Address"
+                      )
+                      .map((af: _t.AdditionalField, index) => {
+                        return (
+                          <>
+                            {!!index && " | "}
+                            <Icons icon={af.id} />
+                            <AdditionalSection>
+                              {" "}
+                              {af.fieldValue}
+                            </AdditionalSection>
+                          </>
+                        );
+                      })}
+                    <br />
+                    {signature.additionalFields
+                      .filter(
+                        (af: _t.AdditionalField) =>
+                          af.fieldValue && af.fieldName === "Address"
+                      )
+                      .map((af: _t.AdditionalField, index) => {
                         return (
                           <>
                             <Icons icon={af.id} />
@@ -120,7 +141,7 @@ export const Preview: React.FC<{}> = ({}) => {
                               {" "}
                               {af.fieldValue}
                             </AdditionalSection>
-                            <br />{" "}
+                            <br />
                           </>
                         );
                       })}

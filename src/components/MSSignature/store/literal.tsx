@@ -28,8 +28,8 @@ export const INITIAL_SIGNATURE_STYLE: _t.SignatureStyles = {
 };
 
 export const SIZE_RANGE = {
-  size: { min: 12, max: 28 },
-  weight: { min: 300, max: 900 },
+  size: { min: 12, max: 36 },
+  weight: { min: 100, max: 900 },
 };
 
 export const FontList: _t.Font[] = [
