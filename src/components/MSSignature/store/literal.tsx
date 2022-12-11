@@ -1,38 +1,42 @@
 import * as _t from "./types";
 
-export const INITIAL_SIGNATURE: _t.Signature = {
-  photo: undefined,
+export const INITIAL_SIGNATURE: _t.Employee = {
   employeeId: 1,
-  employeeName: "Derek Chou",
+  firstName: "First",
+  lastName: "Last",
+  middleNameInitial: "M",
   title: "Software Engineer",
   profileUrl: "https://smoothstack.com/smoothstack-2020-logo/",
-  companyLogoUrl: "https://smoothstack.com/smoothstack-2020-logo/",
-  additionalFields: [
-    { id: "phone", fieldName: "Phone", fieldValue: "1112223333" },
-    { id: "website", fieldName: "Website", fieldValue: "" },
-    { id: "address", fieldName: "Address", fieldValue: "" },
-  ],
-  socials: [
-    { id: "facebook", socialTitle: "Facebook", socialLink: "" },
-    { id: "linkedin", socialTitle: "LinkedIn", socialLink: "" },
-    { id: "youtube", socialTitle: "Youtube", socialLink: "" },
-    { id: "instagram", socialTitle: "Instagram", socialLink: "" },
-  ],
+  phoneNumber: "111-222-3333",
+  calendarUrl: "smoothstack.com",
+  mailingAddress: "8200 Greensboro Drive, Suite 900",
+  mailingAddress2: "McLean Virginia 22102",
+  badgeUrls: [],
 };
 
 export const INITIAL_SIGNATURE_STYLE: _t.SignatureStyles = {
-  employeeName: { font: "Arial", size: 80, weight: 80, color: "#000000" },
-  title: { font: "Arial", size: 40, weight: 50, color: "#000000" },
-  additionalFields: { font: "Arial", size: 20, weight: 30, color: "#000000" },
-  socials: { font: "Arial", size: 20, weight: 30, color: "#000000" },
+  companyLogoUrl: "https://smoothstack.com/smoothstack-2020-logo/",
+  profileDefualtUrl: "https://smoothstack.com/smoothstack-2020-logo/",
+  employeeName: { font: "Arial", size: 35, weight: 800, color: "#000000" },
+  title: { font: "Arial", size: 16, weight: 800, color: "#000000" },
+  additionalFields: { font: "Arial", size: 12, weight: 100, color: "#000000" },
 };
 
-export const SIZE_RANGE = {
-  size: { min: 12, max: 36 },
-  weight: { min: 100, max: 900 },
-};
+export const INITIAL_EMPLOYEES: _t.Employee[] = [
+  INITIAL_SIGNATURE,
+  {
+    employeeId: 2,
+    firstName: "Test",
+    lastName: "Test",
+    title: "Java Developer",
+    profileUrl: "https://smoothstack.com/smoothstack-2020-logo/",
+    phoneNumber: "111-222-3333",
+    calendarUrl: "smoothstack.com",
+    badgeUrls: [],
+  },
+];
 
-export const FontList: _t.Font[] = [
+export const FontList: string[] = [
   "Arial",
   "Verdana",
   "Poppins",

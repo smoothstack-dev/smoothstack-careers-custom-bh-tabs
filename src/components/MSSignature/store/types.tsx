@@ -1,57 +1,32 @@
-export type Signature = {
-  photo: any;
+export type Employee = {
   employeeId: number;
-  employeeName: string;
+  firstName: string;
+  lastName: string;
+  middleNameInitial?: string;
   title: string;
   profileUrl: string;
-  companyLogoUrl: string;
-  additionalFields: AdditionalField[];
-  socials: Social[];
+  phoneNumber: string;
+  mailingAddress?: string;
+  mailingAddress2?: string;
+  calendarUrl?: string;
+  badgeUrls?: string[];
 };
 
-export type Font =
-  | "Arial"
-  | "Verdana"
-  | "Poppins"
-  | "Trebuchet MS"
-  | "Georgia"
-  | "Palatino"
-  | "Lucida Sans"
-  | "Times New Roman"
-  | "Courier New";
-
-export type SocialId =
-  | "linkedin"
-  | "youtube"
-  | "instagram"
-  | "twitter"
-  | "facebook";
-
-export type FieldId = "website" | "phone" | "address" | "mobile";
-
-export type Icons = SocialId | FieldId;
-
-export type Social = {
-  id: SocialId;
-  socialTitle: string;
-  socialLink: string;
-};
-
-export type AdditionalField = {
-  id: FieldId;
-  fieldName: string;
-  fieldValue: string;
-};
+export type SignatureStyleFields =
+  | "employeeName"
+  | "title"
+  | "additionalFields";
 
 export type SignatureStyles = {
+  companyLogoUrl: string;
+  profileDefualtUrl: string;
   employeeName: Styles;
   title: Styles;
   additionalFields: Styles;
-  socials: Styles;
 };
 
 export type Styles = {
-  font: Font;
+  font: string;
   size: number;
   weight: number;
   color: string;

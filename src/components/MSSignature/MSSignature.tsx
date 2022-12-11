@@ -1,20 +1,22 @@
 import React from "react";
 import "./style.css";
-import { Col, Container, Row } from "react-bootstrap";
-import { Preview } from "./Preview";
-import { Settings } from "./Settings";
+import { Container, Tab, Tabs } from "react-bootstrap";
+import { SignatureDesign } from "./SignatureDesign";
+import { EmployeeSettings } from "./EmployeeSettings";
 
 export const MSSignature: React.FC<{}> = ({}) => {
   return (
     <Container>
-      <Row>
-        <Col md={4}>
-          <Settings />
-        </Col>
-        <Col md={8}>
-          <Preview />
-        </Col>
-      </Row>
+      <div>
+        <Tabs defaultActiveKey="design" transition={false} className="mb-3">
+          <Tab eventKey="design" title="Signature Design">
+            <SignatureDesign />
+          </Tab>
+          <Tab eventKey="details" title="Employee Data">
+            <EmployeeSettings />
+          </Tab>
+        </Tabs>
+      </div>
     </Container>
   );
 };
