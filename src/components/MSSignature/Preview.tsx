@@ -58,55 +58,62 @@ export const Preview: React.FC<{ data: _t.Employee }> = ({ data }) => {
 
   return (
     <div style={CardContainerStyle}>
-      <table>
+      <table
+        style={{
+          height: "175px",
+        }}
+      >
         <tr>
-          <th>
+          <th rowSpan={4}>
             <div
               style={{
                 height: "175px",
-                maxWidth: "225px",
+                maxWidth: "175px",
+                marginRight: "5px",
                 overflow: "hidden",
-                padding: "5px",
-                margin: "0px",
               }}
             >
               <img
-                src={data.profileUrl}
+                src={data.profileUrl ?? signatureStyle.profileDefualtUrl}
                 style={{
-                  padding: "2px",
                   display: "block",
-                  height: "170px",
+                  height: "175px",
                   width: "auto",
                 }}
               />
             </div>
           </th>
+        </tr>
+        <tr>
           <th>
+            {" "}
             {/* Name and Title */}
             <span style={NameSectionStyle}>{employeeName}</span>
             <span style={BreakStyleSmall} />
             <span style={TitleSectionStyle}>{data.title}</span>
+          </th>
+        </tr>
+        <tr>
+          <th>
             {/* Additional Fields */}
             <div style={AdditionalSectionStyle}>
-              {data.phoneNumber && (
-                <>
+              <>
+                {data.calendarUrl && (
                   <span>
                     <TfiIcon.TfiMobile /> {data.phoneNumber}
                   </span>
-                  <span style={BreakStyleMedium} />
-                </>
-              )}
-              {data.calendarUrl && (
-                <>
+                )}
+                {data.calendarUrl && data.phoneNumber && <> | </>}
+                {data.calendarUrl && (
                   <span>
                     <AiIcon.AiOutlineGlobal />{" "}
                     <a href={data.calendarUrl} target="_blank">
                       {data.calendarUrl}
                     </a>
                   </span>
-                  <span style={BreakStyleMedium} />
-                </>
-              )}
+                )}
+                <span style={BreakStyleMedium} />
+              </>
               {data.mailingAddress && (
                 <>
                   {" "}
@@ -117,24 +124,35 @@ export const Preview: React.FC<{ data: _t.Employee }> = ({ data }) => {
                   <span>
                     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{data.mailingAddress2}
                   </span>
-                  <span style={BreakStyleMedium} />
                 </>
               )}
             </div>
-            <div>
-              <span style={BreakStyleMedium} />
-            </div>
+          </th>
+        </tr>
+        <tr>
+          <th>
             {/* Comp Logo */}
             <div>
-              <span style={BreakStyleMedium} />
               <img
-                src={data.profileUrl}
+                src={signatureStyle.companyLogoUrl}
                 style={{
-                  marginTop: "5px",
                   height: "25px",
                   width: "auto",
                 }}
               />
+            </div>
+            <div>
+              {data.badgeUrls?.map((badge) => {
+                return (
+                  <img
+                    src={badge}
+                    style={{
+                      height: "25px",
+                      width: "25px",
+                    }}
+                  />
+                );
+              })}
             </div>
           </th>
         </tr>

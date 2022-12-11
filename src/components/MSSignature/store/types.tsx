@@ -20,6 +20,9 @@ export type SignatureStyleFields =
 export type SignatureStyles = {
   companyLogoUrl: string;
   profileDefualtUrl: string;
+  profileSize: number;
+  badgeSize: number;
+  companyLogoSize: number;
   employeeName: Styles;
   title: Styles;
   additionalFields: Styles;
@@ -28,8 +31,9 @@ export type SignatureStyles = {
 export type Styles = {
   font: string;
   size: number;
-  weight: number;
+  weight: string; // bold or normal
   color: string;
+  italic?: boolean;
 };
 
 export type Update = {

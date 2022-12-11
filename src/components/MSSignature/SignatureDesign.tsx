@@ -1,6 +1,7 @@
 import React from "react";
 import {
   Button,
+  ButtonGroup,
   Col,
   Container,
   Dropdown,
@@ -9,6 +10,7 @@ import {
   OverlayTrigger,
   Popover,
   Row,
+  ToggleButton,
 } from "react-bootstrap";
 import styled from "styled-components";
 import { ChromePicker } from "react-color";
@@ -16,7 +18,6 @@ import useSignatureStyle from "./store/signatureStyle";
 import { FontList, INITIAL_SIGNATURE } from "./store/literal";
 import { Preview } from "./Preview";
 import { SignatureStyleFields } from "./store/types";
-import { toInteger } from "lodash";
 
 const SettingContainer = styled.div`
   max-height: 650px;
@@ -115,6 +116,40 @@ const DesignSection: React.FC<{}> = ({}) => {
           </Row>
           <br />
           <Row>
+            <Col md={3}>Weight</Col>
+            <Col md={9}>
+              <ButtonGroup>
+                <ToggleButton
+                  key={`radio-${field}-1`}
+                  id={`radio-${field}-1`}
+                  type="checkbox"
+                  variant={"outline-primary"}
+                  name="checkbox"
+                  value={"normal"}
+                  size="sm"
+                  checked={signatureStyle[field].weight === "normal"}
+                  onChange={() => updateSubStyle(field, "weight", "normal")}
+                >
+                  Regular
+                </ToggleButton>
+                <ToggleButton
+                  key={`radio-${field}-2`}
+                  id={`radio-${field}-2`}
+                  type="checkbox"
+                  variant={"outline-primary"}
+                  name="checkbox"
+                  value={"bold"}
+                  size="sm"
+                  checked={signatureStyle[field].weight === "bold"}
+                  onChange={() => updateSubStyle(field, "weight", "bold")}
+                >
+                  <strong>Bold</strong>
+                </ToggleButton>
+              </ButtonGroup>
+            </Col>
+          </Row>
+          <br />
+          <Row>
             <Col md={3}>{`Size (${signatureStyle[field].size}px)`}</Col>
             <Col md={9}>
               <Form.Range
@@ -122,22 +157,6 @@ const DesignSection: React.FC<{}> = ({}) => {
                   updateSubStyle(field, "size", +e.target.value / 2);
                 }}
                 value={signatureStyle[field].size * 2}
-              />
-            </Col>
-          </Row>
-          <br />
-          <Row>
-            <Col md={3}>Weight</Col>
-            <Col md={9}>
-              <Form.Range
-                onChange={(e) => {
-                  updateSubStyle(
-                    field,
-                    "weight",
-                    toInteger(+e.target.value / 10) * 100
-                  );
-                }}
-                value={signatureStyle[field].weight / 10}
               />
             </Col>
           </Row>
