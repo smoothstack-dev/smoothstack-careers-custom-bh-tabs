@@ -1,14 +1,15 @@
-import React from "react";
-import { Container, Row } from "react-bootstrap";
-import styled from "styled-components";
+import React, { useEffect } from "react";
 import useSignatureStyle from "./store/signatureStyle";
 import * as _t from "./store/types";
 import * as TfiIcon from "react-icons/tfi";
 import * as HiIcon from "react-icons/hi";
 import * as AiIcon from "react-icons/ai";
+import useSignature from "./store/signature";
 
-export const Preview: React.FC<{ data: _t.Employee }> = ({ data }) => {
+export const Preview: React.FC<{ data?: _t.Signature }> = ({ data }) => {
   const { signatureStyle } = useSignatureStyle();
+  const { signature } = useSignature();
+  const previewData = data ?? signature;
 
   const CardContainerStyle = {
     display: "flex",
@@ -51,10 +52,12 @@ export const Preview: React.FC<{ data: _t.Employee }> = ({ data }) => {
     "margin-bottom": "0em",
   };
 
-  const employeeName = `${data.firstName} ${
-    data.middleNameInitial ? data.middleNameInitial + ". " : ""
+  if (!previewData) return <>No Data to Show</>;
+
+  const employeeName = `${previewData.firstName} ${
+    previewData.middleNameInitial ? previewData.middleNameInitial + ". " : ""
   }
-  ${data.lastName}`;
+  ${previewData.lastName}`;
 
   return (
     <div style={CardContainerStyle}>
@@ -74,7 +77,7 @@ export const Preview: React.FC<{ data: _t.Employee }> = ({ data }) => {
               }}
             >
               <img
-                src={data.profileUrl ?? signatureStyle.profileDefualtUrl}
+                src={previewData.profileUrl ?? signatureStyle.profileDefualtUrl}
                 style={{
                   display: "block",
                   height: "175px",
@@ -85,44 +88,45 @@ export const Preview: React.FC<{ data: _t.Employee }> = ({ data }) => {
           </th>
         </tr>
         <tr>
-          <th>
+          <th style={{ verticalAlign: "top" }}>
             {" "}
             {/* Name and Title */}
             <span style={NameSectionStyle}>{employeeName}</span>
             <span style={BreakStyleSmall} />
-            <span style={TitleSectionStyle}>{data.title}</span>
+            <span style={TitleSectionStyle}>{previewData.title}</span>
           </th>
         </tr>
         <tr>
-          <th>
+          <th style={{ verticalAlign: "top", height: "50px" }}>
             {/* Additional Fields */}
             <div style={AdditionalSectionStyle}>
               <>
-                {data.calendarUrl && (
+                {previewData.phoneNumber && (
                   <span>
-                    <TfiIcon.TfiMobile /> {data.phoneNumber}
+                    <TfiIcon.TfiMobile /> {previewData.phoneNumber}
                   </span>
                 )}
-                {data.calendarUrl && data.phoneNumber && <> | </>}
-                {data.calendarUrl && (
+                {previewData.calendarUrl && previewData.phoneNumber && <> | </>}
+                {previewData.calendarUrl && (
                   <span>
                     <AiIcon.AiOutlineGlobal />{" "}
-                    <a href={data.calendarUrl} target="_blank">
-                      {data.calendarUrl}
+                    <a href={previewData.calendarUrl} target="_blank">
+                      {previewData.calendarUrl}
                     </a>
                   </span>
                 )}
                 <span style={BreakStyleMedium} />
               </>
-              {data.mailingAddress && (
+              {previewData.mailingAddress && (
                 <>
                   {" "}
                   <span>
-                    <HiIcon.HiOutlineOfficeBuilding /> {data.mailingAddress}
+                    <HiIcon.HiOutlineOfficeBuilding />{" "}
+                    {previewData.mailingAddress}
                   </span>
                   <span style={BreakStyleMedium} />
                   <span>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{data.mailingAddress2}
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{previewData.mailingAddress2}
                   </span>
                 </>
               )}
@@ -142,7 +146,7 @@ export const Preview: React.FC<{ data: _t.Employee }> = ({ data }) => {
               />
             </div>
             <div>
-              {data.badgeUrls?.map((badge) => {
+              {previewData.badgeUrls?.map((badge) => {
                 return (
                   <img
                     src={badge}

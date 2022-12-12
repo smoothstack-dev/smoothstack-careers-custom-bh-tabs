@@ -1,15 +1,24 @@
-export type Employee = {
-  employeeId: number;
+export type Signature = {
+  primaryEmail: string;
   firstName: string;
   lastName: string;
   middleNameInitial?: string;
   title: string;
-  profileUrl: string;
   phoneNumber: string;
+  profileUrl?: string;
   mailingAddress?: string;
   mailingAddress2?: string;
   calendarUrl?: string;
   badgeUrls?: string[];
+};
+
+// From Microsoft
+export type EmployeeData = {
+  mail: string;
+  givenName: string;
+  surname: string;
+  jobTitle: string;
+  mobilePhone: string;
 };
 
 export type SignatureStyleFields =

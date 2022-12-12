@@ -15,7 +15,7 @@ import {
 import styled from "styled-components";
 import { ChromePicker } from "react-color";
 import useSignatureStyle from "./store/signatureStyle";
-import { FontList, INITIAL_SIGNATURE } from "./store/literal";
+import { FontList, MOCK_SIGNATURE } from "./store/literal";
 import { Preview } from "./Preview";
 import { SignatureStyleFields } from "./store/types";
 
@@ -48,7 +48,7 @@ export const SignatureDesign: React.FC<{}> = ({}) => {
                   <strong>Signature Preview</strong>
                 </Row>
                 {/* Actual Signature Starting Point */}
-                <Preview data={INITIAL_SIGNATURE} />
+                <Preview data={MOCK_SIGNATURE} />
               </Container>
             </PreviewContainer>
           </Col>

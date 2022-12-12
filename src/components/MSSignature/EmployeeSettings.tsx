@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Button,
   Col,
@@ -8,21 +8,72 @@ import {
   ListGroup,
   Modal,
   Row,
+  Spinner,
 } from "react-bootstrap";
 import { Preview } from "./Preview";
 import useEmployees from "./store/employees";
 import useSignature from "./store/signature";
-import { Employee } from "./store/types";
+import { EmployeeData, Signature } from "./store/types";
 import styled from "styled-components";
+import { getEmployeeList, getEmployeeSignatureData } from "../../helpers/api";
 
 export const EmployeeSettings: React.FC<{}> = ({}) => {
-  const { employees } = useEmployees();
+  const { employees, setEmployees } = useEmployees();
   const { signature, setSelectedSignature } = useSignature();
+
   const [search, setSearch] = useState<string>("");
-  const employeeName = (e: Employee) => `${e.firstName} ${
-    e.middleNameInitial ? e.middleNameInitial + ". " : ""
-  }
-  ${e.lastName}`;
+  const [isLoadingEmployeeList, setIsLoadingEmployeeList] =
+    useState<boolean>(false);
+  const [isLoadingEmployeeData, setLoadingEmployeeData] =
+    useState<boolean>(false);
+  const [error, setError] = useState<string>("");
+
+  // Retrieve Employee List
+  useEffect(() => {
+    const loadEmployeeList = async () => {
+      setIsLoadingEmployeeList(true);
+      const data = await getEmployeeList();
+      const constructedData: EmployeeData[] = data
+        .filter((d: any) => d.mail)
+        .map((d: any) => {
+          return {
+            mail: (d.mail ?? "").toLowerCase(),
+            givenName: d.givenName ?? "",
+            surname: d.surname ?? "",
+            jobTitle: d.jobTitle ?? "",
+            mobilePhone: d.mobilePhone ?? "",
+          } as EmployeeData;
+        });
+      setEmployees(() => constructedData);
+      setIsLoadingEmployeeList(false);
+    };
+    loadEmployeeList();
+  }, []);
+
+  // Retrieve Existing Employee Signature Data
+  const handleGetEmployeeData = async (selectedEmployee: EmployeeData) => {
+    const primaryEmail = selectedEmployee.mail;
+    const defaultData: Signature = {
+      primaryEmail: selectedEmployee.mail,
+      firstName: selectedEmployee.givenName,
+      lastName: selectedEmployee.surname,
+      title: selectedEmployee.jobTitle,
+      phoneNumber: selectedEmployee.mobilePhone,
+    };
+    try {
+      setError("");
+      setLoadingEmployeeData(true);
+      const data = await getEmployeeSignatureData(primaryEmail);
+      setSelectedSignature(data ?? defaultData);
+      setLoadingEmployeeData(false);
+    } catch {
+      setLoadingEmployeeData(false);
+      setSelectedSignature(defaultData);
+    }
+  };
+
+  // Styleing
+  const employeeName = (e: EmployeeData) => `${e.givenName} ${e.surname}`;
 
   const SettingContainer = styled.div`
     max-height: 550px;
@@ -35,7 +86,7 @@ export const EmployeeSettings: React.FC<{}> = ({}) => {
         <Row>
           <Col md={4}>
             <FloatingLabel
-              label="Search Employee by Name"
+              label="Search Employee by Name or Email"
               className="fieldLabel"
             >
               <Form.Control
@@ -47,33 +98,47 @@ export const EmployeeSettings: React.FC<{}> = ({}) => {
             </FloatingLabel>
             <SettingContainer>
               <br />
-              <ListGroup>
-                {employees
-                  .filter((e) => {
-                    if (search) {
-                      const name = employeeName(e);
-                      return name
-                        .toLocaleLowerCase()
-                        .includes(search.toLocaleLowerCase());
-                    }
-                    return true;
-                  })
-                  .map((e) => {
-                    const isSelected = signature.employeeId === e.employeeId;
-                    return (
-                      <ListGroup.Item
-                        active={isSelected}
-                        onClick={() => setSelectedSignature(e)}
-                      >
-                        {employeeName(e)}
-                      </ListGroup.Item>
-                    );
-                  })}
-              </ListGroup>
+              {isLoadingEmployeeList ? (
+                <Spinner animation={"border"} />
+              ) : (
+                <ListGroup>
+                  {employees
+                    .filter((e) => {
+                      if (search) {
+                        const name = employeeName(e);
+                        return (
+                          name
+                            .toLocaleLowerCase()
+                            .includes(search.toLocaleLowerCase()) ||
+                          e.mail.includes(search.toLocaleLowerCase())
+                        );
+                      }
+                      return true;
+                    })
+                    .map((e) => {
+                      const isSelected = signature?.primaryEmail === e.mail;
+                      return (
+                        <ListGroup.Item
+                          active={isSelected}
+                          onClick={() => {
+                            handleGetEmployeeData(e);
+                          }}
+                        >
+                          <strong>{employeeName(e)}</strong>
+                          <br />
+                          {e.mail}
+                        </ListGroup.Item>
+                      );
+                    })}
+                </ListGroup>
+              )}
             </SettingContainer>
           </Col>
           <Col md={8}>
-            <DetailSection />
+            <DetailSection
+              isLoadingEmployeeData={isLoadingEmployeeData}
+              error={error}
+            />
           </Col>
         </Row>
       </Container>
@@ -81,7 +146,10 @@ export const EmployeeSettings: React.FC<{}> = ({}) => {
   );
 };
 
-const DetailSection: React.FC<{}> = ({}) => {
+const DetailSection: React.FC<{
+  isLoadingEmployeeData: boolean;
+  error: string;
+}> = ({ isLoadingEmployeeData, error }) => {
   const { signature: employee, updateSignature } = useSignature();
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
@@ -116,48 +184,62 @@ const DetailSection: React.FC<{}> = ({}) => {
           <p>
             <strong>Employee Info:</strong>
           </p>
+          {isLoadingEmployeeData ? (
+            <Spinner animation={"border"} />
+          ) : error ? (
+            <p>{error}</p>
+          ) : !employee ? (
+            <p>No Employee Selected. Please select an employee from the list</p>
+          ) : (
+            <div>
+              {createFieldSet("firstName", "First Name", employee.firstName)}
+              {createFieldSet(
+                "middleNameInitial",
+                "Middle Initial (optional)",
+                employee.middleNameInitial
+              )}
+              {createFieldSet("lastName", "Last Name", employee.lastName)}
+              {createFieldSet("title", "Title", employee.title)}
+              {createFieldSet("profileUrl", "Profile URL", employee.profileUrl)}
+              {createFieldSet(
+                "phoneNumber",
+                "Phone Number",
+                employee.phoneNumber
+              )}
+              {createFieldSet(
+                "mailingAddress",
+                "Mailing Address (optional)",
+                employee.mailingAddress
+              )}
+              {createFieldSet(
+                "calendarUrl",
+                "Calendar URL (optional)",
+                employee.calendarUrl
+              )}
+              {createFieldSet(
+                "badgeUrls",
+                "Badge URLs (optional). Please separate badge urls with space",
+                employee.badgeUrls?.join(" ")
+              )}
 
-          {createFieldSet("firstName", "First Name", employee.firstName)}
-          {createFieldSet(
-            "middleNameInitial",
-            "Middle Initial (optional)",
-            employee.middleNameInitial
+              <div
+                style={{
+                  display: "flex",
+                }}
+              >
+                <Button
+                  variant="link"
+                  onClick={handleShow}
+                  style={{
+                    marginRight: "5px",
+                  }}
+                >
+                  Preview
+                </Button>
+                <Button>Save Changes</Button>
+              </div>
+            </div>
           )}
-          {createFieldSet("lastName", "Last Name", employee.lastName)}
-          {createFieldSet("title", "Title", employee.title)}
-          {createFieldSet("profileUrl", "Profile URL", employee.profileUrl)}
-          {createFieldSet("phoneNumber", "Phone Number", employee.phoneNumber)}
-          {createFieldSet(
-            "mailingAddress",
-            "Mailing Address (optional)",
-            employee.mailingAddress
-          )}
-          {createFieldSet(
-            "calendarUrl",
-            "Calendar URL (optional)",
-            employee.calendarUrl
-          )}
-          {createFieldSet(
-            "badgeUrls",
-            "Badge URLs (optional). Please separate badge urls with space",
-            employee.badgeUrls?.join(" ")
-          )}
-        </div>
-        <div
-          style={{
-            display: "flex",
-          }}
-        >
-          <Button
-            variant="link"
-            onClick={handleShow}
-            style={{
-              marginRight: "5px",
-            }}
-          >
-            Preview
-          </Button>
-          <Button>Save Changes</Button>
         </div>
       </div>
 
@@ -179,7 +261,7 @@ const DetailSection: React.FC<{}> = ({}) => {
               padding: "15px",
             }}
           >
-            <Preview data={employee} />
+            {employee && <Preview data={employee} />}
           </div>
         </Modal.Body>
       </Modal>

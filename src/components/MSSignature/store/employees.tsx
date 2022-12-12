@@ -3,9 +3,9 @@ import { useWithImmer } from "../../../helpers/use-with-immer";
 import * as _l from "./literal";
 import * as _t from "./types";
 
-export const employeesStore = atom<_t.Employee[]>({
+export const employeesStore = atom<_t.EmployeeData[]>({
   key: "employees",
-  default: _l.INITIAL_EMPLOYEES,
+  default: [],
 });
 
 export default function useEmployees() {

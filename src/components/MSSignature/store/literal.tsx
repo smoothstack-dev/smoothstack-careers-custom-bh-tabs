@@ -1,7 +1,7 @@
 import * as _t from "./types";
 
-export const INITIAL_SIGNATURE: _t.Employee = {
-  employeeId: 1,
+export const MOCK_SIGNATURE: _t.Signature = {
+  primaryEmail: "defaultemail@smoothstack.com",
   firstName: "Firstname",
   lastName: "Lastname",
   middleNameInitial: "M",
@@ -35,20 +35,6 @@ export const INITIAL_SIGNATURE_STYLE: _t.SignatureStyles = {
     color: "#000000",
   },
 };
-
-export const INITIAL_EMPLOYEES: _t.Employee[] = [
-  INITIAL_SIGNATURE,
-  {
-    employeeId: 2,
-    firstName: "Test",
-    lastName: "Test",
-    title: "Java Developer",
-    profileUrl: "https://smoothstack.com/smoothstack-2020-logo/",
-    phoneNumber: "111-222-3333",
-    calendarUrl: "smoothstack.com",
-    badgeUrls: [],
-  },
-];
 
 export const FontList: string[] = [
   "Arial",

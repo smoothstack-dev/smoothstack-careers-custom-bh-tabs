@@ -4,7 +4,7 @@ import Prescreen from "./components/Prescreen/Prescreen";
 import { Route, Switch } from "react-router-dom";
 import { Button } from "react-bootstrap";
 import { JobDetailsManagement } from "./components/JobDetailsManagement/JobDetailsManagement";
-import { MSSignature } from "./components/MSSignature/MSSignature";
+import { MSSignature } from "./components/MSSignature";
 import {
   AuthenticatedTemplate,
   UnauthenticatedTemplate,

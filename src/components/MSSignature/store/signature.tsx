@@ -3,9 +3,9 @@ import { useWithImmer } from "../../../helpers/use-with-immer";
 import * as _l from "./literal";
 import * as _t from "./types";
 
-export const signatureStore = atom<_t.Employee>({
+export const signatureStore = atom<_t.Signature | undefined>({
   key: "signature",
-  default: _l.INITIAL_SIGNATURE,
+  default: undefined,
 });
 
 export default function useSignature() {
@@ -20,9 +20,9 @@ export default function useSignature() {
     });
   };
 
-  const setSelectedSignature = (employee: _t.Employee) => {
+  const setSelectedSignature = (signature: _t.Signature) => {
     setSignature(() => {
-      return employee;
+      return signature;
     });
   };
 
