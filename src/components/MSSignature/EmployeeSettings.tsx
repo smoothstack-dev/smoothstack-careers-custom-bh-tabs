@@ -16,6 +16,7 @@ import useSignature from "./store/signature";
 import { EmployeeData, Signature } from "./store/types";
 import styled from "styled-components";
 import { getEmployeeList, getEmployeeSignatureData } from "../../helpers/api";
+import useSignatureStyle from "./store/signatureStyle";
 
 export const EmployeeSettings: React.FC<{}> = ({}) => {
   const { employees, setEmployees } = useEmployees();
@@ -151,6 +152,7 @@ const DetailSection: React.FC<{
   error: string;
 }> = ({ isLoadingEmployeeData, error }) => {
   const { signature: employee, updateSignature } = useSignature();
+  const { signatureStyle } = useSignatureStyle();
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
@@ -261,7 +263,9 @@ const DetailSection: React.FC<{
               padding: "15px",
             }}
           >
-            {employee && <Preview data={employee} />}
+            {employee && (
+              <Preview data={employee} signatureStyle={signatureStyle} />
+            )}
           </div>
         </Modal.Body>
       </Modal>

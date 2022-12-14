@@ -110,6 +110,7 @@ export const getEmployeeSignatureData = async (primaryEmail: string) => {
     const response: AxiosResponse = await axios.get(
       `${userSignatureData}?primaryEmail=${primaryEmail}`
     );
+    console.log("response.data", response.data);
     return response.data;
   } catch (err) {
     console.error("Error getting employee signature data", primaryEmail);
