@@ -116,18 +116,20 @@ export const EmployeeSettings: React.FC<{}> = ({}) => {
                       }
                       return true;
                     })
-                    .map((e) => {
-                      const isSelected = signature?.primaryEmail === e.mail;
+                    .map((emp, index) => {
+                      const isSelected = signature?.primaryEmail === emp.mail;
                       return (
                         <ListGroup.Item
+                          id={`list-${index}`}
+                          key={index}
                           active={isSelected}
-                          onClick={() => {
-                            handleGetEmployeeData(e);
+                          onClick={(e) => {
+                            handleGetEmployeeData(emp);
                           }}
                         >
-                          <strong>{employeeName(e)}</strong>
+                          <strong>{employeeName(emp)}</strong>
                           <br />
-                          {e.mail}
+                          {emp.mail}
                         </ListGroup.Item>
                       );
                     })}

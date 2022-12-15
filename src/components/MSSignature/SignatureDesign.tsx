@@ -85,13 +85,15 @@ const mockGenerateSignatureFunc = (data: any) => {
         .replace("[INSERT CALENDAR_URL]", employeeData.calendarUrl)
     : undefined;
   let address = employeeData.mailingAddress
-    ? addressSection
-        .replace("[INSERT MAILING_ADDRESS_1]", employeeData.mailingAddress)
-        .replace(
-          "[INSERT MAILING_ADDRESS_2]",
-          employeeData.mailingAddress2 || " "
-        )
-    : undefined;
+    ? addressSection.replace(
+        "[INSERT MAILING_ADDRESS_1]",
+        employeeData.mailingAddress
+      )
+    : // .replace(
+      //   "[INSERT MAILING_ADDRESS_2]",
+      //   employeeData.mailingAddress2 || " "
+      // )
+      undefined;
 
   const additionalFieldSection = [phoneNumber, calendar].join(" | ") + address;
   updatedLayout = updatedLayout.replace(
@@ -115,8 +117,6 @@ const mockGenerateSignatureFunc = (data: any) => {
     badges += badgeSection.replace("[INSERT BADGE_URL]", b);
   });
   updatedLayout = updatedLayout.replace("[INSERT BADGE_IMG]", badges);
-
-  console.log(updatedLayout);
 };
 
 export const SignatureDesign: React.FC<{}> = ({}) => {
@@ -146,8 +146,7 @@ export const SignatureDesign: React.FC<{}> = ({}) => {
     );
     const phoneNumberSection = ReactDOMServer.renderToString(
       <span>
-        <TfiIcon.TfiMobile />
-        [INSERT PHONE_NUMBER]
+        <TfiIcon.TfiMobile /> [INSERT PHONE_NUMBER]
       </span>
     );
     const calendarSection = ReactDOMServer.renderToString(
@@ -158,21 +157,15 @@ export const SignatureDesign: React.FC<{}> = ({}) => {
         </a>
       </span>
     );
-    const phoneIconSection = ReactDOMServer.renderToString(
-      <span>
-        <TfiIcon.TfiMobile />
-        [INSERT PHONE_NUMBER]
-      </span>
-    );
     const addressSection = ReactDOMServer.renderToString(
       <>
-        <span style={BreakStyleMedium} />
+        <span style={BreakStyleMedium} />{" "}
         <span>
           <HiIcon.HiOutlineOfficeBuilding />
           [INSERT MAILING_ADDRESS_1]
         </span>
-        <span style={BreakStyleMedium} />
-        <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; [INSERT MAILING_ADDRESS_2]</span>
+        {/* <span style={BreakStyleMedium} />
+        <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; [INSERT MAILING_ADDRESS_2]</span> */}
       </>
     );
     const companyLogoSection = ReactDOMServer.renderToString(

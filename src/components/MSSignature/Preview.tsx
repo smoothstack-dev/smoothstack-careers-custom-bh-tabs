@@ -93,7 +93,7 @@ export const Preview: React.FC<{
           </th>
         </tr>
         <tr>
-          <th style={{ verticalAlign: "top" }}>
+          <th style={{ verticalAlign: "top", textAlign: "left" }}>
             {" "}
             {/* Name and Title */}
             <span style={NameSectionStyle}>
@@ -102,7 +102,11 @@ export const Preview: React.FC<{
                 ? `[INSERT EMPLOYEE_NAME]`
                 : employeeName}
             </span>
-            <span style={BreakStyleSmall} />
+            <span
+              style={
+                isGenerateSignatureFrame ? BreakStyleMedium : BreakStyleSmall
+              }
+            />
             <span style={TitleSectionStyle}>
               {isGenerateSignatureFrame
                 ? `[INSERT EMPLOYEE_TITLE]`
@@ -111,7 +115,9 @@ export const Preview: React.FC<{
           </th>
         </tr>
         <tr>
-          <th style={{ verticalAlign: "top", height: "50px" }}>
+          <th
+            style={{ verticalAlign: "top", textAlign: "left", height: "50px" }}
+          >
             {/* Additional Fields */}
             <div style={AdditionalSectionStyle}>
               {isGenerateSignatureFrame ? (
@@ -142,11 +148,11 @@ export const Preview: React.FC<{
                         <HiIcon.HiOutlineOfficeBuilding />{" "}
                         {previewData.mailingAddress}
                       </span>
-                      <span style={BreakStyleMedium} />
+                      {/* <span style={BreakStyleMedium} />
                       <span>
                         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                         {previewData.mailingAddress2}
-                      </span>
+                      </span> */}
                     </>
                   )}
                 </>
@@ -155,7 +161,7 @@ export const Preview: React.FC<{
           </th>
         </tr>
         <tr>
-          <th>
+          <th style={{ verticalAlign: "top", textAlign: "left" }}>
             {/* Comp Logo */}
             <div>
               {isGenerateSignatureFrame ? (
