@@ -6,8 +6,8 @@ export type Signature = {
   title: string;
   phoneNumber: string;
   profileUrl?: string;
+  teamsProfileUrl?: string;
   mailingAddress?: string;
-  mailingAddress2?: string;
   calendarUrl?: string;
   badgeUrls?: string[];
 };
@@ -28,14 +28,25 @@ export type SignatureStyleFields =
 
 export type SignatureStyles = {
   companyLogoUrl: string;
-  profileDefualtUrl: string;
+  profileDefaultUrl: string;
   profileSize: number;
   badgeSize: number;
   companyLogoSize: number;
   employeeName: Styles;
   title: Styles;
   additionalFields: Styles;
+  sections?: HtmlSection;
 };
+
+export interface HtmlSection {
+  signatureLayout: string;
+  profileImageSection: string;
+  phoneNumberSection: string;
+  calendarSection: string;
+  addressSection: string;
+  companyLogoSection: string;
+  badgeSection: string;
+}
 
 export type Styles = {
   font: string;

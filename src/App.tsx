@@ -102,8 +102,10 @@ const App: React.FC = () => {
               <JobDetailsManagement />
             </MSAuth>
           </Route>
-          <Route path="/msSignature">
-            <MSSignature />
+          <Route path="/mssignature">
+            <MSAuth isUserAccountAllowed={isUserAccountAllowed}>
+              <MSSignature />
+            </MSAuth>
           </Route>
           <Route path="/">
             <MSAuth isUserAccountAllowed={isUserAccountAllowed}>

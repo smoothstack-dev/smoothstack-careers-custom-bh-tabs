@@ -13,6 +13,12 @@ export default function useSignatureStyle() {
     useRecoilState(signatureStyleStore)
   );
 
+  const setInitialSignatureStyle = (data: _t.SignatureStyles) => {
+    setStyle(() => {
+      return data;
+    });
+  };
+
   const updateStyle = (key: string, value: any) => {
     setStyle((draft) => {
       const updatedSignature = { ...signatureStyle, [key]: value };
@@ -40,5 +46,6 @@ export default function useSignatureStyle() {
     signatureStyle,
     updateStyle,
     updateSubStyle,
+    setInitialSignatureStyle,
   };
 }

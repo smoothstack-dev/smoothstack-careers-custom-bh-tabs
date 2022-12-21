@@ -17,16 +17,17 @@ import { EmployeeData, Signature } from "./store/types";
 import styled from "styled-components";
 import { getEmployeeList, getEmployeeSignatureData } from "../../helpers/api";
 import useSignatureStyle from "./store/signatureStyle";
+import * as API from "./../../helpers/api";
 
 export const EmployeeSettings: React.FC<{}> = ({}) => {
   const { employees, setEmployees } = useEmployees();
   const { signature, setSelectedSignature } = useSignature();
-
   const [search, setSearch] = useState<string>("");
   const [isLoadingEmployeeList, setIsLoadingEmployeeList] =
     useState<boolean>(false);
   const [isLoadingEmployeeData, setLoadingEmployeeData] =
     useState<boolean>(false);
+  const [btnText, setBtnText] = useState<string>("Save Changes");
   const [error, setError] = useState<string>("");
 
   // Retrieve Employee List
@@ -51,6 +52,8 @@ export const EmployeeSettings: React.FC<{}> = ({}) => {
     loadEmployeeList();
   }, []);
 
+  const ref = React.useRef<null | HTMLDivElement>(null);
+
   // Retrieve Existing Employee Signature Data
   const handleGetEmployeeData = async (selectedEmployee: EmployeeData) => {
     const primaryEmail = selectedEmployee.mail;
@@ -71,6 +74,7 @@ export const EmployeeSettings: React.FC<{}> = ({}) => {
       setLoadingEmployeeData(false);
       setSelectedSignature(defaultData);
     }
+    ref.current?.scrollIntoView({ behavior: "auto" });
   };
 
   // Styleing
@@ -119,18 +123,20 @@ export const EmployeeSettings: React.FC<{}> = ({}) => {
                     .map((emp, index) => {
                       const isSelected = signature?.primaryEmail === emp.mail;
                       return (
-                        <ListGroup.Item
-                          id={`list-${index}`}
-                          key={index}
-                          active={isSelected}
-                          onClick={(e) => {
-                            handleGetEmployeeData(emp);
-                          }}
-                        >
-                          <strong>{employeeName(emp)}</strong>
-                          <br />
-                          {emp.mail}
-                        </ListGroup.Item>
+                        <div ref={isSelected ? ref : undefined}>
+                          <ListGroup.Item
+                            id={`list-${index}`}
+                            key={index}
+                            active={isSelected}
+                            onClick={(e) => {
+                              handleGetEmployeeData(emp);
+                            }}
+                          >
+                            <strong>{employeeName(emp)}</strong>
+                            <br />
+                            {emp.mail}
+                          </ListGroup.Item>
+                        </div>
                       );
                     })}
                 </ListGroup>
@@ -141,6 +147,8 @@ export const EmployeeSettings: React.FC<{}> = ({}) => {
             <DetailSection
               isLoadingEmployeeData={isLoadingEmployeeData}
               error={error}
+              btnText={btnText}
+              setBtnText={setBtnText}
             />
           </Col>
         </Row>
@@ -151,13 +159,29 @@ export const EmployeeSettings: React.FC<{}> = ({}) => {
 
 const DetailSection: React.FC<{
   isLoadingEmployeeData: boolean;
+  btnText: string;
+  setBtnText: any;
   error: string;
-}> = ({ isLoadingEmployeeData, error }) => {
+}> = ({ isLoadingEmployeeData, error, btnText, setBtnText }) => {
+  const [isSaving, setIsSaving] = useState<boolean>(false);
   const { signature: employee, updateSignature } = useSignature();
   const { signatureStyle } = useSignatureStyle();
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
+
+  const handleSave = async () => {
+    try {
+      setIsSaving(true);
+      setBtnText("Saving employee data...");
+      const response = await API.saveEmployeeSignatureData(employee);
+      setIsSaving(false);
+      setBtnText("Saved");
+    } catch {
+      setIsSaving(false);
+      setBtnText("Saved");
+    }
+  };
 
   const createFieldSet = (
     field: string,
@@ -240,7 +264,9 @@ const DetailSection: React.FC<{
                 >
                   Preview
                 </Button>
-                <Button>Save Changes</Button>
+                <Button onClick={() => handleSave()} disabled={isSaving}>
+                  {btnText}
+                </Button>
               </div>
             </div>
           )}

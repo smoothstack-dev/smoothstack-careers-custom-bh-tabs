@@ -80,7 +80,7 @@ export const Preview: React.FC<{
               ) : (
                 <img
                   src={
-                    previewData.profileUrl ?? signatureStyle.profileDefualtUrl
+                    previewData.profileUrl ?? signatureStyle.profileDefaultUrl
                   }
                   style={{
                     display: "block",
@@ -148,11 +148,6 @@ export const Preview: React.FC<{
                         <HiIcon.HiOutlineOfficeBuilding />{" "}
                         {previewData.mailingAddress}
                       </span>
-                      {/* <span style={BreakStyleMedium} />
-                      <span>
-                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                        {previewData.mailingAddress2}
-                      </span> */}
                     </>
                   )}
                 </>

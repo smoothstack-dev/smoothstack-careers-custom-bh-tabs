@@ -4,13 +4,22 @@ import { useHistory } from "react-router-dom";
 
 export const MainPage: React.FC<{}> = () => {
   const history = useHistory();
-  const handlePageChange = () => {
-    history.push("/jobDetailsManagement");
+  const handlePageChange = (route: string) => {
+    history.push(route);
   };
 
   return (
     <div>
-      <Button variant="outline-primary" onClick={() => handlePageChange()}>
+      <Button
+        variant="outline-primary"
+        onClick={() => handlePageChange("/jobDetailsManagement")}
+      >
+        Job Description Management
+      </Button>
+      <Button
+        variant="outline-primary"
+        onClick={() => handlePageChange("/mssignature")}
+      >
         Job Description Management
       </Button>
     </div>

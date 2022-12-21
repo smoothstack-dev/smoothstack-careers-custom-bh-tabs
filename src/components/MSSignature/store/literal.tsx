@@ -10,8 +10,7 @@ export const MOCK_SIGNATURE: _t.Signature = {
     "https://smoothstack.com/wp-content/uploads/2018/07/cropped-favicon.png",
   phoneNumber: "111-222-3333",
   calendarUrl: "smoothstack.com",
-  mailingAddress: "8200 Greensboro Drive, Suite 900",
-  mailingAddress2: "McLean Virginia 22102",
+  mailingAddress: "8200 Greensboro Drive, Suite 900 McLean Virginia 22102",
   badgeUrls: [
     "https://storage.googleapis.com/minted-nfts/smoothstack/memberships/images/0.png",
     "https://storage.googleapis.com/minted-nfts/smoothstack/skills/images/0.png",
@@ -21,7 +20,7 @@ export const MOCK_SIGNATURE: _t.Signature = {
 
 export const INITIAL_SIGNATURE_STYLE: _t.SignatureStyles = {
   companyLogoUrl: "https://smoothstack.com/smoothstack-2020-logo/",
-  profileDefualtUrl:
+  profileDefaultUrl:
     "https://smoothstack.com/wp-content/uploads/2018/07/cropped-favicon.png",
   profileSize: 175,
   badgeSize: 25,

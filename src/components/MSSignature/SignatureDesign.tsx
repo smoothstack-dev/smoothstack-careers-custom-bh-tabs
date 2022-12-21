@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   Button,
   ButtonGroup,
@@ -19,6 +19,7 @@ import { FontList, MOCK_SIGNATURE } from "./store/literal";
 import { Preview } from "./Preview";
 import { SignatureStyleFields } from "./store/types";
 import ReactDOMServer from "react-dom/server";
+import * as API from "./../../helpers/api";
 import * as TfiIcon from "react-icons/tfi";
 import * as HiIcon from "react-icons/hi";
 import * as AiIcon from "react-icons/ai";
@@ -37,96 +38,28 @@ const PreviewContainer = styled.div`
   min-height: 700px;
 `;
 
-const mockGenerateSignatureFunc = (data: any) => {
-  const { companyLogoUrl, profileDefualtUrl } = data;
-  const {
-    signatureLayout,
-    profileImageSection,
-    phoneNumberSection,
-    calendarSection,
-    addressSection,
-    companyLogoSection,
-    badgeSection,
-  } = data.signatureHtml;
-
-  // 1. start with layout
-  const employeeData = MOCK_SIGNATURE;
-  let updatedLayout = signatureLayout;
-
-  // 2. replace profile image
-  const profileUrl = employeeData.profileUrl || profileDefualtUrl;
-  const profileImg = profileImageSection.replace(
-    "[INSERT PROFILE_URL]",
-    profileUrl
-  );
-  updatedLayout = updatedLayout.replace("[INSERT PROFILE_IMG]", profileImg);
-
-  // 3. replace employee name and title
-  const employeeName = `${employeeData.firstName} ${
-    employeeData.middleNameInitial ? employeeData.middleNameInitial + ". " : ""
-  }
-  ${employeeData.lastName}`;
-  updatedLayout = updatedLayout.replace("[INSERT EMPLOYEE_NAME]", employeeName);
-  updatedLayout = updatedLayout.replace(
-    "[INSERT EMPLOYEE_TITLE]",
-    employeeData.title
-  );
-
-  // 4. replace additional fields
-  const phoneNumber = employeeData.phoneNumber
-    ? phoneNumberSection.replace(
-        "[INSERT PHONE_NUMBER]",
-        employeeData.phoneNumber
-      )
-    : undefined;
-  const calendar = employeeData.calendarUrl
-    ? calendarSection
-        .replace("[INSERT CALENDAR_URL]", employeeData.calendarUrl)
-        .replace("[INSERT CALENDAR_URL]", employeeData.calendarUrl)
-    : undefined;
-  let address = employeeData.mailingAddress
-    ? addressSection.replace(
-        "[INSERT MAILING_ADDRESS_1]",
-        employeeData.mailingAddress
-      )
-    : // .replace(
-      //   "[INSERT MAILING_ADDRESS_2]",
-      //   employeeData.mailingAddress2 || " "
-      // )
-      undefined;
-
-  const additionalFieldSection = [phoneNumber, calendar].join(" | ") + address;
-  updatedLayout = updatedLayout.replace(
-    "[INSERT ADDITIONAL_FIELDS]",
-    additionalFieldSection
-  );
-
-  // 5. replace company logo
-  const companyLogo = companyLogoSection.replace(
-    "[INSERT COMPANY_LOGO_URL]",
-    companyLogoUrl || ""
-  );
-  updatedLayout = updatedLayout.replace(
-    "[INSERT COMPANY_LOGO_IMG]",
-    companyLogo
-  );
-
-  // 6. replace badges
-  let badges = "";
-  employeeData.badgeUrls?.forEach((b) => {
-    badges += badgeSection.replace("[INSERT BADGE_URL]", b);
-  });
-  updatedLayout = updatedLayout.replace("[INSERT BADGE_IMG]", badges);
-};
-
 export const SignatureDesign: React.FC<{}> = ({}) => {
   const { signatureStyle } = useSignatureStyle();
+  const [isSaving, setIsSaving] = React.useState<boolean>(false);
+  const [btnText, setBtnText] = React.useState<string>("Save Changes");
   const BreakStyleMedium = {
     display: "block",
     marginBottom: "0em",
   };
 
-  const handleSave = () => {
+  useEffect(() => {
+    if (btnText !== "Save Changes") setBtnText("Save Changes");
+  }, [signatureStyle]);
+
+  const convertHtmlToString = (
+    element: React.ReactElement<any, string | React.JSXElementConstructor<any>>
+  ) => {
+    return ReactDOMServer.renderToString(element);
+  };
+
+  const handleSave = async () => {
+    setIsSaving(true);
+    setBtnText("Saving your changes....");
     const signatureLayout = ReactDOMServer.renderToString(
       <Preview
         data={MOCK_SIGNATURE}
@@ -134,7 +67,7 @@ export const SignatureDesign: React.FC<{}> = ({}) => {
         isGenerateSignatureFrame={true}
       />
     );
-    const profileImageSection = ReactDOMServer.renderToString(
+    const profileImageSection = convertHtmlToString(
       <img
         src="[INSERT PROFILE_URL]"
         style={{
@@ -144,12 +77,12 @@ export const SignatureDesign: React.FC<{}> = ({}) => {
         }}
       />
     );
-    const phoneNumberSection = ReactDOMServer.renderToString(
+    const phoneNumberSection = convertHtmlToString(
       <span>
         <TfiIcon.TfiMobile /> [INSERT PHONE_NUMBER]
       </span>
     );
-    const calendarSection = ReactDOMServer.renderToString(
+    const calendarSection = convertHtmlToString(
       <span>
         <AiIcon.AiOutlineGlobal />{" "}
         <a href="[INSERT CALENDAR_URL]" target="_blank">
@@ -157,18 +90,18 @@ export const SignatureDesign: React.FC<{}> = ({}) => {
         </a>
       </span>
     );
-    const addressSection = ReactDOMServer.renderToString(
+    const addressSection = convertHtmlToString(
       <>
         <span style={BreakStyleMedium} />{" "}
         <span>
           <HiIcon.HiOutlineOfficeBuilding />
-          [INSERT MAILING_ADDRESS_1]
+          [INSERT MAILING_ADDRESS]
         </span>
         {/* <span style={BreakStyleMedium} />
         <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; [INSERT MAILING_ADDRESS_2]</span> */}
       </>
     );
-    const companyLogoSection = ReactDOMServer.renderToString(
+    const companyLogoSection = convertHtmlToString(
       <img
         src="[INSERT COMPANY_LOGO_URL]"
         style={{
@@ -177,7 +110,7 @@ export const SignatureDesign: React.FC<{}> = ({}) => {
         }}
       />
     );
-    const badgeSection = ReactDOMServer.renderToString(
+    const badgeSection = convertHtmlToString(
       <img
         src="[INSERT BADGE_URL]"
         style={{
@@ -197,9 +130,16 @@ export const SignatureDesign: React.FC<{}> = ({}) => {
     };
     const requestData = {
       ...signatureStyle,
-      signatureHtml,
+      sections: signatureHtml,
     };
-    mockGenerateSignatureFunc(requestData);
+    try {
+      const response = await API.saveSignatureConfigData(requestData);
+      setIsSaving(false);
+      setBtnText("Saved");
+    } catch {
+      setIsSaving(false);
+      setBtnText("Something when wrong, please save it again!");
+    }
   };
 
   return (
@@ -207,7 +147,11 @@ export const SignatureDesign: React.FC<{}> = ({}) => {
       <Container>
         <Row>
           <Col md={4}>
-            <DesignSection handleSave={handleSave} />
+            <DesignSection
+              handleSave={handleSave}
+              btnText={btnText}
+              isSaving={isSaving}
+            />
           </Col>
           <Col md={8}>
             <PreviewContainer>
@@ -229,7 +173,11 @@ export const SignatureDesign: React.FC<{}> = ({}) => {
   );
 };
 
-const DesignSection: React.FC<{ handleSave: any }> = ({ handleSave }) => {
+const DesignSection: React.FC<{
+  handleSave: any;
+  btnText: string;
+  isSaving: boolean;
+}> = ({ handleSave, btnText, isSaving }) => {
   const { signatureStyle, updateStyle, updateSubStyle } = useSignatureStyle();
 
   const colorPopover = (field: SignatureStyleFields) => {
@@ -354,9 +302,9 @@ const DesignSection: React.FC<{ handleSave: any }> = ({ handleSave }) => {
           <p>
             <strong>Pofile Defualt Url</strong>
             <Form.Control
-              value={signatureStyle.profileDefualtUrl || ""}
+              value={signatureStyle.profileDefaultUrl || ""}
               onChange={(e) => {
-                updateStyle("profileDefualtUrl", e.target.value);
+                updateStyle("profileDefaultUrl", e.target.value);
               }}
             />
           </p>
@@ -381,7 +329,9 @@ const DesignSection: React.FC<{ handleSave: any }> = ({ handleSave }) => {
         </div>
       </SettingContainer>
       <br />
-      <Button onClick={() => handleSave()}>Save Changes</Button>
+      <Button onClick={() => handleSave()} disabled={isSaving}>
+        {btnText}
+      </Button>
     </div>
   );
 };

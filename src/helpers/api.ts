@@ -1,4 +1,5 @@
 import axios, { AxiosResponse } from "axios";
+import { SignatureStyles } from "../components/MSSignature/store/types";
 import { FORM, FORM_TYPE, PrescreenForm, TechScreenForm } from "../types/forms";
 
 // const carearApiEndpoint = "http://localhost:3000/local/";
@@ -19,7 +20,8 @@ const msUsersGet = authApiEndpoint + "users";
 //  smoothstack-signature-api
 const signatureEndpoint =
   " https://njbmha3pnf.execute-api.us-east-1.amazonaws.com/prod/";
-const userSignatureData = signatureEndpoint + "signature";
+const signatureUserData = signatureEndpoint + "user";
+const signatureConfigData = signatureEndpoint + "config";
 
 // Prescreen
 export const getPrescreenData = async (candidateId: string) => {
@@ -105,14 +107,47 @@ export const getEmployeeList = async () => {
   }
 };
 
+// Signature Api
 export const getEmployeeSignatureData = async (primaryEmail: string) => {
   try {
     const response: AxiosResponse = await axios.get(
-      `${userSignatureData}?primaryEmail=${primaryEmail}`
+      `${signatureUserData}?primaryEmail=${primaryEmail}`
     );
-    console.log("response.data", response.data);
     return response.data;
   } catch (err) {
     console.error("Error getting employee signature data", primaryEmail);
+  }
+};
+
+export const saveEmployeeSignatureData = async (data: any) => {
+  try {
+    const response: AxiosResponse = await axios.post(
+      `${signatureUserData}`,
+      data
+    );
+    return response.data;
+  } catch (err) {
+    console.error("Error saving employee signature data");
+  }
+};
+
+export const getSignatureConfig = async () => {
+  try {
+    const response: AxiosResponse = await axios.get(`${signatureConfigData}`);
+    return response.data;
+  } catch (err) {
+    console.error("Error getting signature config data", err);
+  }
+};
+
+export const saveSignatureConfigData = async (data: SignatureStyles) => {
+  try {
+    const response: AxiosResponse = await axios.post(
+      `${signatureConfigData}`,
+      data
+    );
+    return response.data;
+  } catch (err) {
+    console.error("Error saving signature config data");
   }
 };
