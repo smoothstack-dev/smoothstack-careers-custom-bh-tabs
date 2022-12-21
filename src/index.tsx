@@ -8,6 +8,7 @@ import { PublicClientApplication } from "@azure/msal-browser";
 import { MsalProvider } from "@azure/msal-react";
 import { msalConfig } from "./authConfig";
 import { BrowserRouter } from "react-router-dom";
+import { RecoilRoot } from "recoil";
 
 /**
  * Initialize a PublicClientApplication instance which is provided to the MsalProvider component
@@ -18,9 +19,11 @@ const msalInstance = new PublicClientApplication(msalConfig);
 ReactDOM.render(
   <React.StrictMode>
     <MsalProvider instance={msalInstance}>
-      <BrowserRouter>
-        <App />
-      </BrowserRouter>
+      <RecoilRoot>
+        <BrowserRouter>
+          <App />
+        </BrowserRouter>
+      </RecoilRoot>
     </MsalProvider>
   </React.StrictMode>,
   document.getElementById("root")
