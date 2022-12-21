@@ -7,10 +7,13 @@ export const useWithImmer = <T,>(props: [T, SetterOrUpdater<T>]) => {
   type updaterType = (draft: Draft<typeof value>) => void;
   return [
     value,
-    React.useCallback((updater: updaterType) => {
-      const isFn = typeof updater === "function";
-      if (isFn) setValue(produce<Draft<typeof value>>(updater));
-      else setValue(freeze(updater));
-    }, []),
+    React.useCallback(
+      (updater: updaterType) => {
+        const isFn = typeof updater === "function";
+        if (isFn) setValue(produce<Draft<typeof value>>(updater));
+        else setValue(freeze(updater));
+      },
+      [setValue]
+    ),
   ] as readonly [T, (updater: (draft: T) => void) => void];
 };

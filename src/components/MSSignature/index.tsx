@@ -6,7 +6,7 @@ import { EmployeeSettings } from "./EmployeeSettings";
 import useSignatureStyle from "./store/signatureStyle";
 import * as API from "./../../helpers/api";
 
-export const MSSignature: React.FC<{}> = ({}) => {
+export const MSSignature = () => {
   const [isLoading, setLoading] = React.useState<boolean>(false);
   const { setInitialSignatureStyle } = useSignatureStyle();
 
@@ -18,7 +18,7 @@ export const MSSignature: React.FC<{}> = ({}) => {
       setLoading(false);
     };
     getSignatureData();
-  }, []);
+  }, [setInitialSignatureStyle]);
 
   return (
     <Container>

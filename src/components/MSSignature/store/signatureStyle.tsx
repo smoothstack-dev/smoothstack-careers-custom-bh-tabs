@@ -32,7 +32,6 @@ export default function useSignatureStyle() {
     value: any
   ) => {
     setStyle((draft) => {
-      let convertedValue = value;
       const updatedStyle = { ...signatureStyle[field], [key]: value };
       const updatedSignatureStyle = {
         ...signatureStyle,
