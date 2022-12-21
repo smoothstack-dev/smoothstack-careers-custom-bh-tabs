@@ -19,7 +19,7 @@ import { getEmployeeList, getEmployeeSignatureData } from "../../helpers/api";
 import useSignatureStyle from "./store/signatureStyle";
 import * as API from "./../../helpers/api";
 
-export const EmployeeSettings: React.FC<{}> = ({}) => {
+export const EmployeeSettings = () => {
   const { employees, setEmployees } = useEmployees();
   const { signature, setSelectedSignature } = useSignature();
   const [search, setSearch] = useState<string>("");
@@ -46,11 +46,13 @@ export const EmployeeSettings: React.FC<{}> = ({}) => {
             mobilePhone: d.mobilePhone ?? "",
           } as EmployeeData;
         });
-      setEmployees(() => constructedData);
+      setEmployees(() => {
+        return constructedData;
+      });
       setIsLoadingEmployeeList(false);
     };
     loadEmployeeList();
-  }, []);
+  }, [setEmployees]);
 
   const ref = React.useRef<null | HTMLDivElement>(null);
 
@@ -174,7 +176,7 @@ const DetailSection: React.FC<{
     try {
       setIsSaving(true);
       setBtnText("Saving employee data...");
-      const response = await API.saveEmployeeSignatureData(employee);
+      await API.saveEmployeeSignatureData(employee);
       setIsSaving(false);
       setBtnText("Saved");
     } catch {

@@ -38,7 +38,7 @@ const PreviewContainer = styled.div`
   min-height: 700px;
 `;
 
-export const SignatureDesign: React.FC<{}> = ({}) => {
+export const SignatureDesign = () => {
   const { signatureStyle } = useSignatureStyle();
   const [isSaving, setIsSaving] = React.useState<boolean>(false);
   const [btnText, setBtnText] = React.useState<string>("Save Changes");
@@ -48,8 +48,8 @@ export const SignatureDesign: React.FC<{}> = ({}) => {
   };
 
   useEffect(() => {
-    if (btnText !== "Save Changes") setBtnText("Save Changes");
-  }, [signatureStyle]);
+    setBtnText("Save Changes");
+  }, [signatureStyle, setBtnText]);
 
   const convertHtmlToString = (
     element: React.ReactElement<any, string | React.JSXElementConstructor<any>>
@@ -70,6 +70,7 @@ export const SignatureDesign: React.FC<{}> = ({}) => {
     const profileImageSection = convertHtmlToString(
       <img
         src="[INSERT PROFILE_URL]"
+        alt=""
         style={{
           display: "block",
           height: "175px",
@@ -104,6 +105,7 @@ export const SignatureDesign: React.FC<{}> = ({}) => {
     const companyLogoSection = convertHtmlToString(
       <img
         src="[INSERT COMPANY_LOGO_URL]"
+        alt=""
         style={{
           height: "25px",
           width: "auto",
@@ -113,6 +115,7 @@ export const SignatureDesign: React.FC<{}> = ({}) => {
     const badgeSection = convertHtmlToString(
       <img
         src="[INSERT BADGE_URL]"
+        alt=""
         style={{
           height: "25px",
           width: "25px",
@@ -133,7 +136,7 @@ export const SignatureDesign: React.FC<{}> = ({}) => {
       sections: signatureHtml,
     };
     try {
-      const response = await API.saveSignatureConfigData(requestData);
+      await API.saveSignatureConfigData(requestData);
       setIsSaving(false);
       setBtnText("Saved");
     } catch {

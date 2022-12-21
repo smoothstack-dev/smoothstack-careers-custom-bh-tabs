@@ -3,6 +3,7 @@ import * as _t from "./store/types";
 import * as TfiIcon from "react-icons/tfi";
 import * as HiIcon from "react-icons/hi";
 import * as AiIcon from "react-icons/ai";
+import { INITIAL_SIGNATURE_STYLE } from "./store/literal";
 
 export const Preview: React.FC<{
   data: _t.Signature;
@@ -82,6 +83,7 @@ export const Preview: React.FC<{
                   src={
                     previewData.profileUrl ?? signatureStyle.profileDefaultUrl
                   }
+                  alt={signatureStyle.profileDefaultUrl}
                   style={{
                     display: "block",
                     height: "175px",
@@ -135,7 +137,11 @@ export const Preview: React.FC<{
                   {previewData.calendarUrl && (
                     <span>
                       <AiIcon.AiOutlineGlobal />{" "}
-                      <a href={previewData.calendarUrl} target="_blank">
+                      <a
+                        href={previewData.calendarUrl}
+                        target="_blank"
+                        rel="noreferrer"
+                      >
                         {previewData.calendarUrl}
                       </a>
                     </span>
@@ -164,6 +170,7 @@ export const Preview: React.FC<{
               ) : (
                 <img
                   src={signatureStyle.companyLogoUrl}
+                  alt={INITIAL_SIGNATURE_STYLE.companyLogoUrl}
                   style={{
                     height: "25px",
                     width: "auto",
@@ -178,6 +185,7 @@ export const Preview: React.FC<{
                     return (
                       <img
                         src={badge}
+                        alt=""
                         style={{
                           height: "25px",
                           width: "25px",
