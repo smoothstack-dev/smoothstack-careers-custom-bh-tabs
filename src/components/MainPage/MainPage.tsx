@@ -16,11 +16,12 @@ export const MainPage: React.FC<{}> = () => {
       >
         Job Description Management
       </Button>
+      <br />
       <Button
         variant="outline-primary"
         onClick={() => handlePageChange("/mssignature")}
       >
-        Job Description Management
+        Microsoft Signature Setting
       </Button>
     </div>
   );
