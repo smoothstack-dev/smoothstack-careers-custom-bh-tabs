@@ -232,6 +232,11 @@ const DetailSection: React.FC<{
               {createFieldSet("title", "Title", employee.title)}
               {createFieldSet("profileUrl", "Profile URL", employee.profileUrl)}
               {createFieldSet(
+                "teamsProfileUrl",
+                "Teams Profile URL",
+                employee.teamsProfileUrl
+              )}
+              {createFieldSet(
                 "phoneNumber",
                 "Phone Number",
                 employee.phoneNumber
