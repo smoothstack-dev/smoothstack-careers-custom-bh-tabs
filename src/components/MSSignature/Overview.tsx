@@ -1,11 +1,11 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React from "react";
 import useEmployees from "./store/employees";
-import * as API from "./../../helpers/api";
+// import * as API from "./../../helpers/api";
 import { Table } from "react-bootstrap";
 
 export const DataOverview = () => {
   // Need to map with DDB data
-  const { employees, setEmployees } = useEmployees();
+  const { employees } = useEmployees();
 
   return (
     <div>

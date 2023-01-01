@@ -15,12 +15,12 @@ import useEmployees from "./store/employees";
 import useSignature from "./store/signature";
 import { EmployeeData, Signature } from "./store/types";
 import styled from "styled-components";
-import { getEmployeeList, getEmployeeSignatureData } from "../../helpers/api";
+import { getEmployeeSignatureData } from "../../helpers/api";
 import useSignatureStyle from "./store/signatureStyle";
 import * as API from "./../../helpers/api";
 
 export const EmployeeSettings = () => {
-  const { employees, setEmployees } = useEmployees();
+  const { employees } = useEmployees();
   const { signature, setSelectedSignature } = useSignature();
   const [search, setSearch] = useState<string>("");
   const [isLoadingEmployeeData, setLoadingEmployeeData] =
@@ -79,7 +79,7 @@ export const EmployeeSettings = () => {
       }
       return true;
     });
-  }, [employees, search, selectedEmployeeEmail]);
+  }, [employees, search]);
 
   const SettingContainer = styled.div`
     max-height: 550px;

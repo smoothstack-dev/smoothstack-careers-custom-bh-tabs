@@ -12,7 +12,7 @@ import { EmployeeData } from "./store/types";
 export const MSSignature = () => {
   const [isLoading, setLoading] = React.useState<boolean>(false);
   const { setInitialSignatureStyle } = useSignatureStyle();
-  const { employees, setEmployees } = useEmployees();
+  const { setEmployees } = useEmployees();
   const [isLoadingEmployeeList, setIsLoadingEmployeeList] =
     useState<boolean>(false);
 
@@ -56,10 +56,18 @@ export const MSSignature = () => {
             {isLoading ? <Spinner animation={"border"} /> : <SignatureDesign />}
           </Tab>
           <Tab eventKey="details" title="Employee Data">
-            <EmployeeSettings />
+            {isLoadingEmployeeList ? (
+              <Spinner animation={"border"} />
+            ) : (
+              <EmployeeSettings />
+            )}
           </Tab>
           <Tab eventKey="overview" title="Data Overview">
-            <DataOverview />
+            {isLoadingEmployeeList ? (
+              <Spinner animation={"border"} />
+            ) : (
+              <DataOverview />
+            )}
           </Tab>
         </Tabs>
       </div>

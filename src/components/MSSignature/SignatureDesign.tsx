@@ -42,10 +42,10 @@ export const SignatureDesign = () => {
   const { signatureStyle } = useSignatureStyle();
   const [isSaving, setIsSaving] = React.useState<boolean>(false);
   const [btnText, setBtnText] = React.useState<string>("Save Changes");
-  const BreakStyleMedium = {
-    display: "block",
-    marginBottom: "0em",
-  };
+  // const BreakStyleMedium = {
+  //   display: "block",
+  //   marginBottom: "0em",
+  // };
 
   useEffect(() => {
     setBtnText("Save Changes");
@@ -61,7 +61,6 @@ export const SignatureDesign = () => {
     setIsSaving(true);
     setBtnText("Saving your changes....");
 
-    const cardW = 600;
     const cardH = 150;
     const picH = Math.round(cardH * 0.75);
     const logoH = Math.round(cardH * 0.13);
