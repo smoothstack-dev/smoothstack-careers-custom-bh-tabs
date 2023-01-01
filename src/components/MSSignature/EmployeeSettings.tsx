@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   Button,
   Col,
@@ -23,43 +23,27 @@ export const EmployeeSettings = () => {
   const { employees, setEmployees } = useEmployees();
   const { signature, setSelectedSignature } = useSignature();
   const [search, setSearch] = useState<string>("");
-  const [isLoadingEmployeeList, setIsLoadingEmployeeList] =
-    useState<boolean>(false);
   const [isLoadingEmployeeData, setLoadingEmployeeData] =
     useState<boolean>(false);
   const [btnText, setBtnText] = useState<string>("Save Changes");
   const [error, setError] = useState<string>("");
-
-  // Retrieve Employee List
-  useEffect(() => {
-    const loadEmployeeList = async () => {
-      setIsLoadingEmployeeList(true);
-      const data = await getEmployeeList();
-      const constructedData: EmployeeData[] = data
-        .filter((d: any) => d.mail)
-        .map((d: any) => {
-          return {
-            mail: (d.mail ?? "").toLowerCase(),
-            givenName: d.givenName ?? "",
-            surname: d.surname ?? "",
-            jobTitle: d.jobTitle ?? "",
-            mobilePhone: d.mobilePhone ?? "",
-          } as EmployeeData;
-        });
-      setEmployees(() => {
-        return constructedData;
-      });
-      setIsLoadingEmployeeList(false);
-    };
-    loadEmployeeList();
-  }, [setEmployees]);
+  const [selectedEmployeeEmail, setSelectedEmployeeEmail] =
+    useState<string>("");
 
   const ref = React.useRef<null | HTMLDivElement>(null);
+
+  useEffect(() => {
+    ref.current?.scrollIntoView({
+      behavior: "auto",
+      block: "end",
+    });
+  }, [signature, search]);
 
   // Retrieve Existing Employee Signature Data
   const handleGetEmployeeData = async (selectedEmployee: EmployeeData) => {
     const primaryEmail = selectedEmployee.mail;
     const defaultData: Signature = {
+      isActive: false,
       primaryEmail: selectedEmployee.mail,
       firstName: selectedEmployee.givenName,
       lastName: selectedEmployee.surname,
@@ -76,11 +60,26 @@ export const EmployeeSettings = () => {
       setLoadingEmployeeData(false);
       setSelectedSignature(defaultData);
     }
-    ref.current?.scrollIntoView({ behavior: "auto" });
+    ref.current?.scrollIntoView({
+      behavior: "auto",
+      block: "end",
+    });
   };
 
-  // Styleing
   const employeeName = (e: EmployeeData) => `${e.givenName} ${e.surname}`;
+
+  const displayList = useMemo(() => {
+    return employees.filter((e) => {
+      if (search) {
+        const name = employeeName(e);
+        return (
+          name.toLocaleLowerCase().includes(search.toLocaleLowerCase()) ||
+          e.mail.includes(search.toLocaleLowerCase())
+        );
+      }
+      return true;
+    });
+  }, [employees, search, selectedEmployeeEmail]);
 
   const SettingContainer = styled.div`
     max-height: 550px;
@@ -105,42 +104,30 @@ export const EmployeeSettings = () => {
             </FloatingLabel>
             <SettingContainer>
               <br />
-              {isLoadingEmployeeList ? (
+              {displayList?.length <= 0 ? (
                 <Spinner animation={"border"} />
               ) : (
                 <ListGroup>
-                  {employees
-                    .filter((e) => {
-                      if (search) {
-                        const name = employeeName(e);
-                        return (
-                          name
-                            .toLocaleLowerCase()
-                            .includes(search.toLocaleLowerCase()) ||
-                          e.mail.includes(search.toLocaleLowerCase())
-                        );
-                      }
-                      return true;
-                    })
-                    .map((emp, index) => {
-                      const isSelected = signature?.primaryEmail === emp.mail;
-                      return (
-                        <div ref={isSelected ? ref : undefined}>
-                          <ListGroup.Item
-                            id={`list-${index}`}
-                            key={index}
-                            active={isSelected}
-                            onClick={(e) => {
-                              handleGetEmployeeData(emp);
-                            }}
-                          >
-                            <strong>{employeeName(emp)}</strong>
-                            <br />
-                            {emp.mail}
-                          </ListGroup.Item>
-                        </div>
-                      );
-                    })}
+                  {displayList.map((emp, index) => {
+                    const isSelected = selectedEmployeeEmail === emp.mail;
+                    return (
+                      <div ref={isSelected ? ref : undefined}>
+                        <ListGroup.Item
+                          id={`list-${index}`}
+                          key={index}
+                          active={isSelected}
+                          onClick={(e) => {
+                            setSelectedEmployeeEmail(emp.mail);
+                            handleGetEmployeeData(emp);
+                          }}
+                        >
+                          <strong>{employeeName(emp)}</strong>
+                          <br />
+                          {emp.mail}
+                        </ListGroup.Item>
+                      </div>
+                    );
+                  })}
                 </ListGroup>
               )}
             </SettingContainer>
@@ -210,74 +197,86 @@ const DetailSection: React.FC<{
   return (
     <>
       <div>
-        <div>
-          <p>
-            <strong>Employee Info:</strong>
-          </p>
-          {isLoadingEmployeeData ? (
-            <Spinner animation={"border"} />
-          ) : error ? (
-            <p>{error}</p>
-          ) : !employee ? (
-            <p>No Employee Selected. Please select an employee from the list</p>
-          ) : (
-            <div>
-              {createFieldSet("firstName", "First Name", employee.firstName)}
-              {createFieldSet(
-                "middleNameInitial",
-                "Middle Initial (optional)",
-                employee.middleNameInitial
-              )}
-              {createFieldSet("lastName", "Last Name", employee.lastName)}
-              {createFieldSet("title", "Title", employee.title)}
-              {createFieldSet("profileUrl", "Profile URL", employee.profileUrl)}
-              {createFieldSet(
-                "teamsProfileUrl",
-                "Teams Profile URL",
-                employee.teamsProfileUrl
-              )}
-              {createFieldSet(
-                "phoneNumber",
-                "Phone Number",
-                employee.phoneNumber
-              )}
-              {createFieldSet(
-                "mailingAddress",
-                "Mailing Address (optional)",
-                employee.mailingAddress
-              )}
-              {createFieldSet(
-                "calendarUrl",
-                "Calendar URL (optional)",
-                employee.calendarUrl
-              )}
-              {createFieldSet(
-                "badgeUrls",
-                "Badge URLs (optional). Please separate badge urls with space",
-                employee.badgeUrls?.join(" ")
-              )}
+        <h2>
+          <strong>Employee Info:</strong>
+        </h2>
+        <br />
+        {isLoadingEmployeeData ? (
+          <Spinner animation={"border"} />
+        ) : error ? (
+          <p>{error}</p>
+        ) : !employee ? (
+          <p>No Employee Selected. Please select an employee from the list</p>
+        ) : (
+          <div style={{ maxHeight: "550px", overflowY: "scroll" }}>
+            <Form.Check
+              type="switch"
+              id="isActive"
+              label="Enable Signture"
+              checked={!!employee.isActive}
+              onChange={(e) => {
+                if (!!employee.isActive) {
+                  updateSignature("isActive", false);
+                } else {
+                  updateSignature("isActive", true);
+                }
+              }}
+            />
+            {createFieldSet("firstName", "First Name", employee.firstName)}
+            {createFieldSet(
+              "middleNameInitial",
+              "Middle Initial (optional)",
+              employee.middleNameInitial
+            )}
+            {createFieldSet("lastName", "Last Name", employee.lastName)}
+            {createFieldSet("title", "Title", employee.title)}
+            {createFieldSet("profileUrl", "Profile URL", employee.profileUrl)}
+            {createFieldSet(
+              "teamsProfileUrl",
+              "Teams Profile URL",
+              employee.teamsProfileUrl
+            )}
+            {createFieldSet(
+              "phoneNumber",
+              "Phone Number",
+              employee.phoneNumber
+            )}
+            {createFieldSet(
+              "mailingAddress",
+              "Mailing Address (optional)",
+              employee.mailingAddress
+            )}
+            {createFieldSet(
+              "calendarUrl",
+              "Calendar URL (optional)",
+              employee.calendarUrl
+            )}
+            {createFieldSet(
+              "badgeUrls",
+              "Badge URLs (optional). Please separate badge urls with space",
+              employee.badgeUrls?.join(" ")
+            )}
 
-              <div
+            <div
+              style={{
+                display: "flex",
+              }}
+            >
+              <Button
+                variant="link"
+                onClick={handleShow}
                 style={{
-                  display: "flex",
+                  marginRight: "5px",
                 }}
               >
-                <Button
-                  variant="link"
-                  onClick={handleShow}
-                  style={{
-                    marginRight: "5px",
-                  }}
-                >
-                  Preview
-                </Button>
-                <Button onClick={() => handleSave()} disabled={isSaving}>
-                  {btnText}
-                </Button>
-              </div>
+                Preview
+              </Button>
+              <Button onClick={() => handleSave()} disabled={isSaving}>
+                {btnText}
+              </Button>
             </div>
-          )}
-        </div>
+          </div>
+        )}
       </div>
 
       <Modal

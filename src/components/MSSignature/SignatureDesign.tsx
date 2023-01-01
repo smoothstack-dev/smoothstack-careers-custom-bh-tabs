@@ -60,6 +60,12 @@ export const SignatureDesign = () => {
   const handleSave = async () => {
     setIsSaving(true);
     setBtnText("Saving your changes....");
+
+    const cardW = 600;
+    const cardH = 150;
+    const picH = Math.round(cardH * 0.75);
+    const logoH = Math.round(cardH * 0.13);
+
     const signatureLayout = ReactDOMServer.renderToString(
       <Preview
         data={MOCK_SIGNATURE}
@@ -71,10 +77,12 @@ export const SignatureDesign = () => {
       <img
         src="[INSERT PROFILE_URL]"
         alt=""
+        height={`${picH}`}
+        width={`${picH}`}
         style={{
-          display: "block",
-          height: "175px",
-          width: "auto",
+          // display: "block",
+          height: `${picH}px`,
+          width: `${picH}px`,
         }}
       />
     );
@@ -93,7 +101,7 @@ export const SignatureDesign = () => {
     );
     const addressSection = convertHtmlToString(
       <>
-        <span style={BreakStyleMedium} />{" "}
+        <br />
         <span>
           <HiIcon.HiOutlineOfficeBuilding />
           [INSERT MAILING_ADDRESS]
@@ -106,9 +114,9 @@ export const SignatureDesign = () => {
       <img
         src="[INSERT COMPANY_LOGO_URL]"
         alt=""
+        height={`${logoH}`}
         style={{
-          height: "25px",
-          width: "auto",
+          height: `${logoH}px`,
         }}
       />
     );
@@ -116,9 +124,11 @@ export const SignatureDesign = () => {
       <img
         src="[INSERT BADGE_URL]"
         alt=""
+        height={`${logoH}`}
+        width={`${logoH}`}
         style={{
-          height: "25px",
-          width: "25px",
+          height: `${logoH}px`,
+          width: `${logoH}px`,
         }}
       />
     );
@@ -145,6 +155,9 @@ export const SignatureDesign = () => {
     }
   };
 
+  const previewData = { ...MOCK_SIGNATURE };
+  previewData.profileUrl = signatureStyle.profileDefaultUrl;
+
   return (
     <div>
       <Container>
@@ -163,10 +176,7 @@ export const SignatureDesign = () => {
                   <strong>Signature Preview</strong>
                 </Row>
                 {/* Actual Signature Starting Point */}
-                <Preview
-                  data={MOCK_SIGNATURE}
-                  signatureStyle={signatureStyle}
-                />
+                <Preview data={previewData} signatureStyle={signatureStyle} />
               </Container>
             </PreviewContainer>
           </Col>
@@ -314,9 +324,15 @@ const DesignSection: React.FC<{
         </div>
         <div>
           <p>
-            <strong>Employee Name</strong>
+            <strong>Employee First Name</strong>
           </p>
-          {DesignSubsection("employeeName")}
+          {DesignSubsection("employeeFirstName")}
+        </div>
+        <div>
+          <p>
+            <strong>Employee Last Name</strong>
+          </p>
+          {DesignSubsection("employeeLastName")}
         </div>
         <div>
           <p>

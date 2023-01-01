@@ -1,4 +1,5 @@
 export type Signature = {
+  isActive: boolean;
   primaryEmail: string;
   firstName: string;
   lastName: string;
@@ -22,7 +23,8 @@ export type EmployeeData = {
 };
 
 export type SignatureStyleFields =
-  | "employeeName"
+  | "employeeFirstName"
+  | "employeeLastName"
   | "title"
   | "additionalFields";
 
@@ -32,7 +34,8 @@ export type SignatureStyles = {
   profileSize: number;
   badgeSize: number;
   companyLogoSize: number;
-  employeeName: Styles;
+  employeeFirstName: Styles;
+  employeeLastName: Styles;
   title: Styles;
   additionalFields: Styles;
   sections?: HtmlSection;

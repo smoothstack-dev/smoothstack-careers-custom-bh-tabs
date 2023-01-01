@@ -1,6 +1,7 @@
 import * as _t from "./types";
 
 export const MOCK_SIGNATURE: _t.Signature = {
+  isActive: true,
   primaryEmail: "defaultemail@smoothstack.com",
   firstName: "Firstname",
   lastName: "Lastname",
@@ -25,11 +26,22 @@ export const INITIAL_SIGNATURE_STYLE: _t.SignatureStyles = {
   profileSize: 175,
   badgeSize: 25,
   companyLogoSize: 25,
-  employeeName: { font: "Arial", size: 31, weight: "bold", color: "#000000" },
-  title: { font: "Arial", size: 16, weight: "bold", color: "#000000" },
+  employeeFirstName: {
+    font: "Arial",
+    size: 20,
+    weight: "bold",
+    color: "#7521a7",
+  },
+  employeeLastName: {
+    font: "Arial",
+    size: 20,
+    weight: "bold",
+    color: "#3246dd",
+  },
+  title: { font: "Arial", size: 13, weight: "bold", color: "#000000" },
   additionalFields: {
     font: "Arial",
-    size: 12,
+    size: 10,
     weight: "normal",
     color: "#000000",
   },

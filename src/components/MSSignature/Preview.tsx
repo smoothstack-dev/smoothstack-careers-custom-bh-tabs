@@ -10,21 +10,33 @@ export const Preview: React.FC<{
   signatureStyle: _t.SignatureStyles;
   isGenerateSignatureFrame?: boolean;
 }> = ({ data: previewData, signatureStyle, isGenerateSignatureFrame }) => {
+  const cardW = 600;
+  const cardH = 150;
+  const picH = Math.round(cardH * 0.75);
+  const logoH = Math.round(cardH * 0.13);
+
   const CardContainerStyle = {
     display: "flex",
     border: "0.1px",
-    backgroundColor: "white",
+    backgroundColor: isGenerateSignatureFrame ? "transparent" : "white",
     borderRadius: "1%",
-    padding: "10px",
-    width: "600px",
-    height: "200px",
+    padding: "3px",
+    width: `${cardW}px`,
+    height: `${cardH}px`,
   };
 
-  const NameSectionStyle = {
-    color: signatureStyle.employeeName.color,
-    fontSize: `${signatureStyle.employeeName.size}px`,
-    fontWeight: signatureStyle.employeeName.weight,
-    fontFamily: signatureStyle.employeeName.font,
+  const FirstNameSectionStyle = {
+    color: signatureStyle.employeeFirstName.color,
+    fontSize: `${signatureStyle.employeeFirstName.size}px`,
+    fontWeight: signatureStyle.employeeFirstName.weight,
+    fontFamily: signatureStyle.employeeFirstName.font,
+  };
+
+  const LastNameSectionStyle = {
+    color: signatureStyle.employeeLastName.color,
+    fontSize: `${signatureStyle.employeeLastName.size}px`,
+    fontWeight: signatureStyle.employeeLastName.weight,
+    fontFamily: signatureStyle.employeeLastName.font,
   };
 
   const TitleSectionStyle = {
@@ -53,24 +65,19 @@ export const Preview: React.FC<{
 
   if (!previewData) return <>No Data to Show</>;
 
-  const employeeName = `${previewData.firstName} ${
-    previewData.middleNameInitial ? previewData.middleNameInitial + ". " : ""
-  }
-  ${previewData.lastName}`;
-
   return (
     <div style={CardContainerStyle}>
       <table
         style={{
-          height: "175px",
+          height: `${picH}px`,
         }}
       >
         <tr>
           <th rowSpan={4}>
             <div
               style={{
-                height: "175px",
-                maxWidth: "175px",
+                height: `${picH}px`,
+                maxWidth: `${picH}px`,
                 marginRight: "5px",
                 overflow: "hidden",
               }}
@@ -84,10 +91,10 @@ export const Preview: React.FC<{
                     previewData.profileUrl ?? signatureStyle.profileDefaultUrl
                   }
                   alt={signatureStyle.profileDefaultUrl}
+                  height={`${picH}px`}
+                  width="auto"
                   style={{
                     display: "block",
-                    height: "175px",
-                    width: "auto",
                   }}
                 />
               )}
@@ -98,27 +105,43 @@ export const Preview: React.FC<{
           <th style={{ verticalAlign: "top", textAlign: "left" }}>
             {" "}
             {/* Name and Title */}
-            <span style={NameSectionStyle}>
+            <span style={FirstNameSectionStyle}>
               {" "}
               {isGenerateSignatureFrame
-                ? `[INSERT EMPLOYEE_NAME]`
-                : employeeName}
+                ? `[INSERT EMPLOYEE_FIRST_NAME]`
+                : previewData.firstName}
             </span>
-            <span
-              style={
-                isGenerateSignatureFrame ? BreakStyleMedium : BreakStyleSmall
-              }
-            />
-            <span style={TitleSectionStyle}>
+            <span style={LastNameSectionStyle}>
+              {" "}
               {isGenerateSignatureFrame
-                ? `[INSERT EMPLOYEE_TITLE]`
-                : previewData.title}
+                ? `[INSERT EMPLOYEE_LAST_NAME]`
+                : previewData.lastName}
             </span>
+            {isGenerateSignatureFrame ? (
+              <div style={TitleSectionStyle}>
+                {isGenerateSignatureFrame
+                  ? `[INSERT EMPLOYEE_TITLE]`
+                  : previewData.title}
+              </div>
+            ) : (
+              <>
+                <span style={BreakStyleSmall} />
+                <span style={TitleSectionStyle}>
+                  {isGenerateSignatureFrame
+                    ? `[INSERT EMPLOYEE_TITLE]`
+                    : previewData.title}
+                </span>
+              </>
+            )}
           </th>
         </tr>
         <tr>
           <th
-            style={{ verticalAlign: "top", textAlign: "left", height: "50px" }}
+            style={{
+              verticalAlign: "top",
+              textAlign: "left",
+              height: `${+AdditionalSectionStyle.fontSize * 2}px`,
+            }}
           >
             {/* Additional Fields */}
             <div style={AdditionalSectionStyle}>
@@ -162,23 +185,27 @@ export const Preview: React.FC<{
           </th>
         </tr>
         <tr>
-          <th style={{ verticalAlign: "top", textAlign: "left" }}>
+          <th
+            style={{
+              verticalAlign: "top",
+              textAlign: "left",
+            }}
+          >
             {/* Comp Logo */}
             <div>
               {isGenerateSignatureFrame ? (
                 `[INSERT COMPANY_LOGO_IMG]`
               ) : (
-                <img
-                  src={signatureStyle.companyLogoUrl}
-                  alt={INITIAL_SIGNATURE_STYLE.companyLogoUrl}
-                  style={{
-                    height: "25px",
-                    width: "auto",
-                  }}
-                />
+                <div>
+                  <img
+                    src={signatureStyle.companyLogoUrl}
+                    alt={INITIAL_SIGNATURE_STYLE.companyLogoUrl}
+                    height={`${logoH}px`}
+                    width="auto"
+                  />
+                </div>
               )}
-            </div>
-            <div>
+              {isGenerateSignatureFrame && <br />}
               {isGenerateSignatureFrame
                 ? `[INSERT BADGE_IMG]`
                 : previewData.badgeUrls?.map((badge) => {
@@ -186,10 +213,8 @@ export const Preview: React.FC<{
                       <img
                         src={badge}
                         alt=""
-                        style={{
-                          height: "25px",
-                          width: "25px",
-                        }}
+                        height={`${logoH}px`}
+                        width={`${logoH}px`}
                       />
                     );
                   })}
