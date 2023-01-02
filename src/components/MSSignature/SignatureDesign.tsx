@@ -15,7 +15,11 @@ import {
 import styled from "styled-components";
 import { ChromePicker } from "react-color";
 import useSignatureStyle from "./store/signatureStyle";
-import { FontList, MOCK_SIGNATURE } from "./store/literal";
+import {
+  FontList,
+  MOCK_SIGNATURE,
+  SIGNATURE_IMAGE_CONFIG,
+} from "./store/literal";
 import { Preview } from "./Preview";
 import { SignatureStyleFields } from "./store/types";
 import ReactDOMServer from "react-dom/server";
@@ -60,11 +64,7 @@ export const SignatureDesign = () => {
   const handleSave = async () => {
     setIsSaving(true);
     setBtnText("Saving your changes....");
-
-    const cardH = 150;
-    const picH = Math.round(cardH * 0.75);
-    const logoH = Math.round(cardH * 0.13);
-
+    const { picH, logoH } = SIGNATURE_IMAGE_CONFIG;
     const signatureLayout = ReactDOMServer.renderToString(
       <Preview
         data={MOCK_SIGNATURE}
@@ -90,11 +90,11 @@ export const SignatureDesign = () => {
         <TfiIcon.TfiMobile /> [INSERT PHONE_NUMBER]
       </span>
     );
-    const calendarSection = convertHtmlToString(
+    const companyWebsiteSection = convertHtmlToString(
       <span>
         <AiIcon.AiOutlineGlobal />{" "}
-        <a href="[INSERT CALENDAR_URL]" target="_blank">
-          [INSERT CALENDAR_URL]
+        <a href="[INSERT COMPANY_WEBSITE_URL]" target="_blank">
+          [INSERT COMPANY_WEBSITE_URL]
         </a>
       </span>
     );
@@ -131,14 +131,23 @@ export const SignatureDesign = () => {
         }}
       />
     );
+    const calendarSection = convertHtmlToString(
+      <span>
+        <AiIcon.AiOutlineGlobal />{" "}
+        <a href="[INSERT CALENDAR_URL]" target="_blank">
+          [INSERT CALENDAR_URL]
+        </a>
+      </span>
+    );
     const signatureHtml = {
       signatureLayout,
       profileImageSection,
       phoneNumberSection,
-      calendarSection,
+      companyWebsiteSection,
       addressSection,
       companyLogoSection,
       badgeSection,
+      calendarSection,
     };
     const requestData = {
       ...signatureStyle,
@@ -312,7 +321,16 @@ const DesignSection: React.FC<{
             />
           </p>
           <p>
-            <strong>Pofile Defualt Url</strong>
+            <strong>Company Website Url</strong>
+            <Form.Control
+              value={signatureStyle.companyWebsiteUrl || ""}
+              onChange={(e) => {
+                updateStyle("companyWebsiteUrl", e.target.value);
+              }}
+            />
+          </p>
+          <p>
+            <strong>Pofile Image Defualt Url</strong>
             <Form.Control
               value={signatureStyle.profileDefaultUrl || ""}
               onChange={(e) => {

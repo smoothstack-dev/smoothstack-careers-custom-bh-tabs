@@ -30,6 +30,7 @@ export type SignatureStyleFields =
 
 export type SignatureStyles = {
   companyLogoUrl: string;
+  companyWebsiteUrl: string;
   profileDefaultUrl: string;
   profileSize: number;
   badgeSize: number;

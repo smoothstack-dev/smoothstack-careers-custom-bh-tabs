@@ -115,7 +115,7 @@ export const getEmployeeSignatureData = async (primaryEmail: string) => {
     );
     return response.data;
   } catch (err) {
-    console.error("Error getting employee signature data", primaryEmail);
+    console.error("Error getting employee signature data", primaryEmail, err);
   }
 };
 

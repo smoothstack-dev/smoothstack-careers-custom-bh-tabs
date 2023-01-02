@@ -3,17 +3,17 @@ import * as _t from "./store/types";
 import * as TfiIcon from "react-icons/tfi";
 import * as HiIcon from "react-icons/hi";
 import * as AiIcon from "react-icons/ai";
-import { INITIAL_SIGNATURE_STYLE } from "./store/literal";
+import {
+  INITIAL_SIGNATURE_STYLE,
+  SIGNATURE_IMAGE_CONFIG,
+} from "./store/literal";
 
 export const Preview: React.FC<{
   data: _t.Signature;
   signatureStyle: _t.SignatureStyles;
   isGenerateSignatureFrame?: boolean;
 }> = ({ data: previewData, signatureStyle, isGenerateSignatureFrame }) => {
-  const cardW = 600;
-  const cardH = 150;
-  const picH = Math.round(cardH * 0.75);
-  const logoH = Math.round(cardH * 0.13);
+  const { cardW, cardH, picH, logoH } = SIGNATURE_IMAGE_CONFIG;
 
   const CardContainerStyle = {
     display: "flex",
@@ -64,7 +64,6 @@ export const Preview: React.FC<{
   };
 
   if (!previewData) return <>No Data to Show</>;
-
   return (
     <div style={CardContainerStyle}>
       <table
@@ -154,18 +153,17 @@ export const Preview: React.FC<{
                       <TfiIcon.TfiMobile /> {previewData.phoneNumber}
                     </span>
                   )}
-                  {previewData.calendarUrl && previewData.phoneNumber && (
-                    <> | </>
-                  )}
-                  {previewData.calendarUrl && (
+                  {signatureStyle.companyWebsiteUrl &&
+                    previewData.phoneNumber && <> | </>}
+                  {signatureStyle.companyWebsiteUrl && (
                     <span>
                       <AiIcon.AiOutlineGlobal />{" "}
                       <a
-                        href={previewData.calendarUrl}
+                        href={signatureStyle.companyWebsiteUrl}
                         target="_blank"
                         rel="noreferrer"
                       >
-                        {previewData.calendarUrl}
+                        {signatureStyle.companyWebsiteUrl}
                       </a>
                     </span>
                   )}
@@ -206,18 +204,36 @@ export const Preview: React.FC<{
                 </div>
               )}
               {isGenerateSignatureFrame && <br />}
-              {isGenerateSignatureFrame
-                ? `[INSERT BADGE_IMG]`
-                : previewData.badgeUrls?.map((badge) => {
-                    return (
-                      <img
-                        src={badge}
-                        alt=""
-                        height={`${logoH}px`}
-                        width={`${logoH}px`}
-                      />
-                    );
-                  })}
+              <div style={{ maxWidth: `${logoH * 12}px` }}>
+                {isGenerateSignatureFrame
+                  ? `[INSERT BADGE_IMG]`
+                  : previewData.badgeUrls?.map((badge) => {
+                      return (
+                        <img
+                          src={badge}
+                          alt=""
+                          height={`${logoH}px`}
+                          width={`${logoH}px`}
+                        />
+                      );
+                    })}
+              </div>
+              <div style={AdditionalSectionStyle}>
+                {isGenerateSignatureFrame
+                  ? `[INSERT CALENDAR_URL]`
+                  : previewData.calendarUrl && (
+                      <span>
+                        <AiIcon.AiOutlineGlobal />{" "}
+                        <a
+                          href={previewData.calendarUrl}
+                          target="_blank"
+                          rel="noreferrer"
+                        >
+                          {previewData.calendarUrl}
+                        </a>
+                      </span>
+                    )}
+              </div>
             </div>
           </th>
         </tr>

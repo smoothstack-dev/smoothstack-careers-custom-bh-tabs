@@ -17,7 +17,7 @@ export const MSLoginBtn = () => {
             });
         } else {
             instance.loginRedirect(loginRequest).catch(e => {
-                console.log(e);
+                console.error(e);
             });
         }
     }

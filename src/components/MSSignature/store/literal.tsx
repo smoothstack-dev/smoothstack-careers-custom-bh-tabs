@@ -10,7 +10,7 @@ export const MOCK_SIGNATURE: _t.Signature = {
   profileUrl:
     "https://smoothstack.com/wp-content/uploads/2018/07/cropped-favicon.png",
   phoneNumber: "111-222-3333",
-  calendarUrl: "smoothstack.com",
+  calendarUrl: "https://calender.link",
   mailingAddress: "8200 Greensboro Drive, Suite 900 McLean Virginia 22102",
   badgeUrls: [
     "https://storage.googleapis.com/minted-nfts/smoothstack/memberships/images/0.png",
@@ -21,6 +21,7 @@ export const MOCK_SIGNATURE: _t.Signature = {
 
 export const INITIAL_SIGNATURE_STYLE: _t.SignatureStyles = {
   companyLogoUrl: "https://smoothstack.com/smoothstack-2020-logo/",
+  companyWebsiteUrl: "https://smoothstack.com",
   profileDefaultUrl:
     "https://smoothstack.com/wp-content/uploads/2018/07/cropped-favicon.png",
   profileSize: 175,
@@ -45,6 +46,14 @@ export const INITIAL_SIGNATURE_STYLE: _t.SignatureStyles = {
     weight: "normal",
     color: "#000000",
   },
+};
+
+const cardH = 150;
+export const SIGNATURE_IMAGE_CONFIG = {
+  cardW: 600,
+  cardH: cardH,
+  picH: Math.round(cardH * 0.75),
+  logoH: Math.round(cardH * 0.13),
 };
 
 export const FontList: string[] = [

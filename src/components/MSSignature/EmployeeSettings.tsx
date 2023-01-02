@@ -18,9 +18,10 @@ import styled from "styled-components";
 import { getEmployeeSignatureData } from "../../helpers/api";
 import useSignatureStyle from "./store/signatureStyle";
 import * as API from "./../../helpers/api";
+import { cloneDeep } from "lodash";
 
 export const EmployeeSettings = () => {
-  const { employees } = useEmployees();
+  const { employees, isLoadingEmployeeList } = useEmployees();
   const { signature, setSelectedSignature } = useSignature();
   const [search, setSearch] = useState<string>("");
   const [isLoadingEmployeeData, setLoadingEmployeeData] =
@@ -104,9 +105,9 @@ export const EmployeeSettings = () => {
             </FloatingLabel>
             <SettingContainer>
               <br />
-              {displayList?.length <= 0 ? (
+              {isLoadingEmployeeList ? (
                 <Spinner animation={"border"} />
-              ) : (
+              ) : displayList.length > 0 ? (
                 <ListGroup>
                   {displayList.map((emp, index) => {
                     const isSelected = selectedEmployeeEmail === emp.mail;
@@ -129,6 +130,8 @@ export const EmployeeSettings = () => {
                     );
                   })}
                 </ListGroup>
+              ) : (
+                <p>No Employee Found</p>
               )}
             </SettingContainer>
           </Col>
@@ -159,11 +162,30 @@ const DetailSection: React.FC<{
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
 
+  const BadgeUrlSplitInd = "\r\n";
+
   const handleSave = async () => {
     try {
       setIsSaving(true);
       setBtnText("Saving employee data...");
-      await API.saveEmployeeSignatureData(employee);
+      let employeeRecord = cloneDeep(employee);
+      if (employeeRecord) {
+        // filter badge urls
+        employeeRecord.badgeUrls =
+          employeeRecord.badgeUrls
+            ?.filter((bd) => !!bd && bd !== null)
+            .map((bd) => bd.trim()) || undefined;
+
+        // format phone number
+        employeeRecord.phoneNumber = [...employeeRecord.phoneNumber]
+          .filter((pn) => !isNaN(+pn))
+          .join("");
+        if (employeeRecord.phoneNumber.length === 10) {
+          const phoneNumber = cloneDeep(employeeRecord.phoneNumber);
+          employeeRecord.phoneNumber = `(${phoneNumber[0]}${phoneNumber[1]}${phoneNumber[2]})${phoneNumber[3]}${phoneNumber[4]}${phoneNumber[5]}-${phoneNumber[6]}${phoneNumber[7]}${phoneNumber[8]}${phoneNumber[9]}`;
+        }
+      }
+      await API.saveEmployeeSignatureData(employeeRecord);
       setIsSaving(false);
       setBtnText("Saved");
     } catch {
@@ -175,22 +197,42 @@ const DetailSection: React.FC<{
   const createFieldSet = (
     field: string,
     label: string,
-    value: string | undefined
+    value: string | undefined,
+    isTextArea: boolean = false
   ) => {
     return (
-      <FloatingLabel label={label} className="fieldLabel">
-        <Form.Control
-          value={value || ""}
-          onChange={(e) => {
-            if (field === "badgeUrls") {
-              const urls = e.target.value.split(" ");
-              updateSignature(field, urls);
-            } else {
-              updateSignature(field, e.target.value);
-            }
-          }}
-        />
-      </FloatingLabel>
+      <Form.Group className="mb-3" controlId="exampleForm.ControlTextarea1">
+        <Form.Label>
+          <strong>{label}:</strong>
+        </Form.Label>
+        {isTextArea ? (
+          <Form.Control
+            as="textarea"
+            rows={(value?.length || 0) / 80 + 3}
+            value={value || ""}
+            onChange={(e) => {
+              if (field === "badgeUrls") {
+                const urls = e.target.value.split(BadgeUrlSplitInd);
+                updateSignature(field, urls);
+              } else {
+                updateSignature(field, e.target.value);
+              }
+            }}
+          />
+        ) : (
+          <Form.Control
+            value={value || ""}
+            onChange={(e) => {
+              if (field === "badgeUrls") {
+                const urls = e.target.value.split(" ");
+                updateSignature(field, urls);
+              } else {
+                updateSignature(field, e.target.value);
+              }
+            }}
+          />
+        )}
+      </Form.Group>
     );
   };
 
@@ -209,28 +251,29 @@ const DetailSection: React.FC<{
           <p>No Employee Selected. Please select an employee from the list</p>
         ) : (
           <div style={{ maxHeight: "550px", overflowY: "scroll" }}>
-            <Form.Check
-              type="switch"
-              id="isActive"
-              label="Enable Signture"
-              checked={!!employee.isActive}
-              onChange={(e) => {
-                if (!!employee.isActive) {
-                  updateSignature("isActive", false);
-                } else {
-                  updateSignature("isActive", true);
-                }
-              }}
-            />
+            <strong>
+              <Form.Check
+                type="switch"
+                id="isActive"
+                label="Enable Signture"
+                checked={!!employee.isActive}
+                onChange={(e) => {
+                  if (!!employee.isActive) {
+                    updateSignature("isActive", false);
+                  } else {
+                    updateSignature("isActive", true);
+                  }
+                }}
+              />
+            </strong>
             {createFieldSet("firstName", "First Name", employee.firstName)}
-            {createFieldSet(
-              "middleNameInitial",
-              "Middle Initial (optional)",
-              employee.middleNameInitial
-            )}
             {createFieldSet("lastName", "Last Name", employee.lastName)}
             {createFieldSet("title", "Title", employee.title)}
-            {createFieldSet("profileUrl", "Profile URL", employee.profileUrl)}
+            {createFieldSet(
+              "profileUrl",
+              "Profile Image URL",
+              employee.profileUrl
+            )}
             {createFieldSet(
               "teamsProfileUrl",
               "Teams Profile URL",
@@ -253,8 +296,13 @@ const DetailSection: React.FC<{
             )}
             {createFieldSet(
               "badgeUrls",
-              "Badge URLs (optional). Please separate badge urls with space",
-              employee.badgeUrls?.join(" ")
+              "Badge URLs (optional). Please separate badge urls with enter",
+              employee.badgeUrls
+                ? employee.badgeUrls
+                    .filter((bd) => !!bd && bd !== null)
+                    .join(BadgeUrlSplitInd)
+                : undefined,
+              true
             )}
 
             <div
