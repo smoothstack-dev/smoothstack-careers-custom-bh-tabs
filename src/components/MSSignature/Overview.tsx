@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import useEmployees from "./store/employees";
 import {
   Button,
@@ -25,7 +25,7 @@ export const DataOverview = () => {
   const [search, setSearch] = useState<string>("");
   const [isAscending, setIsAscending] = useState<boolean>(true);
 
-  const loadEmployeeDataList = async () => {
+  const loadEmployeeDataList = useCallback(async () => {
     setLoadingEmployeeDataList(true);
     setSortingField(undefined);
     setSearch("");
@@ -49,15 +49,10 @@ export const DataOverview = () => {
     setEmployeeDataList(data);
     setDisplayEmployeeDataList(data);
     setLoadingEmployeeDataList(false);
-  };
+  }, [employees]);
 
   // sorting and search
   useEffect(() => {
-    console.log(
-      "sort/search",
-      sortingField,
-      sortingField && sortingField in employeeDataList[259]
-    );
     const updatedList = [...employeeDataList]
       .filter((ul) => {
         if (search) {
@@ -93,13 +88,13 @@ export const DataOverview = () => {
         return 1;
       });
     setDisplayEmployeeDataList(updatedList);
-  }, [sortingField, search, isAscending]);
+  }, [sortingField, search, isAscending, employeeDataList]);
 
   useEffect(() => {
     if (employees && employees.length > 0) {
       loadEmployeeDataList();
     }
-  }, [employees]);
+  }, [employees, loadEmployeeDataList]);
 
   const handleSoring = (field: string) => {
     if (sortingField === field) setIsAscending(!isAscending);
