@@ -17,7 +17,6 @@ export default function useSignature() {
       let updatedSignature = { ...signature, [key]: value } as _t.Signature;
       if (key === "profileUrl" && (!value || value === ""))
         delete updatedSignature.profileUrl;
-      console.log({ key, value, updatedSignature });
       return updatedSignature;
     });
   };
