@@ -15,7 +15,6 @@ export const Preview: React.FC<{
   isGenerateSignatureFrame?: boolean;
 }> = ({ data: previewData, signatureStyle, isGenerateSignatureFrame }) => {
   const { picH, logoH } = SIGNATURE_IMAGE_CONFIG;
-  console.log("previewData", previewData);
 
   const CardContainerStyle = {
     display: "flex",
