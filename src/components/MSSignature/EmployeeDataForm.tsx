@@ -1,4 +1,4 @@
-import React, { ChangeEvent, useEffect, useState } from "react";
+import React, { ChangeEvent, useEffect, useCallback, useState } from "react";
 import {
   Button,
   Col,
@@ -35,40 +35,40 @@ export const EmployeeDataForm: React.FC<{
   const [error, setError] = useState<string>("");
   const [imageSelection, setImageSelection] = useState<string>("Default");
 
-  useEffect(() => {
-    // Retrieve Existing Employee Signature Data
-    const handleGetEmployeeData = async () => {
-      if (!selectedEmployee) return;
-      const primaryEmail = selectedEmployee.mail;
-      const defaultData: Signature = {
-        isActive: false,
-        primaryEmail: selectedEmployee.mail,
-        firstName: selectedEmployee.givenName,
-        lastName: selectedEmployee.surname,
-        title: selectedEmployee.jobTitle,
-        phoneNumber: selectedEmployee.mobilePhone,
-      };
-      try {
-        setError("");
-        setLoadingEmployeeData(true);
-        const data = await getEmployeeSignatureData(primaryEmail);
-        setSelectedSignature(data ?? defaultData);
-        setLoadingEmployeeData(false);
-        if (data) {
-          if (data.profileUrl) {
-            if (data.profileUrl === data.uploadedProfileUrl)
-              setImageSelection("Uploaded Profile");
-            if (data.profileUrl === data.avatarUrl) setImageSelection("Avatar");
-          }
-        }
-      } catch {
-        setLoadingEmployeeData(false);
-        setSelectedSignature(defaultData);
-      }
+  // Retrieve Existing Employee Signature Data
+  const handleGetEmployeeData = useCallback(async () => {
+    if (!selectedEmployee) return;
+    const primaryEmail = selectedEmployee.mail;
+    const defaultData: Signature = {
+      isActive: false,
+      primaryEmail: selectedEmployee.mail,
+      firstName: selectedEmployee.givenName,
+      lastName: selectedEmployee.surname,
+      title: selectedEmployee.jobTitle,
+      phoneNumber: selectedEmployee.mobilePhone,
     };
-
-    handleGetEmployeeData();
+    try {
+      setError("");
+      setLoadingEmployeeData(true);
+      const data = await getEmployeeSignatureData(primaryEmail);
+      setSelectedSignature(data ?? defaultData);
+      setLoadingEmployeeData(false);
+      if (data) {
+        if (data.profileUrl) {
+          if (data.profileUrl === data.uploadedProfileUrl)
+            setImageSelection("Uploaded Profile");
+          if (data.profileUrl === data.avatarUrl) setImageSelection("Avatar");
+        }
+      }
+    } catch {
+      setLoadingEmployeeData(false);
+      setSelectedSignature(defaultData);
+    }
   }, [selectedEmployee, setSelectedSignature]);
+
+  useEffect(() => {
+    if (selectedEmployee?.mail) handleGetEmployeeData();
+  }, [selectedEmployee, handleGetEmployeeData]);
 
   const handleImageUpload = async (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && employee?.primaryEmail) {
