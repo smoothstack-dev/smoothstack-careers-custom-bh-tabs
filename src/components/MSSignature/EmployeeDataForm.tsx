@@ -67,8 +67,12 @@ export const EmployeeDataForm: React.FC<{
   }, [selectedEmployee, setSelectedSignature]);
 
   useEffect(() => {
-    if (selectedEmployee?.mail) handleGetEmployeeData();
-  }, [selectedEmployee, handleGetEmployeeData]);
+    if (
+      selectedEmployee?.mail &&
+      employee?.primaryEmail !== selectedEmployee.mail
+    )
+      handleGetEmployeeData();
+  }, [selectedEmployee, employee, handleGetEmployeeData]);
 
   const handleImageUpload = async (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && employee?.primaryEmail) {
