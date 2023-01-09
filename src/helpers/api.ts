@@ -1,4 +1,5 @@
 import axios, { AxiosResponse } from "axios";
+import { PROFILE_IMAGE_S3_URL } from "../components/MSSignature/store/literal";
 import { SignatureStyles } from "../components/MSSignature/store/types";
 import { FORM, FORM_TYPE, PrescreenForm, TechScreenForm } from "../types/forms";
 
@@ -19,9 +20,11 @@ const msUsersGet = authApiEndpoint + "users";
 
 //  smoothstack-signature-api
 const signatureEndpoint =
-  " https://njbmha3pnf.execute-api.us-east-1.amazonaws.com/prod/";
+  "https://8043o9dkbl.execute-api.us-east-1.amazonaws.com/prod/";
+// " https://njbmha3pnf.execute-api.us-east-1.amazonaws.com/prod/";
 const signatureUserData = signatureEndpoint + "user";
 const signatureConfigData = signatureEndpoint + "config";
+const signatureImageUpload = signatureEndpoint + "profile-image";
 
 // Prescreen
 export const getPrescreenData = async (candidateId: string) => {
@@ -115,7 +118,7 @@ export const getEmployeeSignatureData = async (primaryEmail: string) => {
     );
     return response.data;
   } catch (err) {
-    console.error("Error getting employee signature data", primaryEmail, err);
+    // console.error("Error getting employee signature data", primaryEmail, err);
   }
 };
 
@@ -127,7 +130,7 @@ export const saveEmployeeSignatureData = async (data: any) => {
     );
     return response.data;
   } catch (err) {
-    console.error("Error saving employee signature data");
+    throw new Error();
   }
 };
 
@@ -150,4 +153,28 @@ export const saveSignatureConfigData = async (data: SignatureStyles) => {
   } catch (err) {
     console.error("Error saving signature config data");
   }
+};
+
+export const uploadProfileImage = async (
+  file: FormData,
+  primaryEmail: string
+) => {
+  try {
+    const response: AxiosResponse = await axios.post(
+      `${signatureImageUpload}?primaryEmail=${primaryEmail}`,
+      file,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      }
+    );
+    return `${PROFILE_IMAGE_S3_URL}${response.data.fileName}`;
+  } catch (err) {
+    console.error("Error saving signature config data");
+  }
+  // headers: {
+  //   "content-type": file.type,
+  //   "content-length": `${file.size}`,
+  // },
 };

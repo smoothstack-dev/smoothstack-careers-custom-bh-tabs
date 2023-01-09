@@ -46,15 +46,12 @@ export const SignatureDesign = () => {
   const { signatureStyle } = useSignatureStyle();
   const [isSaving, setIsSaving] = React.useState<boolean>(false);
   const [btnText, setBtnText] = React.useState<string>("Save Changes");
-  // const BreakStyleMedium = {
-  //   display: "block",
-  //   marginBottom: "0em",
-  // };
 
   useEffect(() => {
     setBtnText("Save Changes");
   }, [signatureStyle, setBtnText]);
 
+  // Hepler function to convert react component to htmlstring
   const convertHtmlToString = (
     element: React.ReactElement<any, string | React.JSXElementConstructor<any>>
   ) => {
@@ -79,7 +76,6 @@ export const SignatureDesign = () => {
         height={`${picH}`}
         width={`${picH}`}
         style={{
-          // display: "block",
           height: `${picH}px`,
           width: `${picH}px`,
         }}
@@ -94,7 +90,7 @@ export const SignatureDesign = () => {
       <span>
         <AiIcon.AiOutlineGlobal />{" "}
         <a href="[INSERT COMPANY_WEBSITE_URL]" target="_blank">
-          [INSERT COMPANY_WEBSITE_URL]
+          [INSERT COMPANY_WEBSITE_URL_LABEL]
         </a>
       </span>
     );
@@ -105,8 +101,6 @@ export const SignatureDesign = () => {
           <HiIcon.HiOutlineOfficeBuilding />
           [INSERT MAILING_ADDRESS]
         </span>
-        {/* <span style={BreakStyleMedium} />
-        <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; [INSERT MAILING_ADDRESS_2]</span> */}
       </>
     );
     const companyLogoSection = convertHtmlToString(
@@ -128,6 +122,8 @@ export const SignatureDesign = () => {
         style={{
           height: `${logoH}px`,
           width: `${logoH}px`,
+          marginLeft: "1px",
+          marginBottom: "1px",
         }}
       />
     );
@@ -135,7 +131,7 @@ export const SignatureDesign = () => {
       <span>
         <AiIcon.AiOutlineGlobal />{" "}
         <a href="[INSERT CALENDAR_URL]" target="_blank">
-          [INSERT CALENDAR_URL]
+          [INSERT CALENDAR_URL_LABEL]
         </a>
       </span>
     );
@@ -201,6 +197,11 @@ const DesignSection: React.FC<{
 }> = ({ handleSave, btnText, isSaving }) => {
   const { signatureStyle, updateStyle, updateSubStyle } = useSignatureStyle();
 
+  /**
+   * Color popover to allow user to select a color or enter color code
+   * @param field
+   * @returns
+   */
   const colorPopover = (field: SignatureStyleFields) => {
     return (
       <Popover id="popover-basic">
@@ -214,6 +215,12 @@ const DesignSection: React.FC<{
     );
   };
 
+  /**
+   * This is the generic function to generate styling design for font, size, bold, and color
+   * Currently it is taking fields including: employeeFirstName, employeeLastName, title, additionalFields
+   * @param field
+   * @returns
+   */
   const DesignSubsection = (field: SignatureStyleFields) => {
     return (
       <>
@@ -310,58 +317,68 @@ const DesignSection: React.FC<{
   return (
     <div>
       <SettingContainer>
+        {/* Input Box Sections */}
         <div>
-          <p>
-            <strong>Company Logo Url</strong>
-            <Form.Control
-              value={signatureStyle.companyLogoUrl || ""}
-              onChange={(e) => {
-                updateStyle("companyLogoUrl", e.target.value);
-              }}
-            />
-          </p>
-          <p>
-            <strong>Company Website Url</strong>
-            <Form.Control
-              value={signatureStyle.companyWebsiteUrl || ""}
-              onChange={(e) => {
-                updateStyle("companyWebsiteUrl", e.target.value);
-              }}
-            />
-          </p>
-          <p>
-            <strong>Pofile Image Defualt Url</strong>
-            <Form.Control
-              value={signatureStyle.profileDefaultUrl || ""}
-              onChange={(e) => {
-                updateStyle("profileDefaultUrl", e.target.value);
-              }}
-            />
-          </p>
+          {[
+            {
+              label: "Company Logo Url",
+              field: "companyLogoUrl",
+              value: signatureStyle.companyLogoUrl,
+            },
+            {
+              label: "Company Website Url Label",
+              field: "companyWebsiteUrlLabel",
+              value: signatureStyle.companyWebsiteUrlLabel,
+              isDisabled: true,
+            },
+            {
+              label: "Company Website Url",
+              field: "companyWebsiteUrl",
+              value: signatureStyle.companyWebsiteUrl,
+              isDisabled: true,
+            },
+            {
+              label: "Company Mailing Address",
+              field: "mailingAddress",
+              value: signatureStyle.mailingAddress,
+            },
+            {
+              label: "Profile Image Defualt Url",
+              field: "profileDefaultUrl",
+              value: signatureStyle.profileDefaultUrl,
+            },
+          ].map((item, index) => {
+            return (
+              <p tabIndex={index}>
+                <strong>{item.label}</strong>
+                <Form.Control
+                  value={item.value || ""}
+                  onChange={(e) => {
+                    updateStyle(item.field, e.target.value);
+                  }}
+                  disabled={!!item.isDisabled}
+                />
+              </p>
+            );
+          })}
         </div>
+        {/* Stylling Sections that use DesignSubsection() */}
         <div>
-          <p>
-            <strong>Employee First Name</strong>
-          </p>
-          {DesignSubsection("employeeFirstName")}
-        </div>
-        <div>
-          <p>
-            <strong>Employee Last Name</strong>
-          </p>
-          {DesignSubsection("employeeLastName")}
-        </div>
-        <div>
-          <p>
-            <strong>Title</strong>
-          </p>
-          {DesignSubsection("title")}
-        </div>
-        <div>
-          <p>
-            <strong>Additional Fields</strong>
-          </p>
-          {DesignSubsection("additionalFields")}
+          {[
+            { label: "Employee First Name", fieldName: "employeeFirstName" },
+            { label: "Employee Last Name", fieldName: "employeeLastName" },
+            { label: "Title", fieldName: "title" },
+            { label: "Additional Fields", fieldName: "additionalFields" },
+          ].map((item, index) => {
+            return (
+              <div tabIndex={index}>
+                <p>
+                  <strong>{item.label}</strong>
+                </p>
+                {DesignSubsection(item.fieldName as SignatureStyleFields)}
+              </div>
+            );
+          })}
         </div>
       </SettingContainer>
       <br />
