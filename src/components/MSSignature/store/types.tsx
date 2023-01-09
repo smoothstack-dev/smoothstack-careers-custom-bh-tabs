@@ -7,6 +7,8 @@ export type Signature = {
   middleNameInitial?: string;
   title: string;
   phoneNumber: string;
+  avatarUrl?: string;
+  uploadedProfileUrl?: string;
   profileUrl?: string;
   teamsProfileUrl?: string;
   calendarUrlLabel?: string;

@@ -1,5 +1,7 @@
 import * as _t from "./types";
 
+export const PROFILE_IMAGE_S3_URL = " https://dwkfogbh8lfl9.cloudfront.net/";
+
 export const MOCK_SIGNATURE: _t.Signature = {
   isActive: true,
   primaryEmail: "defaultemail@smoothstack.com",
@@ -53,7 +55,7 @@ export const INITIAL_SIGNATURE_STYLE: _t.SignatureStyles = {
 
 const cardH = 150;
 export const SIGNATURE_IMAGE_CONFIG = {
-  cardW: 600,
+  cardW: cardH * 3,
   cardH: cardH,
   picH: Math.round(cardH * 0.75),
   logoH: Math.round(cardH * 0.13),

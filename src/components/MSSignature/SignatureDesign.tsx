@@ -76,7 +76,6 @@ export const SignatureDesign = () => {
         height={`${picH}`}
         width={`${picH}`}
         style={{
-          // display: "block",
           height: `${picH}px`,
           width: `${picH}px`,
         }}
@@ -102,8 +101,6 @@ export const SignatureDesign = () => {
           <HiIcon.HiOutlineOfficeBuilding />
           [INSERT MAILING_ADDRESS]
         </span>
-        {/* <span style={BreakStyleMedium} />
-        <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; [INSERT MAILING_ADDRESS_2]</span> */}
       </>
     );
     const companyLogoSection = convertHtmlToString(
@@ -125,6 +122,8 @@ export const SignatureDesign = () => {
         style={{
           height: `${logoH}px`,
           width: `${logoH}px`,
+          marginLeft: "1px",
+          marginBottom: "1px",
         }}
       />
     );

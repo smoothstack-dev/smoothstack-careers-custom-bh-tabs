@@ -1,5 +1,14 @@
-import React, { useEffect, useMemo, useState } from "react";
-import { Button, Col, Container, Form, Row, Spinner } from "react-bootstrap";
+import React, { ChangeEvent, useEffect, useMemo, useState } from "react";
+import {
+  Button,
+  Col,
+  Container,
+  Dropdown,
+  DropdownButton,
+  Form,
+  Row,
+  Spinner,
+} from "react-bootstrap";
 import { Preview } from "./Preview";
 import useSignature from "./store/signature";
 import { EmployeeData, Signature } from "./store/types";
@@ -22,7 +31,10 @@ export const EmployeeDataForm: React.FC<{
   const [isLoadingEmployeeData, setLoadingEmployeeData] =
     useState<boolean>(false);
   const [btnText, setBtnText] = useState<string>("Save Changes");
+  const [file, setFile] = useState<File>();
+  const [isUploadingImage, setUploadingImage] = useState<boolean>(false);
   const [error, setError] = useState<string>("");
+  const [imageSelection, setImageSelection] = useState<string>("Default");
 
   useEffect(() => {
     if (selectedEmployee?.mail) handleGetEmployeeData();
@@ -46,9 +58,32 @@ export const EmployeeDataForm: React.FC<{
       const data = await getEmployeeSignatureData(primaryEmail);
       setSelectedSignature(data ?? defaultData);
       setLoadingEmployeeData(false);
+      if (data) {
+        if (data.profileUrl) {
+          if (data.profileUrl === data.uploadedProfileUrl)
+            setImageSelection("Uploaded Profile");
+          if (data.profileUrl === data.avatarUrl) setImageSelection("Avatar");
+        }
+      }
     } catch {
       setLoadingEmployeeData(false);
       setSelectedSignature(defaultData);
+    }
+  };
+
+  const handleImageUpload = async (e: ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && employee?.primaryEmail) {
+      setUploadingImage(true);
+      const uploadedFile = e.target.files[0];
+      setFile(uploadedFile);
+      let formData = new FormData();
+      formData.append("image", uploadedFile);
+      const uploadedProfileUrl = await API.uploadProfileImage(
+        formData,
+        employee.primaryEmail
+      );
+      updateSignature("uploadedProfileUrl", uploadedProfileUrl);
+      setUploadingImage(false);
     }
   };
 
@@ -82,7 +117,7 @@ export const EmployeeDataForm: React.FC<{
     field: string,
     label: string,
     value: string | boolean | undefined,
-    inputType?: "textArea" | "switch"
+    inputType?: "switch"
   ) => {
     return (
       <Form.Group className="mb-3" controlId={field}>
@@ -204,7 +239,7 @@ export const EmployeeDataForm: React.FC<{
 
             <Container>
               <Row>
-                <Col md={4}>
+                <Col md={5}>
                   {employee && (
                     <div>
                       <strong>Signature Preview</strong>
@@ -214,36 +249,72 @@ export const EmployeeDataForm: React.FC<{
                       />
                     </div>
                   )}
-                  <p>
-                    <strong>Avatar Preview</strong>
-                    {employee.profileUrl && (
-                      <>
-                        <img
-                          src={employee.profileUrl}
-                          alt={"invalid image url"}
-                          height={"100px"}
-                          width="auto"
-                          style={{
-                            display: "block",
+                  <br />
+                  <Container>
+                    <Row>
+                      <Col md={5}>
+                        <strong>Avatar Preview</strong>
+                        {employee.avatarUrl && employee.avatarUrl !== "" ? (
+                          <img
+                            src={employee.avatarUrl}
+                            alt={"invalid image url"}
+                            height={"100px"}
+                            width="auto"
+                            style={{
+                              display: "block",
+                            }}
+                          />
+                        ) : (
+                          <p>Enter Avatar Url Below</p>
+                        )}
+                        <br />
+                        <Form.Control
+                          placeholder="Enter Avatar Url Here"
+                          value={employee.avatarUrl || ""}
+                          onChange={(e) => {
+                            updateSignature("avatarUrl", e.target.value);
+                            setBtnText("Save Changes");
+                            if (imageSelection === "Avator") {
+                              setImageSelection("Default");
+                            }
+                            updateSignature("profileUrl", "");
                           }}
                         />
+                      </Col>
+                      <Col md={7}>
+                        <strong>Profile Picture</strong>
+                        {employee.uploadedProfileUrl &&
+                        employee.uploadedProfileUrl !== "" ? (
+                          <img
+                            src={employee.uploadedProfileUrl}
+                            alt={"invalid image url"}
+                            height={"100px"}
+                            width="auto"
+                            style={{
+                              display: "block",
+                            }}
+                          />
+                        ) : (
+                          <p>Upload Profile Image Below</p>
+                        )}
                         <br />
-                      </>
-                    )}
-                    <Form.Control
-                      placeholder="Enter your Avatar url here"
-                      value={employee.profileUrl || ""}
-                      onChange={(e) => {
-                        setBtnText("Save Changes");
-                        updateSignature("profileUrl", e.target.value);
-                      }}
-                    />
-                  </p>
-                  <p>
-                    <strong>Profile Picture</strong>
-                  </p>
+                        <input
+                          type="file"
+                          onChange={(e) => {
+                            handleImageUpload(e);
+                            updateSignature("profileUrl", "");
+                            setBtnText("Save Changes");
+                            if (imageSelection.includes("Uploaded")) {
+                              setImageSelection("Default");
+                            }
+                          }}
+                          disabled={isUploadingImage}
+                        />
+                      </Col>
+                    </Row>
+                  </Container>
                 </Col>
-                <Col md={8}>
+                <Col md={7}>
                   <div style={{ maxHeight: "480px", overflowY: "scroll" }}>
                     {" "}
                     <div>
@@ -269,16 +340,11 @@ export const EmployeeDataForm: React.FC<{
                           label: "Title",
                           fieldData: employee.title,
                         },
-                        {
-                          field: "profileUrl",
-                          label: "Profile Image URL",
-                          fieldData: employee.profileUrl,
-                        },
-                        {
-                          field: "teamsProfileUrl",
-                          label: "Teams Profile URL",
-                          fieldData: employee.teamsProfileUrl,
-                        },
+                        // {
+                        //   field: "teamsProfileUrl",
+                        //   label: "Teams Profile URL",
+                        //   fieldData: employee.teamsProfileUrl,
+                        // },
                         {
                           field: "phoneNumber",
                           label: "Phone Number (Enter numbers only)",
@@ -310,6 +376,57 @@ export const EmployeeDataForm: React.FC<{
                           item.inputType as any
                         );
                       })}
+                    </div>
+                    <div>
+                      <p>
+                        <strong>Select an impage for signature profile</strong>
+                        <DropdownButton
+                          id="dropdown-basic-button"
+                          title={imageSelection}
+                          disabled={
+                            !employee.uploadedProfileUrl &&
+                            (!employee.avatarUrl || employee.avatarUrl === "")
+                          }
+                        >
+                          <Dropdown.Item
+                            eventKey="default"
+                            onClick={() => {
+                              updateSignature("profileUrl", "");
+                              setImageSelection("Default");
+                            }}
+                          >
+                            Default
+                          </Dropdown.Item>
+                          {employee.uploadedProfileUrl && (
+                            <Dropdown.Item
+                              eventKey="upload"
+                              onClick={() => {
+                                updateSignature(
+                                  "profileUrl",
+                                  employee.uploadedProfileUrl
+                                );
+                                setImageSelection("Upload Profile");
+                              }}
+                            >
+                              Uploaded Profile
+                            </Dropdown.Item>
+                          )}
+                          {employee.avatarUrl && employee.avatarUrl !== "" && (
+                            <Dropdown.Item
+                              eventKey="avatar"
+                              onClick={() => {
+                                updateSignature(
+                                  "profileUrl",
+                                  employee.avatarUrl
+                                );
+                                setImageSelection("Avatar");
+                              }}
+                            >
+                              Avatar
+                            </Dropdown.Item>
+                          )}
+                        </DropdownButton>
+                      </p>
                     </div>
                     <div>{createBadgeSet()}</div>
                   </div>

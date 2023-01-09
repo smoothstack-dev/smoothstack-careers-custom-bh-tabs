@@ -14,7 +14,10 @@ export default function useSignature() {
 
   const updateSignature = (key: string, value: any) => {
     setSignature((draft) => {
-      const updatedSignature = { ...signature, [key]: value };
+      let updatedSignature = { ...signature, [key]: value } as _t.Signature;
+      if (key === "profileUrl" && (!value || value === ""))
+        delete updatedSignature.profileUrl;
+      console.log({ key, value, updatedSignature });
       return updatedSignature;
     });
   };
