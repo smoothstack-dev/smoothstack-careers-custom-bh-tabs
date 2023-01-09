@@ -22,10 +22,11 @@ export default function useEmployees() {
     const constructedData: _t.EmployeeData[] = data
       .filter((d: any) => d.mail)
       .map((d: any) => {
+        const [fn, ls] = d.displayName?.split(" ");
         return {
           mail: (d.mail ?? "").toLowerCase(),
-          givenName: d.givenName ?? "",
-          surname: d.surname ?? "",
+          givenName: d.givenName ?? fn ?? "",
+          surname: d.surname ?? ls ?? "",
           jobTitle: d.jobTitle ?? "",
           mobilePhone: d.mobilePhone ?? "",
         } as _t.EmployeeData;

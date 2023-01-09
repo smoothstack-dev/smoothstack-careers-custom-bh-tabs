@@ -1,5 +1,6 @@
 export type Signature = {
   isActive: boolean;
+  displayMailingAddress?: boolean;
   primaryEmail: string;
   firstName: string;
   lastName: string;
@@ -8,13 +9,14 @@ export type Signature = {
   phoneNumber: string;
   profileUrl?: string;
   teamsProfileUrl?: string;
-  mailingAddress?: string;
+  calendarUrlLabel?: string;
   calendarUrl?: string;
   badgeUrls?: string[];
 };
 
 // From Microsoft
 export type EmployeeData = {
+  displayName?: string;
   mail: string;
   givenName: string;
   surname: string;
@@ -30,9 +32,11 @@ export type SignatureStyleFields =
 
 export type SignatureStyles = {
   companyLogoUrl: string;
+  companyWebsiteUrlLabel: string;
   companyWebsiteUrl: string;
   profileDefaultUrl: string;
   profileSize: number;
+  mailingAddress: string;
   badgeSize: number;
   companyLogoSize: number;
   employeeFirstName: Styles;

@@ -19,7 +19,8 @@ const msUsersGet = authApiEndpoint + "users";
 
 //  smoothstack-signature-api
 const signatureEndpoint =
-  " https://njbmha3pnf.execute-api.us-east-1.amazonaws.com/prod/";
+  "https://8043o9dkbl.execute-api.us-east-1.amazonaws.com/prod/";
+// " https://njbmha3pnf.execute-api.us-east-1.amazonaws.com/prod/";
 const signatureUserData = signatureEndpoint + "user";
 const signatureConfigData = signatureEndpoint + "config";
 
@@ -115,7 +116,7 @@ export const getEmployeeSignatureData = async (primaryEmail: string) => {
     );
     return response.data;
   } catch (err) {
-    console.error("Error getting employee signature data", primaryEmail, err);
+    // console.error("Error getting employee signature data", primaryEmail, err);
   }
 };
 
@@ -127,7 +128,7 @@ export const saveEmployeeSignatureData = async (data: any) => {
     );
     return response.data;
   } catch (err) {
-    console.error("Error saving employee signature data");
+    throw new Error();
   }
 };
 

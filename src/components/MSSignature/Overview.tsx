@@ -5,6 +5,7 @@ import {
   Col,
   Container,
   Form,
+  Modal,
   Row,
   Spinner,
   Table,
@@ -12,6 +13,8 @@ import {
 import { EmployeeData, Signature } from "./store/types";
 import { getEmployeeSignatureData } from "../../helpers/api";
 import { CSVLink } from "react-csv";
+import * as MdIcon from "react-icons/md";
+import { EmployeeDataForm } from "./EmployeeDataForm";
 
 export const DataOverview = () => {
   const [employeeDataList, setEmployeeDataList] = useState<Signature[]>([]);
@@ -24,6 +27,10 @@ export const DataOverview = () => {
   const [sortingField, setSortingField] = useState<string | undefined>();
   const [search, setSearch] = useState<string>("");
   const [isAscending, setIsAscending] = useState<boolean>(true);
+
+  const [editEmployee, setEditEmployee] = useState<EmployeeData | undefined>();
+  const [showEditModal, setShowEditModal] = useState<boolean>(false);
+  const handleClose = () => setShowEditModal(false);
 
   const loadEmployeeDataList = useCallback(async () => {
     setLoadingEmployeeDataList(true);
@@ -103,114 +110,170 @@ export const DataOverview = () => {
   };
 
   return (
-    <div>
-      <Container
-        style={{
-          marginBottom: 10,
-        }}
-      >
-        <Row>
-          <Col
-            md={4}
-            style={{
-              display: "flex",
-              alignItems: "end",
-            }}
-          >
-            <Form.Control
-              value={search}
-              onChange={(e) => {
-                setSearch(e.target.value || "");
-              }}
-              placeholder="Search Employee by Name or Email"
-            />
-            <Button
-              variant="link"
-              onClick={() => {
-                setSearch("");
-                setSortingField(undefined);
-                setIsAscending(true);
+    <>
+      <div>
+        <Container
+          style={{
+            marginBottom: 10,
+          }}
+        >
+          <Row>
+            <Col
+              md={4}
+              style={{
+                display: "flex",
+                alignItems: "end",
               }}
             >
-              clear
-            </Button>
-          </Col>
-          <Col md={5}></Col>
-          <Col
-            md={3}
-            style={{
-              display: "flex",
-              alignItems: "end",
-            }}
-          >
-            <div>
-              <CsvDownloadButton
-                data={displayEmployeeDataList}
-                fileName="employee_data.cvs"
-                isDisabled={
-                  isLoadingEmployeeDataList ||
-                  displayEmployeeDataList.length <= 0
-                }
+              <Form.Control
+                value={search}
+                onChange={(e) => {
+                  setSearch(e.target.value || "");
+                }}
+                placeholder="Search Employee by Name or Email"
               />
               <Button
-                onClick={() => loadEmployeeDataList()}
-                disabled={isLoadingEmployeeDataList}
-                style={{
-                  marginRight: "5px",
+                variant="link"
+                onClick={() => {
+                  setSearch("");
+                  setSortingField(undefined);
+                  setIsAscending(true);
                 }}
               >
-                Reload Data
+                clear
               </Button>
-            </div>
-          </Col>
-        </Row>
-      </Container>
+            </Col>
+            <Col md={5}></Col>
+            <Col
+              md={3}
+              style={{
+                display: "flex",
+                alignItems: "end",
+              }}
+            >
+              <div>
+                <CsvDownloadButton
+                  data={displayEmployeeDataList}
+                  fileName="employee_data.cvs"
+                  isDisabled={
+                    isLoadingEmployeeDataList ||
+                    displayEmployeeDataList.length <= 0
+                  }
+                />
+                <Button
+                  onClick={() => loadEmployeeDataList()}
+                  disabled={isLoadingEmployeeDataList}
+                  style={{
+                    marginRight: "5px",
+                  }}
+                >
+                  Refresh Data
+                </Button>
+              </div>
+            </Col>
+          </Row>
+        </Container>
 
-      {isLoadingEmployeeDataList ? (
-        <Spinner animation={"border"} />
-      ) : displayEmployeeDataList.length > 0 ? (
-        <Table striped bordered hover>
-          <thead>
-            <tr>
-              <th>#</th>
-              <th onClick={() => handleSoring("firstName")}>First Name</th>
-              <th onClick={() => handleSoring("lastName")}>Last Name</th>
-              <th onClick={() => handleSoring("isActive")}>Active</th>
-              <th onClick={() => handleSoring("title")}>Title</th>
-              <th onClick={() => handleSoring("phoneNumber")}>Phone Number</th>
-              <th onClick={() => handleSoring("profileUrl")}>
-                Profile Image Url
-              </th>
-              <th onClick={() => handleSoring("mailingAddress")}>
-                Mailing Address
-              </th>
-              <th onClick={() => handleSoring("calendarUrl")}>Calendar Url</th>
-              <th onClick={() => handleSoring("badgeUrls")}>Badge Counts</th>
-            </tr>
-          </thead>
-          <tbody>
-            {displayEmployeeDataList.map((empData: Signature, index) => {
-              return (
-                <tr>
-                  <td>{index + 1}</td>
-                  <td>{empData.firstName}</td>
-                  <td>{empData.lastName}</td>
-                  <td>{!!empData.isActive ? "Y" : "N"}</td>
-                  <td>{empData.title}</td>
-                  <td>{empData.phoneNumber}</td>
-                  <td>{empData.profileUrl}</td>
-                  <td>{empData.mailingAddress}</td>
-                  <td>{empData.calendarUrl}</td>
-                  <td>{empData.badgeUrls?.length}</td>
+        {isLoadingEmployeeDataList ? (
+          <Spinner animation={"border"} />
+        ) : displayEmployeeDataList.length > 0 ? (
+          <div
+            style={{
+              overflowX: "scroll",
+            }}
+          >
+            <Table striped bordered hover>
+              <thead>
+                <tr style={{ whiteSpace: "nowrap", width: "1%" }}>
+                  <th>#</th>
+                  <th>Edit</th>
+                  <th onClick={() => handleSoring("firstName")}>First Name</th>
+                  <th onClick={() => handleSoring("lastName")}>Last Name</th>
+                  <th onClick={() => handleSoring("isActive")}>Active</th>
+                  <th onClick={() => handleSoring("title")}>Title</th>
+                  <th onClick={() => handleSoring("phoneNumber")}>
+                    Phone Number
+                  </th>
+                  <th onClick={() => handleSoring("calendarUrl")}>
+                    Calendar Url
+                  </th>
+                  <th onClick={() => handleSoring("badgeUrls")}>
+                    Badge Counts
+                  </th>
+                  <th onClick={() => handleSoring("profileUrl")}>
+                    Profile Image Url
+                  </th>
                 </tr>
-              );
-            })}
-          </tbody>
-        </Table>
-      ) : (
-        <p>No Employee Data</p>
-      )}
-    </div>
+              </thead>
+              <tbody>
+                {displayEmployeeDataList.map((empData: Signature, index) => {
+                  return (
+                    <tr style={{ whiteSpace: "nowrap", width: "1%" }}>
+                      {[
+                        index + 1,
+                        "edit",
+                        empData.firstName,
+                        empData.lastName,
+                        !!empData.isActive ? "Y" : "N",
+                        empData.title,
+                        empData.phoneNumber,
+                        empData.calendarUrl,
+                        empData.badgeUrls?.length || 0,
+                        empData.profileUrl,
+                      ].map((item, subIndex) => {
+                        if (subIndex === 1)
+                          return (
+                            <td>
+                              <MdIcon.MdEdit
+                                onClick={() => {
+                                  setEditEmployee({
+                                    mail: empData.primaryEmail,
+                                    givenName: empData.firstName,
+                                    surname: empData.lastName,
+                                    jobTitle: empData.title,
+                                    mobilePhone: empData.phoneNumber,
+                                  });
+                                  setShowEditModal(true);
+                                }}
+                              />
+                            </td>
+                          );
+                        return <td>{item}</td>;
+                      })}
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </Table>
+          </div>
+        ) : (
+          <p>No Employee Data</p>
+        )}
+      </div>
+
+      <Modal
+        show={showEditModal}
+        onHide={handleClose}
+        size="xl"
+        aria-labelledby="contained-modal-title-vcenter"
+        centered
+      >
+        <Modal.Header closeButton />
+        <Modal.Body>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              padding: "15px",
+            }}
+          >
+            {editEmployee && (
+              <EmployeeDataForm selectedEmployee={editEmployee} />
+            )}
+          </div>
+        </Modal.Body>
+      </Modal>
+    </>
   );
 };
 

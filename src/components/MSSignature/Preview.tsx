@@ -7,6 +7,7 @@ import {
   INITIAL_SIGNATURE_STYLE,
   SIGNATURE_IMAGE_CONFIG,
 } from "./store/literal";
+import * as Helpers from "./helpers";
 
 export const Preview: React.FC<{
   data: _t.Signature;
@@ -87,7 +88,9 @@ export const Preview: React.FC<{
               ) : (
                 <img
                   src={
-                    previewData.profileUrl ?? signatureStyle.profileDefaultUrl
+                    previewData.profileUrl && previewData.profileUrl !== ""
+                      ? previewData.profileUrl
+                      : signatureStyle.profileDefaultUrl
                   }
                   alt={signatureStyle.profileDefaultUrl}
                   height={`${picH}px`}
@@ -150,10 +153,11 @@ export const Preview: React.FC<{
                 <>
                   {previewData.phoneNumber && (
                     <span>
-                      <TfiIcon.TfiMobile /> {previewData.phoneNumber}
+                      <TfiIcon.TfiMobile />{" "}
+                      {Helpers.formatePhoneNumber(previewData.phoneNumber)}
                     </span>
                   )}
-                  {signatureStyle.companyWebsiteUrl &&
+                  {signatureStyle.companyWebsiteUrlLabel &&
                     previewData.phoneNumber && <> | </>}
                   {signatureStyle.companyWebsiteUrl && (
                     <span>
@@ -163,20 +167,21 @@ export const Preview: React.FC<{
                         target="_blank"
                         rel="noreferrer"
                       >
-                        {signatureStyle.companyWebsiteUrl}
+                        {signatureStyle.companyWebsiteUrlLabel}
                       </a>
                     </span>
                   )}
-                  {previewData.mailingAddress && (
-                    <>
-                      {" "}
-                      <span style={BreakStyleMedium} />
-                      <span>
-                        <HiIcon.HiOutlineOfficeBuilding />{" "}
-                        {previewData.mailingAddress}
-                      </span>
-                    </>
-                  )}
+                  {signatureStyle.mailingAddress &&
+                    previewData.displayMailingAddress && (
+                      <>
+                        {" "}
+                        <span style={BreakStyleMedium} />
+                        <span>
+                          <HiIcon.HiOutlineOfficeBuilding />{" "}
+                          {signatureStyle.mailingAddress}
+                        </span>
+                      </>
+                    )}
                 </>
               )}
             </div>
@@ -208,6 +213,7 @@ export const Preview: React.FC<{
                 {isGenerateSignatureFrame
                   ? `[INSERT BADGE_IMG]`
                   : previewData.badgeUrls?.map((badge) => {
+                      if (!badge || badge === "") return;
                       return (
                         <img
                           src={badge}
@@ -229,7 +235,7 @@ export const Preview: React.FC<{
                           target="_blank"
                           rel="noreferrer"
                         >
-                          {previewData.calendarUrl}
+                          {previewData.calendarUrlLabel || "Calendar Link"}
                         </a>
                       </span>
                     )}
