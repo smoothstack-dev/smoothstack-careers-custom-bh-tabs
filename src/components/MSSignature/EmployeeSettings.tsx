@@ -1,9 +1,7 @@
 import React, { useMemo, useState } from "react";
 import { FloatingLabel, Form, ListGroup, Spinner } from "react-bootstrap";
 import useEmployees from "./store/employees";
-import useSignature from "./store/signature";
 import { EmployeeData } from "./store/types";
-import styled from "styled-components";
 import { EmployeeDataForm } from "./EmployeeDataForm";
 
 export const EmployeeSettings = () => {
@@ -13,7 +11,6 @@ export const EmployeeSettings = () => {
     EmployeeData | undefined
   >();
   const [showSearchList, setShowSearchList] = useState<boolean>(false);
-  const { setSelectedSignature } = useSignature();
 
   const employeeName = (e: EmployeeData) => `${e.givenName} ${e.surname}`;
 
@@ -29,11 +26,6 @@ export const EmployeeSettings = () => {
       return true;
     });
   }, [employees, search]);
-
-  const SettingContainer = styled.div`
-    max-height: 550px;
-    overflow-y: scroll;
-  `;
 
   return (
     <div>

@@ -190,18 +190,19 @@ export const Preview: React.FC<{
                 <div style={{ maxWidth: `${logoH * 12}px` }}>
                   {isGenerateSignatureFrame
                     ? `[INSERT BADGE_IMG]`
-                    : previewData.badgeUrls?.map((badge) => {
-                        if (!badge || badge === "") return;
-                        return (
-                          <img
-                            src={badge}
-                            alt=""
-                            height={`${logoH}px`}
-                            width={`${logoH}px`}
-                            style={{ marginLeft: "1px", marginBottom: "1px" }}
-                          />
-                        );
-                      })}
+                    : previewData.badgeUrls
+                        ?.filter((badge) => badge && badge !== "")
+                        .map((badge) => {
+                          return (
+                            <img
+                              src={badge}
+                              alt=""
+                              height={`${logoH}px`}
+                              width={`${logoH}px`}
+                              style={{ marginLeft: "1px", marginBottom: "1px" }}
+                            />
+                          );
+                        })}
                 </div>
                 <div style={AdditionalSectionStyle}>
                   {isGenerateSignatureFrame

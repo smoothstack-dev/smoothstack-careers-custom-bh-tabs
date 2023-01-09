@@ -103,9 +103,9 @@ const App: React.FC = () => {
             </MSAuth>
           </Route>
           <Route path="/mssignature">
-            {/* <MSAuth isUserAccountAllowed={isUserAccountAllowed}> */}
-            <MSSignature />
-            {/* </MSAuth> */}
+            <MSAuth isUserAccountAllowed={isUserAccountAllowed}>
+              <MSSignature />
+            </MSAuth>
           </Route>
           <Route path="/">
             <MSAuth isUserAccountAllowed={isUserAccountAllowed}>

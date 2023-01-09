@@ -1,4 +1,4 @@
-import React, { ChangeEvent, useEffect, useMemo, useState } from "react";
+import React, { ChangeEvent, useEffect, useState } from "react";
 import {
   Button,
   Col,
@@ -31,51 +31,49 @@ export const EmployeeDataForm: React.FC<{
   const [isLoadingEmployeeData, setLoadingEmployeeData] =
     useState<boolean>(false);
   const [btnText, setBtnText] = useState<string>("Save Changes");
-  const [file, setFile] = useState<File>();
   const [isUploadingImage, setUploadingImage] = useState<boolean>(false);
   const [error, setError] = useState<string>("");
   const [imageSelection, setImageSelection] = useState<string>("Default");
 
   useEffect(() => {
-    if (selectedEmployee?.mail) handleGetEmployeeData();
-  }, [selectedEmployee]);
-
-  // Retrieve Existing Employee Signature Data
-  const handleGetEmployeeData = async () => {
-    if (!selectedEmployee) return;
-    const primaryEmail = selectedEmployee.mail;
-    const defaultData: Signature = {
-      isActive: false,
-      primaryEmail: selectedEmployee.mail,
-      firstName: selectedEmployee.givenName,
-      lastName: selectedEmployee.surname,
-      title: selectedEmployee.jobTitle,
-      phoneNumber: selectedEmployee.mobilePhone,
-    };
-    try {
-      setError("");
-      setLoadingEmployeeData(true);
-      const data = await getEmployeeSignatureData(primaryEmail);
-      setSelectedSignature(data ?? defaultData);
-      setLoadingEmployeeData(false);
-      if (data) {
-        if (data.profileUrl) {
-          if (data.profileUrl === data.uploadedProfileUrl)
-            setImageSelection("Uploaded Profile");
-          if (data.profileUrl === data.avatarUrl) setImageSelection("Avatar");
+    // Retrieve Existing Employee Signature Data
+    const handleGetEmployeeData = async () => {
+      if (!selectedEmployee) return;
+      const primaryEmail = selectedEmployee.mail;
+      const defaultData: Signature = {
+        isActive: false,
+        primaryEmail: selectedEmployee.mail,
+        firstName: selectedEmployee.givenName,
+        lastName: selectedEmployee.surname,
+        title: selectedEmployee.jobTitle,
+        phoneNumber: selectedEmployee.mobilePhone,
+      };
+      try {
+        setError("");
+        setLoadingEmployeeData(true);
+        const data = await getEmployeeSignatureData(primaryEmail);
+        setSelectedSignature(data ?? defaultData);
+        setLoadingEmployeeData(false);
+        if (data) {
+          if (data.profileUrl) {
+            if (data.profileUrl === data.uploadedProfileUrl)
+              setImageSelection("Uploaded Profile");
+            if (data.profileUrl === data.avatarUrl) setImageSelection("Avatar");
+          }
         }
+      } catch {
+        setLoadingEmployeeData(false);
+        setSelectedSignature(defaultData);
       }
-    } catch {
-      setLoadingEmployeeData(false);
-      setSelectedSignature(defaultData);
-    }
-  };
+    };
+
+    handleGetEmployeeData();
+  }, [selectedEmployee, setSelectedSignature]);
 
   const handleImageUpload = async (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && employee?.primaryEmail) {
       setUploadingImage(true);
       const uploadedFile = e.target.files[0];
-      setFile(uploadedFile);
       let formData = new FormData();
       formData.append("image", uploadedFile);
       const uploadedProfileUrl = await API.uploadProfileImage(
@@ -257,7 +255,7 @@ export const EmployeeDataForm: React.FC<{
                         {employee.avatarUrl && employee.avatarUrl !== "" ? (
                           <img
                             src={employee.avatarUrl}
-                            alt={"invalid image url"}
+                            alt={""}
                             height={"100px"}
                             width="auto"
                             style={{
@@ -287,7 +285,7 @@ export const EmployeeDataForm: React.FC<{
                         employee.uploadedProfileUrl !== "" ? (
                           <img
                             src={employee.uploadedProfileUrl}
-                            alt={"invalid image url"}
+                            alt={""}
                             height={"100px"}
                             width="auto"
                             style={{
