@@ -172,9 +172,6 @@ export const uploadProfileImage = async (
     return `${PROFILE_IMAGE_S3_URL}${response.data.fileName}`;
   } catch (err) {
     console.error("Error saving signature config data");
+    throw new Error();
   }
-  // headers: {
-  //   "content-type": file.type,
-  //   "content-length": `${file.size}`,
-  // },
 };

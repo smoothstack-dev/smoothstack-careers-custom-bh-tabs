@@ -3,8 +3,11 @@ import { FloatingLabel, Form, ListGroup, Spinner } from "react-bootstrap";
 import useEmployees from "./store/employees";
 import { EmployeeData } from "./store/types";
 import { EmployeeDataForm } from "./EmployeeDataForm";
+import { TabOptions } from ".";
 
-export const EmployeeSettings = () => {
+export const EmployeeSettings: React.FC<{
+  tab: TabOptions;
+}> = ({ tab }) => {
   const { employees, isLoadingEmployeeList } = useEmployees();
   const [search, setSearch] = useState<string>("");
   const [selectedEmployee, setSelectedEmployee] = useState<
@@ -71,7 +74,9 @@ export const EmployeeSettings = () => {
           )}
         </div>
       )}
-      <EmployeeDataForm selectedEmployee={selectedEmployee} />
+      {tab === "EMPLOYEE" && (
+        <EmployeeDataForm selectedEmployee={selectedEmployee} />
+      )}
     </div>
   );
 };

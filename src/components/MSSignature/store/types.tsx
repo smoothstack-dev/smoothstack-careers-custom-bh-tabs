@@ -36,7 +36,7 @@ export type SignatureStyles = {
   companyLogoUrl: string;
   companyWebsiteUrlLabel: string;
   companyWebsiteUrl: string;
-  profileDefaultUrl: string;
+  profileDefaultUrl?: string;
   profileSize: number;
   mailingAddress: string;
   badgeSize: number;

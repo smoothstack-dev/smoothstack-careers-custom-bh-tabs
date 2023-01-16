@@ -17,6 +17,7 @@ import { ChromePicker } from "react-color";
 import useSignatureStyle from "./store/signatureStyle";
 import {
   FontList,
+  INITIAL_SIGNATURE_STYLE,
   MOCK_SIGNATURE,
   SIGNATURE_IMAGE_CONFIG,
 } from "./store/literal";
@@ -104,14 +105,16 @@ export const SignatureDesign = () => {
       </>
     );
     const companyLogoSection = convertHtmlToString(
-      <img
-        src="[INSERT COMPANY_LOGO_URL]"
-        alt=""
-        height={`${logoH}`}
-        style={{
-          height: `${logoH}px`,
-        }}
-      />
+      <a href="[INSERT COMPANY_WEBSITE_URL]" target="_blank" rel="noreferrer">
+        <img
+          src="[INSERT COMPANY_LOGO_URL]"
+          alt=""
+          height={`${logoH}`}
+          style={{
+            height: `${logoH}px`,
+          }}
+        />
+      </a>
     );
     const badgeSection = convertHtmlToString(
       <img
@@ -160,7 +163,6 @@ export const SignatureDesign = () => {
   };
 
   const previewData = { ...MOCK_SIGNATURE };
-  previewData.profileUrl = signatureStyle.profileDefaultUrl;
 
   return (
     <div>
@@ -195,7 +197,14 @@ const DesignSection: React.FC<{
   btnText: string;
   isSaving: boolean;
 }> = ({ handleSave, btnText, isSaving }) => {
-  const { signatureStyle, updateStyle, updateSubStyle } = useSignatureStyle();
+  const { signatureStyle, updateStyle, updateSubStyle, setStyle } =
+    useSignatureStyle();
+
+  const handleSetToDefault = () => {
+    setStyle(() => {
+      return INITIAL_SIGNATURE_STYLE;
+    });
+  };
 
   /**
    * Color popover to allow user to select a color or enter color code
@@ -342,11 +351,11 @@ const DesignSection: React.FC<{
               field: "mailingAddress",
               value: signatureStyle.mailingAddress,
             },
-            {
-              label: "Profile Image Defualt Url",
-              field: "profileDefaultUrl",
-              value: signatureStyle.profileDefaultUrl,
-            },
+            // {
+            //   label: "Profile Image Defualt Url",
+            //   field: "profileDefaultUrl",
+            //   value: signatureStyle.profileDefaultUrl,
+            // },
           ].map((item, index) => {
             return (
               <p tabIndex={index}>
@@ -384,6 +393,13 @@ const DesignSection: React.FC<{
       <br />
       <Button onClick={() => handleSave()} disabled={isSaving}>
         {btnText}
+      </Button>
+      <Button
+        variant="link"
+        onClick={() => handleSetToDefault()}
+        disabled={isSaving}
+      >
+        Reset to Default
       </Button>
     </div>
   );

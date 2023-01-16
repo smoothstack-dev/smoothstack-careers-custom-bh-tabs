@@ -8,10 +8,13 @@ import * as API from "./../../helpers/api";
 import { DataOverview } from "./Overview";
 import useEmployees from "./store/employees";
 
+export type TabOptions = "DESIGN" | "EMPLOYEE" | "OVERVIEW";
+
 export const MSSignature = () => {
   const [isLoading, setLoading] = React.useState<boolean>(false);
   const { setInitialSignatureStyle } = useSignatureStyle();
   const { isLoadingEmployeeList, loadEmployeeList } = useEmployees();
+  const [tab, setTab] = React.useState<TabOptions>("DESIGN");
 
   useEffect(() => {
     const getSignatureData = async () => {
@@ -29,22 +32,27 @@ export const MSSignature = () => {
   return (
     <Container>
       <div>
-        <Tabs defaultActiveKey="design" transition={false} className="mb-3">
-          <Tab eventKey="design" title="Signature Design">
+        <Tabs
+          defaultActiveKey="DESIGN"
+          transition={false}
+          onSelect={(t: any) => setTab(t)}
+          className="mb-3"
+        >
+          <Tab eventKey="DESIGN" title="Signature Design">
             {isLoading ? <Spinner animation={"border"} /> : <SignatureDesign />}
           </Tab>
-          <Tab eventKey="details" title="Employee Data">
+          <Tab eventKey="EMPLOYEE" title="Employee Data">
             {isLoadingEmployeeList ? (
               <Spinner animation={"border"} />
             ) : (
-              <EmployeeSettings />
+              <EmployeeSettings tab={tab} />
             )}
           </Tab>
-          <Tab eventKey="overview" title="Data Overview">
+          <Tab eventKey="OVERVIEW" title="Data Overview">
             {isLoadingEmployeeList ? (
               <Spinner animation={"border"} />
             ) : (
-              <DataOverview />
+              <DataOverview tab={tab} />
             )}
           </Tab>
         </Tabs>

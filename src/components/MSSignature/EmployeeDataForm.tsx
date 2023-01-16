@@ -1,14 +1,5 @@
 import React, { ChangeEvent, useEffect, useCallback, useState } from "react";
-import {
-  Button,
-  Col,
-  Container,
-  Dropdown,
-  DropdownButton,
-  Form,
-  Row,
-  Spinner,
-} from "react-bootstrap";
+import { Button, Col, Container, Form, Row, Spinner } from "react-bootstrap";
 import { Preview } from "./Preview";
 import useSignature from "./store/signature";
 import { EmployeeData, Signature } from "./store/types";
@@ -17,6 +8,7 @@ import useSignatureStyle from "./store/signatureStyle";
 import * as API from "./../../helpers/api";
 import { cloneDeep } from "lodash";
 import * as Helpers from "./helpers";
+import { PROFILE_IMAGE_S3_URL } from "./store/literal";
 
 export const EmployeeDataForm: React.FC<{
   selectedEmployee: EmployeeData | undefined;
@@ -31,9 +23,22 @@ export const EmployeeDataForm: React.FC<{
   const [isLoadingEmployeeData, setLoadingEmployeeData] =
     useState<boolean>(false);
   const [btnText, setBtnText] = useState<string>("Save Changes");
-  const [isUploadingImage, setUploadingImage] = useState<boolean>(false);
   const [error, setError] = useState<string>("");
-  const [imageSelection, setImageSelection] = useState<string>("Default");
+  const [imageError, setImageError] = useState<string>("");
+  const [imageSelection, setImageSelection] = useState<
+    "No Image" | "Avatar" | "Uploaded Profile"
+  >("No Image");
+  const [uploadedImage, setUploadedImage] = useState<any>();
+  const [profileImageUrl, setProfileImageUrl] = useState<string | undefined>();
+
+  const fileInputId = "upload-file-btn";
+
+  const resetStates = () => {
+    setError("");
+    setUploadedImage(undefined);
+    setProfileImageUrl("");
+    setImageSelection("No Image");
+  };
 
   // Retrieve Existing Employee Signature Data
   const handleGetEmployeeData = useCallback(async () => {
@@ -48,15 +53,21 @@ export const EmployeeDataForm: React.FC<{
       phoneNumber: selectedEmployee.mobilePhone,
     };
     try {
-      setError("");
+      resetStates();
       setLoadingEmployeeData(true);
       const data = await getEmployeeSignatureData(primaryEmail);
       setSelectedSignature(data ?? defaultData);
       setLoadingEmployeeData(false);
       if (data) {
+        if (data.uploadedProfileUrl)
+          setProfileImageUrl(data.uploadedProfileUrl);
         if (data.profileUrl) {
-          if (data.profileUrl === data.uploadedProfileUrl)
+          if (
+            data.profileUrl === data.uploadedProfileUrl &&
+            data.profileUrl !== ""
+          ) {
             setImageSelection("Uploaded Profile");
+          }
           if (data.profileUrl === data.avatarUrl) setImageSelection("Avatar");
         }
       }
@@ -68,25 +79,49 @@ export const EmployeeDataForm: React.FC<{
 
   useEffect(() => {
     if (
-      selectedEmployee?.mail &&
-      employee?.primaryEmail !== selectedEmployee.mail
+      !isLoadingEmployeeData &&
+      selectedEmployee?.mail !== employee?.primaryEmail
     )
       handleGetEmployeeData();
-  }, [selectedEmployee, employee, handleGetEmployeeData]);
+  }, [
+    isLoadingEmployeeData,
+    selectedEmployee,
+    employee,
+    handleGetEmployeeData,
+  ]);
 
+  // Save new selected image to local state
   const handleImageUpload = async (e: ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && employee?.primaryEmail) {
-      setUploadingImage(true);
-      const uploadedFile = e.target.files[0];
+    setImageError("");
+    if (e.target.files && e.target.files[0]) {
+      const type = e.target.files[0].type.toUpperCase();
+      if (
+        !(type.includes("PNG") || type.includes("JPG") || type.includes("JPEG"))
+      ) {
+        setImageError(`Image type (${type}) is not acceptable!`);
+        clearFileInput();
+      } else {
+        const objLink = URL.createObjectURL(e.target.files[0]);
+        setUploadedImage(e.target.files[0]);
+        setProfileImageUrl(objLink);
+        updateSignature("profileUrl", objLink);
+        setImageSelection("Uploaded Profile");
+      }
+    }
+  };
+
+  // upload selected image to S3 and retrieve the url back
+  const handleSeveUploadedImage = async () => {
+    if (employee?.primaryEmail) {
       let formData = new FormData();
-      formData.append("image", uploadedFile);
+      formData.append("image", uploadedImage);
       const uploadedProfileUrl = await API.uploadProfileImage(
         formData,
         employee.primaryEmail
       );
-      updateSignature("uploadedProfileUrl", uploadedProfileUrl);
-      setUploadingImage(false);
+      return uploadedProfileUrl || "";
     }
+    return "";
   };
 
   const handleSave = async () => {
@@ -94,6 +129,10 @@ export const EmployeeDataForm: React.FC<{
       setIsSaving(true);
       setBtnText("Saving employee data...");
       let employeeRecord = cloneDeep(employee);
+      let newImageUrl = "";
+      if (uploadedImage) {
+        newImageUrl = await handleSeveUploadedImage();
+      }
       if (employeeRecord) {
         // filter badge urls
         employeeRecord.badgeUrls =
@@ -105,10 +144,18 @@ export const EmployeeDataForm: React.FC<{
         employeeRecord.phoneNumber = Helpers.formatePhoneNumber(
           employeeRecord.phoneNumber
         );
+
+        // update profileUrl
+        if (uploadedImage) {
+          employeeRecord.uploadedProfileUrl = newImageUrl;
+        }
+        if (imageSelection === "Uploaded Profile")
+          employeeRecord.profileUrl = employeeRecord.uploadedProfileUrl;
       }
       await API.saveEmployeeSignatureData(employeeRecord);
       setIsSaving(false);
       setBtnText("Saved");
+      // handleGetEmployeeData();
     } catch {
       setIsSaving(false);
       setBtnText("Smething went wrong, please click to save it again");
@@ -224,6 +271,34 @@ export const EmployeeDataForm: React.FC<{
       ? `${employee.firstName} ${employee.lastName} Info:`
       : "Employee Info";
 
+  const clearFileInput = () => {
+    const oldInput = document.getElementById(fileInputId);
+    if (oldInput) {
+      // create new input
+      const newInput = document.createElement("input");
+      newInput.type = "file";
+      newInput.id = fileInputId;
+      newInput.onchange = (e: any) => {
+        handleImageUpload(e);
+        setBtnText("Save Changes");
+      };
+      newInput.setAttribute("style", "display:none;");
+      oldInput.parentNode?.replaceChild(newInput, oldInput);
+
+      // component reset
+      setUploadedImage(undefined);
+      if (employee?.uploadedProfileUrl) {
+        setProfileImageUrl(employee.uploadedProfileUrl);
+        updateSignature("profileUrl", employee.uploadedProfileUrl);
+      } else {
+        setProfileImageUrl(undefined);
+        updateSignature("profileUrl", "");
+      }
+    } else {
+      setImageError("please try again");
+    }
+  };
+
   return (
     <>
       <div>
@@ -241,7 +316,7 @@ export const EmployeeDataForm: React.FC<{
 
             <Container>
               <Row>
-                <Col md={5}>
+                <Col md={6}>
                   {employee && (
                     <div>
                       <strong>Signature Preview</strong>
@@ -274,21 +349,24 @@ export const EmployeeDataForm: React.FC<{
                           placeholder="Enter Avatar Url Here"
                           value={employee.avatarUrl || ""}
                           onChange={(e) => {
-                            updateSignature("avatarUrl", e.target.value);
                             setBtnText("Save Changes");
-                            if (imageSelection === "Avator") {
-                              setImageSelection("Default");
+                            updateSignature("avatarUrl", e.target.value);
+                            if (imageSelection === "Avatar") {
+                              setImageSelection("No Image");
+                              updateSignature("profileUrl", "");
                             }
-                            updateSignature("profileUrl", "");
                           }}
                         />
                       </Col>
                       <Col md={7}>
                         <strong>Profile Picture</strong>
-                        {employee.uploadedProfileUrl &&
-                        employee.uploadedProfileUrl !== "" ? (
+                        {profileImageUrl && profileImageUrl !== "" ? (
                           <img
-                            src={employee.uploadedProfileUrl}
+                            src={
+                              profileImageUrl.includes(PROFILE_IMAGE_S3_URL)
+                                ? `${profileImageUrl}?${performance.now()}`
+                                : `${profileImageUrl}`
+                            }
                             alt={""}
                             height={"100px"}
                             width="auto"
@@ -300,23 +378,95 @@ export const EmployeeDataForm: React.FC<{
                           <p>Upload Profile Image Below</p>
                         )}
                         <br />
-                        <input
-                          type="file"
-                          onChange={(e) => {
-                            handleImageUpload(e);
-                            updateSignature("profileUrl", "");
-                            setBtnText("Save Changes");
-                            if (imageSelection.includes("Uploaded")) {
-                              setImageSelection("Default");
-                            }
+                        <div>
+                          <input
+                            type="file"
+                            id={fileInputId}
+                            onChange={(e) => {
+                              handleImageUpload(e);
+                              setBtnText("Save Changes");
+                            }}
+                            style={{ display: "none" }}
+                          />
+                        </div>
+                        <Button
+                          onClick={() => {
+                            setImageError("");
+                            const btn =
+                              document.getElementById("upload-file-btn");
+                            if (!btn) setImageError("please try again");
+                            else btn.click();
                           }}
-                          disabled={isUploadingImage}
-                        />
+                        >
+                          {employee.uploadedProfileUrl || uploadedImage
+                            ? "Update Profile"
+                            : "Upload Profile"}
+                        </Button>
+                        {uploadedImage && (
+                          <Button
+                            onClick={() => {
+                              setImageError("");
+                              clearFileInput();
+                            }}
+                            variant={"link"}
+                            disabled={isSaving}
+                          >
+                            remove image
+                          </Button>
+                        )}
+                        {imageError && imageError !== "" && <p>{imageError}</p>}
                       </Col>
                     </Row>
                   </Container>
+                  <div style={{ marginTop: "30px" }}>
+                    <p>
+                      <strong>Microsoft Teams' Profile Image</strong>
+                      <div>
+                        {[
+                          {
+                            label: "No Image",
+                            value: "",
+                            display: true,
+                          },
+                          {
+                            label: "Uploaded Profile",
+                            value: profileImageUrl,
+                            display: !!profileImageUrl,
+                          },
+                          {
+                            label: "Avatar",
+                            value: employee?.avatarUrl,
+                            display:
+                              employee.avatarUrl && employee.avatarUrl !== "",
+                          },
+                        ].map((btnConfig, index) => {
+                          return btnConfig.display ? (
+                            <Button
+                              variant={
+                                employee.teamsProfileUrl === btnConfig.value
+                                  ? "primary"
+                                  : "outline-primary"
+                              }
+                              key={`image-option-${index}`}
+                              style={{ marginRight: "10px" }}
+                              onClick={() => {
+                                updateSignature(
+                                  "teamsProfileUrl",
+                                  btnConfig.value
+                                );
+                              }}
+                            >
+                              {btnConfig.label}
+                            </Button>
+                          ) : (
+                            <></>
+                          );
+                        })}
+                      </div>
+                    </p>
+                  </div>
                 </Col>
-                <Col md={7}>
+                <Col md={6}>
                   <div style={{ maxHeight: "480px", overflowY: "scroll" }}>
                     {" "}
                     <div>
@@ -382,52 +532,53 @@ export const EmployeeDataForm: React.FC<{
                     <div>
                       <p>
                         <strong>Select an impage for signature profile</strong>
-                        <DropdownButton
-                          id="dropdown-basic-button"
-                          title={imageSelection}
-                          disabled={
-                            !employee.uploadedProfileUrl &&
+                        {/* disabled={
+                            !!profileImageUrl &&
                             (!employee.avatarUrl || employee.avatarUrl === "")
-                          }
-                        >
-                          <Dropdown.Item
-                            eventKey="default"
-                            onClick={() => {
-                              updateSignature("profileUrl", "");
-                              setImageSelection("Default");
-                            }}
-                          >
-                            Default
-                          </Dropdown.Item>
-                          {employee.uploadedProfileUrl && (
-                            <Dropdown.Item
-                              eventKey="upload"
-                              onClick={() => {
-                                updateSignature(
-                                  "profileUrl",
-                                  employee.uploadedProfileUrl
-                                );
-                                setImageSelection("Upload Profile");
-                              }}
-                            >
-                              Uploaded Profile
-                            </Dropdown.Item>
-                          )}
-                          {employee.avatarUrl && employee.avatarUrl !== "" && (
-                            <Dropdown.Item
-                              eventKey="avatar"
-                              onClick={() => {
-                                updateSignature(
-                                  "profileUrl",
-                                  employee.avatarUrl
-                                );
-                                setImageSelection("Avatar");
-                              }}
-                            >
-                              Avatar
-                            </Dropdown.Item>
-                          )}
-                        </DropdownButton>
+                          } */}
+                        <div>
+                          {[
+                            {
+                              label: "No Image",
+                              value: "",
+                              display: true,
+                            },
+                            {
+                              label: "Uploaded Profile",
+                              value: profileImageUrl,
+                              display: !!profileImageUrl,
+                            },
+                            {
+                              label: "Avatar",
+                              value: employee?.avatarUrl,
+                              display:
+                                employee.avatarUrl && employee.avatarUrl !== "",
+                            },
+                          ].map((btnConfig, index) => {
+                            return btnConfig.display ? (
+                              <Button
+                                variant={
+                                  imageSelection === btnConfig.label
+                                    ? "primary"
+                                    : "outline-primary"
+                                }
+                                key={`image-option-${index}`}
+                                style={{ marginRight: "10px" }}
+                                onClick={() => {
+                                  updateSignature(
+                                    "profileUrl",
+                                    btnConfig.value
+                                  );
+                                  setImageSelection(btnConfig.label as any);
+                                }}
+                              >
+                                {btnConfig.label}
+                              </Button>
+                            ) : (
+                              <></>
+                            );
+                          })}
+                        </div>
                       </p>
                     </div>
                     <div>{createBadgeSet()}</div>
@@ -442,6 +593,13 @@ export const EmployeeDataForm: React.FC<{
                 display: "flex",
               }}
             >
+              <Button
+                onClick={() => handleGetEmployeeData()}
+                variant={"link"}
+                disabled={isSaving}
+              >
+                Reset
+              </Button>
               <Button onClick={() => handleSave()} disabled={isSaving}>
                 {btnText}
               </Button>

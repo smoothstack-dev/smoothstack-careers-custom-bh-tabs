@@ -1,13 +1,11 @@
 import React from "react";
 import * as _t from "./store/types";
-import * as TfiIcon from "react-icons/tfi";
-import * as HiIcon from "react-icons/hi";
-import * as AiIcon from "react-icons/ai";
 import {
   INITIAL_SIGNATURE_STYLE,
   SIGNATURE_IMAGE_CONFIG,
 } from "./store/literal";
 import * as Helpers from "./helpers";
+import { PROFILE_IMAGE_S3_URL } from "./store/literal";
 
 export const Preview: React.FC<{
   data: _t.Signature;
@@ -91,19 +89,23 @@ export const Preview: React.FC<{
                 {isGenerateSignatureFrame ? (
                   `[INSERT PROFILE_IMG]`
                 ) : (
-                  <img
-                    src={
-                      previewData.profileUrl && previewData.profileUrl !== ""
-                        ? previewData.profileUrl
-                        : signatureStyle.profileDefaultUrl
-                    }
-                    alt={signatureStyle.profileDefaultUrl}
-                    height={`${picH}px`}
-                    width="auto"
-                    style={{
-                      display: "block",
-                    }}
-                  />
+                  <>
+                    {previewData && previewData.profileUrl && (
+                      <img
+                        src={
+                          previewData.profileUrl.includes(PROFILE_IMAGE_S3_URL)
+                            ? `${previewData.profileUrl}?${performance.now()}`
+                            : `${previewData.profileUrl}`
+                        }
+                        alt={""}
+                        height={`${picH}px`}
+                        width="auto"
+                        style={{
+                          display: "block",
+                        }}
+                      />
+                    )}
+                  </>
                 )}
               </div>
             </td>
@@ -139,7 +141,6 @@ export const Preview: React.FC<{
                   <>
                     {previewData.phoneNumber && (
                       <span>
-                        <TfiIcon.TfiMobile />{" "}
                         {Helpers.formatePhoneNumber(previewData.phoneNumber)}
                       </span>
                     )}
@@ -147,7 +148,6 @@ export const Preview: React.FC<{
                       previewData.phoneNumber && <> | </>}
                     {signatureStyle.companyWebsiteUrl && (
                       <span>
-                        <AiIcon.AiOutlineGlobal />{" "}
                         <a
                           href={signatureStyle.companyWebsiteUrl}
                           target="_blank"
@@ -162,10 +162,7 @@ export const Preview: React.FC<{
                         <>
                           {" "}
                           <span style={BreakStyleMedium} />
-                          <span>
-                            <HiIcon.HiOutlineOfficeBuilding />{" "}
-                            {signatureStyle.mailingAddress}
-                          </span>
+                          <span>{signatureStyle.mailingAddress}</span>
                         </>
                       )}
                   </>
@@ -177,12 +174,18 @@ export const Preview: React.FC<{
                   `[INSERT COMPANY_LOGO_IMG]`
                 ) : (
                   <div>
-                    <img
-                      src={signatureStyle.companyLogoUrl}
-                      alt={INITIAL_SIGNATURE_STYLE.companyLogoUrl}
-                      height={`${logoH}px`}
-                      width="auto"
-                    />
+                    <a
+                      href={signatureStyle.companyWebsiteUrl}
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      <img
+                        src={signatureStyle.companyLogoUrl}
+                        alt={INITIAL_SIGNATURE_STYLE.companyLogoUrl}
+                        height={`${logoH}px`}
+                        width="auto"
+                      />
+                    </a>
                   </div>
                 )}
                 {isGenerateSignatureFrame && <br />}
@@ -208,7 +211,6 @@ export const Preview: React.FC<{
                     ? `[INSERT CALENDAR_URL]`
                     : previewData.calendarUrl && (
                         <span>
-                          <AiIcon.AiOutlineGlobal />{" "}
                           <a
                             href={previewData.calendarUrl}
                             target="_blank"

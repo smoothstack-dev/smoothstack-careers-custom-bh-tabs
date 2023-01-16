@@ -1,6 +1,6 @@
 import * as _t from "./types";
 
-export const PROFILE_IMAGE_S3_URL = " https://dwkfogbh8lfl9.cloudfront.net/";
+export const PROFILE_IMAGE_S3_URL = "https://dwkfogbh8lfl9.cloudfront.net/";
 
 export const MOCK_SIGNATURE: _t.Signature = {
   isActive: true,
@@ -34,20 +34,20 @@ export const INITIAL_SIGNATURE_STYLE: _t.SignatureStyles = {
   companyLogoSize: 25,
   employeeFirstName: {
     font: "Arial",
-    size: 20,
+    size: 22.5,
     weight: "bold",
     color: "#7521a7",
   },
   employeeLastName: {
     font: "Arial",
-    size: 20,
+    size: 22.5,
     weight: "bold",
     color: "#3246dd",
   },
-  title: { font: "Arial", size: 13, weight: "bold", color: "#000000" },
+  title: { font: "Arial", size: 15, weight: "bold", color: "#000000" },
   additionalFields: {
     font: "Arial",
-    size: 10,
+    size: 15,
     weight: "normal",
     color: "#000000",
   },

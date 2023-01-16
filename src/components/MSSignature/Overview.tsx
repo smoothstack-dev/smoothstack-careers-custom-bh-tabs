@@ -15,8 +15,11 @@ import { getEmployeeSignatureData } from "../../helpers/api";
 import { CSVLink } from "react-csv";
 import * as MdIcon from "react-icons/md";
 import { EmployeeDataForm } from "./EmployeeDataForm";
+import { TabOptions } from ".";
 
-export const DataOverview = () => {
+export const DataOverview: React.FC<{
+  tab: TabOptions;
+}> = ({ tab }) => {
   const [employeeDataList, setEmployeeDataList] = useState<Signature[]>([]);
   const [displayEmployeeDataList, setDisplayEmployeeDataList] = useState<
     Signature[]
@@ -189,7 +192,7 @@ export const DataOverview = () => {
                   <th>Edit</th>
                   <th onClick={() => handleSoring("firstName")}>First Name</th>
                   <th onClick={() => handleSoring("lastName")}>Last Name</th>
-                  <th onClick={() => handleSoring("isActive")}>Active</th>
+                  <th onClick={() => handleSoring("isActive")}>Enabled</th>
                   <th onClick={() => handleSoring("title")}>Title</th>
                   <th onClick={() => handleSoring("phoneNumber")}>
                     Phone Number
@@ -214,7 +217,7 @@ export const DataOverview = () => {
                         "edit",
                         empData.firstName,
                         empData.lastName,
-                        !!empData.isActive ? "Y" : "N",
+                        !!empData.isActive ? "Yes" : "No",
                         empData.title,
                         empData.phoneNumber,
                         empData.calendarUrl,
@@ -267,7 +270,7 @@ export const DataOverview = () => {
               padding: "15px",
             }}
           >
-            {editEmployee && (
+            {editEmployee && tab === "OVERVIEW" && (
               <EmployeeDataForm selectedEmployee={editEmployee} />
             )}
           </div>
@@ -285,6 +288,25 @@ interface CsvDownloadButtonProps {
 
 export function CsvDownloadButton(props: CsvDownloadButtonProps) {
   const { data, fileName, isDisabled } = props;
+  const csvData = data.map((d: any) => {
+    return {
+      PrimaryEmail: d.primaryEmail || "",
+      FirstName: d.firstName || "",
+      LastName: d.lastName || "",
+      Enabled: d.isActive ? "Yes" : "No",
+      title: d.title || "",
+      PhoneNumber: d.phoneNumber || "",
+      DisplayedProfileUrl: d.profileUrl || "",
+      AvatarUrl: d.avatarUrl || "",
+      UploadedProfileUrl: d.uploadedProfileUrl || "",
+      BadgesCount: d.badgeUrls ? d.badgeUrls.length : 0,
+      DisplayMailingAddress: d.displayMailingAddress ? "Yes" : "No",
+      TeamsProfileUrl: d.teamsProfileUrl || "",
+      CalendarUrlLabel: d.calendarUrlLabel || "",
+      CalendarUrl: d.calendarUrl || "",
+    };
+  });
+
   const csvLinkRef = useRef<any>(null);
   return (
     <>
@@ -296,7 +318,7 @@ export function CsvDownloadButton(props: CsvDownloadButtonProps) {
         Download CSV
       </Button>
       <CSVLink
-        data={data}
+        data={csvData}
         filename={`${fileName}.csv`}
         target="_blank"
         ref={csvLinkRef}
