@@ -17,6 +17,8 @@ export const Preview: React.FC<{
   const CardContainerStyle = {
     display: "flex",
     border: "0.1px",
+    // backgroundImage:
+    //   "url('https://smoothstack.com/wp-content/uploads/2023/01/white_bg.png')",
     backgroundColor: "white",
     borderRadius: "1%",
     padding: "5px",

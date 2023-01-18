@@ -531,7 +531,7 @@ export const EmployeeDataForm: React.FC<{
                     </div>
                     <div>
                       <p>
-                        <strong>Select an impage for signature profile</strong>
+                        <strong>Select an image for signature profile</strong>
                         {/* disabled={
                             !!profileImageUrl &&
                             (!employee.avatarUrl || employee.avatarUrl === "")
