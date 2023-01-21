@@ -11,7 +11,7 @@ export const MOCK_SIGNATURE: _t.Signature = {
   title: "Software Engineer",
   displayMailingAddress: true,
   profileUrl:
-    "https://smoothstack.com/wp-content/uploads/2018/07/cropped-favicon.png",
+    "https://smoothstack.com/wp-content/uploads/2023/01/image-placeholder.png",
   phoneNumber: "123-456-7890",
   calendarUrlLabel: "Calendar Link",
   calendarUrl: "https://calender.link",
