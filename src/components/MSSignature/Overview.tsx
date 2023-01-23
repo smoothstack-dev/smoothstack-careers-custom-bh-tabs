@@ -39,6 +39,10 @@ export const DataOverview: React.FC<{
     setLoadingEmployeeDataList(true);
     setSortingField(undefined);
     setSearch("");
+
+    // const allEmpData = await getAllEmployeeSignatureData();
+    // console.log("allEmpData", allEmpData);
+
     const data = await Promise.all(
       employees
         .filter((emp: EmployeeData) => emp.mail)

@@ -5,17 +5,9 @@ import { Route, Switch } from "react-router-dom";
 import { Button } from "react-bootstrap";
 import { JobDetailsManagement } from "./components/JobDetailsManagement/JobDetailsManagement";
 import { MSSignature } from "./components/MSSignature";
-import {
-  AuthenticatedTemplate,
-  UnauthenticatedTemplate,
-  useIsAuthenticated,
-  useMsal,
-} from "@azure/msal-react";
 import { MSLoginBtn } from "./components/MSLoginBtn/MSLoginBtn";
 import { MainPage } from "./components/MainPage/MainPage";
-import { loginRequest } from "./authConfig";
-import { callMsGraph } from "./graph";
-import { validateMSEmailAccess } from "./helpers/api";
+import useUser from "./components/MSLoginBtn/store/user";
 
 export type HeaderBtnType = {
   text: string;
@@ -28,41 +20,13 @@ const App: React.FC = () => {
   // For Custom Button
   const [headerMsg, setHeaderMsg] = React.useState<string>("");
   const [headerBtn, setHeaderBtn] = React.useState<HeaderBtnType>();
-  const [graphData, setGraphData] = React.useState(undefined);
-  const [isUserAccountAllowed, setUserAccountAllowed] = React.useState<
-    undefined | boolean
-  >(undefined);
 
-  const { instance, accounts } = useMsal();
-  const isAuthenticated = useIsAuthenticated();
+  const { isAuthenticated, isCheckingUser, checkUserAuthentication } =
+    useUser();
 
-  // Once user logs in, auto retrieve user details
   React.useEffect(() => {
-    const requestProfileData = async () => {
-      // Silently acquires an access token which is then attached to a request for MS Graph data
-      instance
-        .acquireTokenSilent({
-          ...loginRequest,
-          account: accounts[0],
-        })
-        .then((response) => {
-          callMsGraph(response.accessToken).then(async (response) => {
-            setGraphData(response);
-            const email = response.mail;
-            const isAllowed = await validateMSEmailAccess(email);
-            setUserAccountAllowed(isAllowed);
-          });
-        })
-        .catch((error) => {
-          console.error("requestProfileData", error);
-          setUserAccountAllowed(false);
-        });
-    };
-
-    if (isAuthenticated && !graphData) {
-      requestProfileData();
-    }
-  }, [isAuthenticated, graphData, instance, accounts]);
+    if (!isAuthenticated && !isCheckingUser) checkUserAuthentication();
+  }, [isAuthenticated, isCheckingUser, checkUserAuthentication]);
 
   return (
     <>
@@ -98,17 +62,17 @@ const App: React.FC = () => {
             />
           </Route>
           <Route path="/jobDetailsManagement">
-            <MSAuth isUserAccountAllowed={isUserAccountAllowed}>
+            <MSAuth>
               <JobDetailsManagement />
             </MSAuth>
           </Route>
           <Route path="/mssignature">
-            <MSAuth isUserAccountAllowed={isUserAccountAllowed}>
+            <MSAuth>
               <MSSignature />
             </MSAuth>
           </Route>
           <Route path="/">
-            <MSAuth isUserAccountAllowed={isUserAccountAllowed}>
+            <MSAuth>
               <MainPage />
             </MSAuth>
           </Route>
@@ -119,23 +83,14 @@ const App: React.FC = () => {
 };
 
 const MSAuth: React.FC<{
-  isUserAccountAllowed: undefined | boolean;
   children: any;
-}> = ({ isUserAccountAllowed, children }) => {
-  const msg =
-    isUserAccountAllowed === undefined
-      ? "Loading your credential..."
-      : "Sorry, you do not have permission to access to this portal";
-  return (
-    <div>
-      <AuthenticatedTemplate>
-        {isUserAccountAllowed ? children : msg}
-      </AuthenticatedTemplate>
-      <UnauthenticatedTemplate>
-        Please log in to your Microsoft Account First!
-      </UnauthenticatedTemplate>
-    </div>
-  );
+}> = ({ children }) => {
+  const { isAuthenticated, isCheckingUser } = useUser();
+  const loginMsg = "Please log in to your Microsoft Account First!";
+  const loadingMsg = "Loading your credential...";
+  if (isCheckingUser) return <p>{loadingMsg}</p>;
+  if (!isAuthenticated) return <p>{loginMsg}</p>;
+  return <div>{children}</div>;
 };
 
 export default App;

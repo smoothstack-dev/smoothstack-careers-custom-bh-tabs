@@ -1,4 +1,5 @@
 import axios, { AxiosResponse } from "axios";
+import { SESSION_USER_TOKEN } from "../components/MSLoginBtn/store/literal";
 import { PROFILE_IMAGE_S3_URL } from "../components/MSSignature/store/literal";
 import { SignatureStyles } from "../components/MSSignature/store/types";
 import { FORM, FORM_TYPE, PrescreenForm, TechScreenForm } from "../types/forms";
@@ -38,6 +39,10 @@ export const getPrescreenData = async (candidateId: string) => {
     return undefined;
   }
 };
+
+const TOKEN_TYPE = "Bearer";
+
+const getUserToken = () => sessionStorage.getItem(SESSION_USER_TOKEN);
 
 export const savePrescreenForm = async (
   formType: FORM_TYPE,
@@ -110,11 +115,42 @@ export const getEmployeeList = async () => {
   }
 };
 
+// Authentication
+export const checkUserAuthentication = async (token?: string) => {
+  const userToken = token || getUserToken();
+  try {
+    const response: AxiosResponse = await axios.get(`${signatureConfigData}`, {
+      headers: { Authorization: `${TOKEN_TYPE} ${userToken}` },
+    });
+    if (!response) {
+      sessionStorage.clear();
+      window.location.reload();
+    }
+    return !!response;
+  } catch (err) {
+    sessionStorage.clear();
+    return false;
+  }
+};
+
 // Signature Api
+export const getAllEmployeeSignatureData = async () => {
+  try {
+    const response: AxiosResponse = await axios.get(signatureUserData);
+    console.log("response", response);
+    return response.data;
+  } catch (err) {
+    // console.error("Error getting employee signature data", primaryEmail, err);
+  }
+};
+
 export const getEmployeeSignatureData = async (primaryEmail: string) => {
   try {
     const response: AxiosResponse = await axios.get(
-      `${signatureUserData}?primaryEmail=${primaryEmail}`
+      `${signatureUserData}?primaryEmail=${primaryEmail}`,
+      {
+        headers: { Authorization: `${TOKEN_TYPE} ${getUserToken()}` },
+      }
     );
     return response.data;
   } catch (err) {
@@ -126,7 +162,10 @@ export const saveEmployeeSignatureData = async (data: any) => {
   try {
     const response: AxiosResponse = await axios.post(
       `${signatureUserData}`,
-      data
+      data,
+      {
+        headers: { Authorization: `${TOKEN_TYPE} ${getUserToken()}` },
+      }
     );
     return response.data;
   } catch (err) {
@@ -136,7 +175,9 @@ export const saveEmployeeSignatureData = async (data: any) => {
 
 export const getSignatureConfig = async () => {
   try {
-    const response: AxiosResponse = await axios.get(`${signatureConfigData}`);
+    const response: AxiosResponse = await axios.get(`${signatureConfigData}`, {
+      headers: { Authorization: `${TOKEN_TYPE} ${getUserToken()}` },
+    });
     return response.data;
   } catch (err) {
     console.error("Error getting signature config data", err);
@@ -147,7 +188,10 @@ export const saveSignatureConfigData = async (data: SignatureStyles) => {
   try {
     const response: AxiosResponse = await axios.post(
       `${signatureConfigData}`,
-      data
+      data,
+      {
+        headers: { Authorization: `${TOKEN_TYPE} ${getUserToken()}` },
+      }
     );
     return response.data;
   } catch (err) {
@@ -166,6 +210,7 @@ export const uploadProfileImage = async (
       {
         headers: {
           "Content-Type": "multipart/form-data",
+          Authorization: `${TOKEN_TYPE} ${getUserToken()}`,
         },
       }
     );
