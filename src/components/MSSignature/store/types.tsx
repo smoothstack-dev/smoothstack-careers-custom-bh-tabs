@@ -14,6 +14,7 @@ export type Signature = {
   calendarUrlLabel?: string;
   calendarUrl?: string;
   badgeUrls?: string[];
+  note?: string;
 };
 
 // From Microsoft

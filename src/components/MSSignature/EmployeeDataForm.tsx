@@ -166,7 +166,7 @@ export const EmployeeDataForm: React.FC<{
     field: string,
     label: string,
     value: string | boolean | undefined,
-    inputType?: "switch"
+    inputType?: "switch" | "textarea"
   ) => {
     return (
       <Form.Group className="mb-3" controlId={field}>
@@ -190,6 +190,24 @@ export const EmployeeDataForm: React.FC<{
                     }}
                   />
                 </strong>
+              );
+            case "textarea":
+              return (
+                <>
+                  <Form.Label>
+                    <strong>{label}:</strong>
+                  </Form.Label>
+                  <Form.Control
+                    as="textarea"
+                    aria-label="With textarea"
+                    value={value?.toString() || ""}
+                    onChange={(e) => {
+                      setBtnText("Save Changes");
+                      updateSignature(field, e.target.value);
+                    }}
+                    rows={(value?.toString().length || 0) / 80 + 2}
+                  />
+                </>
               );
             default:
               return (
@@ -529,6 +547,7 @@ export const EmployeeDataForm: React.FC<{
                         );
                       })}
                     </div>
+                    {/* Profile Pic Selection */}
                     <div>
                       <p>
                         <strong>Select an image for signature profile</strong>
@@ -581,7 +600,16 @@ export const EmployeeDataForm: React.FC<{
                         </div>
                       </p>
                     </div>
+                    {/* Badge Section */}
                     <div>{createBadgeSet()}</div>
+                    <div>
+                      {createFieldSet(
+                        "note",
+                        "Note",
+                        employee.note || "",
+                        "textarea"
+                      )}
+                    </div>
                   </div>
                 </Col>
               </Row>
@@ -591,6 +619,7 @@ export const EmployeeDataForm: React.FC<{
               style={{
                 float: "right",
                 display: "flex",
+                marginTop: "5px",
               }}
             >
               <Button

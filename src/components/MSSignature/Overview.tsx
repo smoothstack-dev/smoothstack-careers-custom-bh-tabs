@@ -11,7 +11,7 @@ import {
   Table,
 } from "react-bootstrap";
 import { EmployeeData, Signature } from "./store/types";
-import { getEmployeeSignatureData } from "../../helpers/api";
+import { getAllEmployeeSignatureData } from "../../helpers/api";
 import { CSVLink } from "react-csv";
 import * as MdIcon from "react-icons/md";
 import { EmployeeDataForm } from "./EmployeeDataForm";
@@ -42,24 +42,24 @@ export const DataOverview: React.FC<{
 
     // const allEmpData = await getAllEmployeeSignatureData();
     // console.log("allEmpData", allEmpData);
-
-    const data = await Promise.all(
-      employees
-        .filter((emp: EmployeeData) => emp.mail)
-        .map(async (emp: EmployeeData) => {
-          const empData = await getEmployeeSignatureData(emp.mail);
-          if (empData) return empData;
-          else
-            return {
-              isActive: false,
-              primaryEmail: emp.mail,
-              firstName: emp.givenName,
-              lastName: emp.surname,
-              title: emp.jobTitle,
-              phoneNumber: emp.mobilePhone,
-            };
-        })
-    );
+    const empDataList = await getAllEmployeeSignatureData();
+    const data = employees
+      .filter((emp: EmployeeData) => emp.mail)
+      .map((emp: EmployeeData) => {
+        const empData = empDataList.find(
+          (ed: any) => emp.mail.toUpperCase() === ed.primaryEmail?.toUpperCase()
+        );
+        if (empData) return empData;
+        else
+          return {
+            isActive: false,
+            primaryEmail: emp.mail,
+            firstName: emp.givenName,
+            lastName: emp.surname,
+            title: emp.jobTitle,
+            phoneNumber: emp.mobilePhone,
+          };
+      });
     setEmployeeDataList(data);
     setDisplayEmployeeDataList(data);
     setLoadingEmployeeDataList(false);

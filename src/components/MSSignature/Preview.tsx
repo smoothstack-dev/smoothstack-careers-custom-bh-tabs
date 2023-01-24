@@ -12,7 +12,7 @@ export const Preview: React.FC<{
   signatureStyle: _t.SignatureStyles;
   isGenerateSignatureFrame?: boolean;
 }> = ({ data: previewData, signatureStyle, isGenerateSignatureFrame }) => {
-  const { picH, logoH } = SIGNATURE_IMAGE_CONFIG;
+  const { picH } = SIGNATURE_IMAGE_CONFIG;
 
   const CardContainerStyle = {
     display: "flex",
@@ -184,14 +184,14 @@ export const Preview: React.FC<{
                       <img
                         src={signatureStyle.companyLogoUrl}
                         alt={INITIAL_SIGNATURE_STYLE.companyLogoUrl}
-                        height={`${logoH}px`}
+                        height={`${signatureStyle.companyLogoSize}px`}
                         width="auto"
                       />
                     </a>
                   </div>
                 )}
                 {isGenerateSignatureFrame && <br />}
-                <div style={{ maxWidth: `${logoH * 12}px` }}>
+                <div style={{ maxWidth: `${signatureStyle.badgeSize * 10}px` }}>
                   {isGenerateSignatureFrame
                     ? `[INSERT BADGE_IMG]`
                     : previewData.badgeUrls
@@ -201,8 +201,8 @@ export const Preview: React.FC<{
                             <img
                               src={badge}
                               alt=""
-                              height={`${logoH}px`}
-                              width={`${logoH}px`}
+                              height={`${signatureStyle.badgeSize}px`}
+                              width={`${signatureStyle.badgeSize}px`}
                               style={{ marginLeft: "1px", marginBottom: "1px" }}
                             />
                           );

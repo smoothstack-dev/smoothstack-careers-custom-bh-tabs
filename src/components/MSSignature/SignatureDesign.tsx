@@ -28,6 +28,7 @@ import * as API from "./../../helpers/api";
 import * as TfiIcon from "react-icons/tfi";
 import * as HiIcon from "react-icons/hi";
 import * as AiIcon from "react-icons/ai";
+import { cloneDeep } from "lodash";
 
 const SettingContainer = styled.div`
   max-height: 650px;
@@ -62,7 +63,7 @@ export const SignatureDesign = () => {
   const handleSave = async () => {
     setIsSaving(true);
     setBtnText("Saving your changes....");
-    const { picH, logoH } = SIGNATURE_IMAGE_CONFIG;
+    const { picH } = SIGNATURE_IMAGE_CONFIG;
     const signatureLayout = ReactDOMServer.renderToString(
       <Preview
         data={MOCK_SIGNATURE}
@@ -109,9 +110,9 @@ export const SignatureDesign = () => {
         <img
           src="[INSERT COMPANY_LOGO_URL]"
           alt=""
-          height={`${logoH}`}
+          height={`${signatureStyle.companyLogoSize}`}
           style={{
-            height: `${logoH}px`,
+            height: `${signatureStyle.companyLogoSize}px`,
           }}
         />
       </a>
@@ -120,11 +121,11 @@ export const SignatureDesign = () => {
       <img
         src="[INSERT BADGE_URL]"
         alt=""
-        height={`${logoH}`}
-        width={`${logoH}`}
+        height={`${signatureStyle.badgeSize}`}
+        width={`${signatureStyle.badgeSize}`}
         style={{
-          height: `${logoH}px`,
-          width: `${logoH}px`,
+          height: `${signatureStyle.badgeSize}px`,
+          width: `${signatureStyle.badgeSize}px`,
           marginLeft: "1px",
           marginBottom: "1px",
         }}
@@ -202,7 +203,9 @@ const DesignSection: React.FC<{
 
   const handleSetToDefault = () => {
     setStyle(() => {
-      return INITIAL_SIGNATURE_STYLE;
+      let defaultStyle = cloneDeep(INITIAL_SIGNATURE_STYLE);
+      defaultStyle.mailingAddress = signatureStyle.mailingAddress;
+      return defaultStyle;
     });
   };
 
@@ -385,6 +388,44 @@ const DesignSection: React.FC<{
                   <strong>{item.label}</strong>
                 </p>
                 {DesignSubsection(item.fieldName as SignatureStyleFields)}
+              </div>
+            );
+          })}
+        </div>
+        <div>
+          {[
+            {
+              label: "Badge Size",
+              field: "badgeSize",
+              value: signatureStyle.badgeSize,
+            },
+            {
+              label: "Company Logo Size",
+              field: "companyLogoSize",
+              value: signatureStyle.companyLogoSize,
+            },
+          ].map((item, index) => {
+            return (
+              <div>
+                <p>
+                  <strong>{item.label}</strong>
+                </p>
+                <Container>
+                  <Row>
+                    <Col md={3}>{`Size (${item.value}px)`}</Col>
+                    <Col md={9}>
+                      <Form.Range
+                        onChange={(e) => {
+                          const size = +e.target.value;
+                          if (size >= 10 && size <= 40)
+                            updateStyle(item.field, e.target.value);
+                        }}
+                        value={item.value}
+                      />
+                    </Col>
+                  </Row>
+                </Container>
+                <hr />
               </div>
             );
           })}

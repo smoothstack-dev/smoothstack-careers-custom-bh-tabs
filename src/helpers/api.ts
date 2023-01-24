@@ -136,8 +136,9 @@ export const checkUserAuthentication = async (token?: string) => {
 // Signature Api
 export const getAllEmployeeSignatureData = async () => {
   try {
-    const response: AxiosResponse = await axios.get(signatureUserData);
-    console.log("response", response);
+    const response: AxiosResponse = await axios.get(signatureUserData, {
+      headers: { Authorization: `${TOKEN_TYPE} ${getUserToken()}` },
+    });
     return response.data;
   } catch (err) {
     // console.error("Error getting employee signature data", primaryEmail, err);

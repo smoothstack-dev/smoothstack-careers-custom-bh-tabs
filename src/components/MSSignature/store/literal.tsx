@@ -30,8 +30,8 @@ export const INITIAL_SIGNATURE_STYLE: _t.SignatureStyles = {
     "https://smoothstack.com/wp-content/uploads/2018/07/cropped-favicon.png",
   mailingAddress: "8200 Greensboro Drive, Suite 900 McLean Virginia 22102",
   profileSize: 175,
-  badgeSize: 25,
-  companyLogoSize: 25,
+  badgeSize: 23,
+  companyLogoSize: 23,
   employeeFirstName: {
     font: "Arial",
     size: 16,
