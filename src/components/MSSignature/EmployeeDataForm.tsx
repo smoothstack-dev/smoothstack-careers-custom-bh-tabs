@@ -46,11 +46,11 @@ export const EmployeeDataForm: React.FC<{
     const primaryEmail = selectedEmployee.mail;
     const defaultData: Signature = {
       isActive: false,
-      primaryEmail: selectedEmployee.mail,
-      firstName: selectedEmployee.givenName,
-      lastName: selectedEmployee.surname,
-      title: selectedEmployee.jobTitle,
-      phoneNumber: selectedEmployee.mobilePhone,
+      primaryEmail: selectedEmployee.mail || "",
+      firstName: selectedEmployee.givenName || "",
+      lastName: selectedEmployee.surname || "",
+      title: selectedEmployee.jobTitle || "",
+      phoneNumber: selectedEmployee.mobilePhone || "",
     };
     try {
       resetStates();

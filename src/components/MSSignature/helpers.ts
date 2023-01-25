@@ -1,5 +1,5 @@
 export const filterWithNumberOnly = (str: string) => {
-  return [...str].filter((pn) => pn !== " " && !isNaN(+pn)).join("");
+  return str ? [...str].filter((pn) => pn !== " " && !isNaN(+pn)).join("") : "";
 };
 
 export const formatePhoneNumber = (phone: string) => {
