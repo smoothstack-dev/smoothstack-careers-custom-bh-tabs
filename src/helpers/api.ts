@@ -27,6 +27,14 @@ const signatureUserData = signatureEndpoint + "user";
 const signatureConfigData = signatureEndpoint + "config";
 const signatureImageUpload = signatureEndpoint + "profile-image";
 
+const TOKEN_TYPE = "Bearer";
+const getUserToken = () => sessionStorage.getItem(SESSION_USER_TOKEN);
+const getAuthenticationHeader = {
+  headers: {
+    Authorization: `${TOKEN_TYPE} ${getUserToken()}`,
+  },
+};
+
 // Prescreen
 export const getPrescreenData = async (candidateId: string) => {
   try {
@@ -40,16 +48,6 @@ export const getPrescreenData = async (candidateId: string) => {
   }
 };
 
-const TOKEN_TYPE = "Bearer";
-
-const getUserToken = () => sessionStorage.getItem(SESSION_USER_TOKEN);
-
-const getAuthenticationHeader = {
-  headers: {
-    Authorization: `${TOKEN_TYPE} ${getUserToken()}`,
-  },
-};
-
 export const savePrescreenForm = async (
   formType: FORM_TYPE,
   form: PrescreenForm | TechScreenForm
@@ -57,8 +55,7 @@ export const savePrescreenForm = async (
   try {
     const response: AxiosResponse = await axios.post(
       `${prescreenPost}?formType=${FORM[formType].type}`,
-      form,
-      getAuthenticationHeader
+      form
     );
     return response.data;
   } catch (err) {
