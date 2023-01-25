@@ -44,6 +44,14 @@ const TOKEN_TYPE = "Bearer";
 
 const getUserToken = () => sessionStorage.getItem(SESSION_USER_TOKEN);
 
+const getAuthenticationHeader = () => {
+  return {
+    headers: {
+      Authorization: `${TOKEN_TYPE} ${getUserToken()}`,
+    },
+  };
+};
+
 export const savePrescreenForm = async (
   formType: FORM_TYPE,
   form: PrescreenForm | TechScreenForm
@@ -51,7 +59,8 @@ export const savePrescreenForm = async (
   try {
     const response: AxiosResponse = await axios.post(
       `${prescreenPost}?formType=${FORM[formType].type}`,
-      form
+      form,
+      getAuthenticationHeader()
     );
     return response.data;
   } catch (err) {
@@ -64,7 +73,8 @@ export const savePrescreenForm = async (
 export const getJobDescirptionList = async (queryString: string) => {
   try {
     const response: AxiosResponse = await axios.get(
-      `${jobDescriptionManagement}?${queryString}`
+      `${jobDescriptionManagement}?${queryString}`,
+      getAuthenticationHeader()
     );
     return response.data;
   } catch (err) {
@@ -80,7 +90,8 @@ export const saveJobDescription = async (
   try {
     const response: AxiosResponse = await axios.put(
       `${jobDescriptionManagement}?${queryString}`,
-      udpateData
+      udpateData,
+      getAuthenticationHeader()
     );
     if (response.status && response.status < 300) return true;
     else return false;
@@ -93,7 +104,8 @@ export const saveJobDescription = async (
 export const validateMSEmailAccess = async (email: string) => {
   try {
     const response: AxiosResponse = await axios.post(
-      `${msEmailValidationPost}?email=${email}`
+      `${msEmailValidationPost}?email=${email}`,
+      getAuthenticationHeader()
     );
     if (response.status && response.status < 300) {
       return response.data.body?.isAllowed;
@@ -107,7 +119,10 @@ export const validateMSEmailAccess = async (email: string) => {
 // Microsoft Signature
 export const getEmployeeList = async () => {
   try {
-    const response: AxiosResponse = await axios.get(`${msUsersGet}`);
+    const response: AxiosResponse = await axios.get(
+      `${msUsersGet}`,
+      getAuthenticationHeader()
+    );
     return response.data;
   } catch (err) {
     console.error("Error retrieveing employee list", err);
@@ -136,9 +151,10 @@ export const checkUserAuthentication = async (token?: string) => {
 // Signature Api
 export const getAllEmployeeSignatureData = async () => {
   try {
-    const response: AxiosResponse = await axios.get(signatureUserData, {
-      headers: { Authorization: `${TOKEN_TYPE} ${getUserToken()}` },
-    });
+    const response: AxiosResponse = await axios.get(
+      signatureUserData,
+      getAuthenticationHeader()
+    );
     return response.data;
   } catch (err) {
     // console.error("Error getting employee signature data", primaryEmail, err);
@@ -149,9 +165,7 @@ export const getEmployeeSignatureData = async (primaryEmail: string) => {
   try {
     const response: AxiosResponse = await axios.get(
       `${signatureUserData}?primaryEmail=${primaryEmail}`,
-      {
-        headers: { Authorization: `${TOKEN_TYPE} ${getUserToken()}` },
-      }
+      getAuthenticationHeader()
     );
     return response.data;
   } catch (err) {
@@ -164,9 +178,7 @@ export const saveEmployeeSignatureData = async (data: any) => {
     const response: AxiosResponse = await axios.post(
       `${signatureUserData}`,
       data,
-      {
-        headers: { Authorization: `${TOKEN_TYPE} ${getUserToken()}` },
-      }
+      getAuthenticationHeader()
     );
     return response.data;
   } catch (err) {
@@ -176,9 +188,10 @@ export const saveEmployeeSignatureData = async (data: any) => {
 
 export const getSignatureConfig = async () => {
   try {
-    const response: AxiosResponse = await axios.get(`${signatureConfigData}`, {
-      headers: { Authorization: `${TOKEN_TYPE} ${getUserToken()}` },
-    });
+    const response: AxiosResponse = await axios.get(
+      `${signatureConfigData}`,
+      getAuthenticationHeader()
+    );
     return response.data;
   } catch (err) {
     console.error("Error getting signature config data", err);
@@ -190,9 +203,7 @@ export const saveSignatureConfigData = async (data: SignatureStyles) => {
     const response: AxiosResponse = await axios.post(
       `${signatureConfigData}`,
       data,
-      {
-        headers: { Authorization: `${TOKEN_TYPE} ${getUserToken()}` },
-      }
+      getAuthenticationHeader()
     );
     return response.data;
   } catch (err) {
