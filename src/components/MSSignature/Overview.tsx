@@ -110,7 +110,7 @@ export const DataOverview: React.FC<{
     }
   }, [employees, loadEmployeeDataList]);
 
-  const handleSoring = (field: string) => {
+  const handleSorting = (field: string) => {
     if (sortingField === field) setIsAscending(!isAscending);
     else setIsAscending(true);
     setSortingField(field);
@@ -194,20 +194,21 @@ export const DataOverview: React.FC<{
                 <tr style={{ whiteSpace: "nowrap", width: "1%" }}>
                   <th>#</th>
                   <th>Edit</th>
-                  <th onClick={() => handleSoring("firstName")}>First Name</th>
-                  <th onClick={() => handleSoring("lastName")}>Last Name</th>
-                  <th onClick={() => handleSoring("isActive")}>Enabled</th>
-                  <th onClick={() => handleSoring("title")}>Title</th>
-                  <th onClick={() => handleSoring("phoneNumber")}>
+                  <th onClick={() => handleSorting("firstName")}>First Name</th>
+                  <th onClick={() => handleSorting("lastName")}>Last Name</th>
+                  <th onClick={() => handleSorting("isActive")}>Enabled</th>
+                  <th onClick={() => handleSorting("title")}>Title</th>
+                  <th onClick={() => handleSorting("phoneNumber")}>
                     Phone Number
                   </th>
-                  <th onClick={() => handleSoring("calendarUrl")}>
-                    Calendar Url
-                  </th>
-                  <th onClick={() => handleSoring("badgeUrls")}>
+                  <th onClick={() => handleSorting("note")}>Note</th>
+                  <th onClick={() => handleSorting("badgeUrls")}>
                     Badge Counts
                   </th>
-                  <th onClick={() => handleSoring("profileUrl")}>
+                  <th onClick={() => handleSorting("calendarUrl")}>
+                    Calendar Url
+                  </th>
+                  <th onClick={() => handleSorting("profileUrl")}>
                     Profile Image Url
                   </th>
                 </tr>
@@ -224,8 +225,9 @@ export const DataOverview: React.FC<{
                         !!empData.isActive ? "Yes" : "No",
                         empData.title,
                         empData.phoneNumber,
-                        empData.calendarUrl,
+                        empData.note || "",
                         empData.badgeUrls?.length || 0,
+                        empData.calendarUrl,
                         empData.profileUrl,
                       ].map((item, subIndex) => {
                         if (subIndex === 1)
@@ -300,6 +302,7 @@ export function CsvDownloadButton(props: CsvDownloadButtonProps) {
       Enabled: d.isActive ? "Yes" : "No",
       title: d.title || "",
       PhoneNumber: d.phoneNumber || "",
+      Note: d.note || "",
       DisplayedProfileUrl: d.profileUrl || "",
       AvatarUrl: d.avatarUrl || "",
       UploadedProfileUrl: d.uploadedProfileUrl || "",
