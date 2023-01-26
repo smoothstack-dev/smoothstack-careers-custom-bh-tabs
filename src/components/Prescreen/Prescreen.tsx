@@ -159,9 +159,15 @@ export const Prescreen: React.FC<{
   React.useEffect(() => {
     const savePrescreen = async () => {
       if (!prescreenData) return;
-      await savePrescreenForm(prescreenData);
-      setDataSaved(true);
-      setHeaderMsg("");
+      try {
+        await savePrescreenForm(prescreenData);
+        setDataSaved(true);
+        setHeaderMsg("");
+      } catch {
+        setHeaderMsg(
+          "Failed saving data! Please collect the data manually before nevigating out from Prescreen tab and try it again."
+        );
+      }
     };
 
     if (startSaving) savePrescreen();
