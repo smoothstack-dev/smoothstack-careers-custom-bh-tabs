@@ -213,10 +213,10 @@ export const DataOverview: React.FC<{
                   <th onClick={() => handleSorting("profileUrl")}>
                     Profile Image Url
                   </th>
-                  <th onClick={() => handleSoring("primaryStatus")}>
+                  <th onClick={() => handleSorting("primaryStatus")}>
                     Primary Status
                   </th>
-                  <th onClick={() => handleSoring("trainPlaceTotalHours")}>
+                  <th onClick={() => handleSorting("trainPlaceTotalHours")}>
                     Train & Place Total Hours
                   </th>
                 </tr>
