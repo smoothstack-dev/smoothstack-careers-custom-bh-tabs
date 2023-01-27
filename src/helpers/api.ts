@@ -14,7 +14,7 @@ const jobDescriptionManagement = carearApiEndpoint + "jobDescriptionDetail";
 //  smoothstack-user-mgt-api
 const usrMgtEndpoint =
   "https://8043o9dkbl.execute-api.us-east-1.amazonaws.com/prod/";
-const signatureUserData = usrMgtEndpoint + "ms/user";
+const signatureUserData = usrMgtEndpoint + "signature/user";
 const signatureConfigData = usrMgtEndpoint + "signature/config";
 const signatureImageUpload = usrMgtEndpoint + "resources/profile-image";
 const msUsersGet = usrMgtEndpoint + "ms/user";
