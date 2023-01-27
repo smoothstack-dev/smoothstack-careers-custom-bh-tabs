@@ -15,6 +15,8 @@ export type Signature = {
   calendarUrl?: string;
   badgeUrls?: string[];
   note?: string;
+  primaryStatus?: string;
+  trainPlaceTotalHours?: number;
 };
 
 // From Microsoft
@@ -25,6 +27,8 @@ export type EmployeeData = {
   surname: string;
   jobTitle: string;
   mobilePhone: string;
+  primaryStatus?: string;
+  trainPlaceTotalHours?: number;
 };
 
 export type SignatureStyleFields =

@@ -4,8 +4,6 @@ import { PROFILE_IMAGE_S3_URL } from "../components/MSSignature/store/literal";
 import { SignatureStyles } from "../components/MSSignature/store/types";
 import { FORM, FORM_TYPE, PrescreenForm, TechScreenForm } from "../types/forms";
 
-// const carearApiEndpoint = "http://localhost:3000/local/";
-
 // smoothstack-careers-api
 const carearApiEndpoint =
   "https://1syp4w9c5h.execute-api.us-east-1.amazonaws.com/prod/";
@@ -13,19 +11,14 @@ const prescreenUrl = carearApiEndpoint + "prescreen";
 const prescreenPost = carearApiEndpoint + "form-events";
 const jobDescriptionManagement = carearApiEndpoint + "jobDescriptionDetail";
 
-// smoothstack-auth-api
-const authApiEndpoint =
-  "https://tjco3r5z49.execute-api.us-east-1.amazonaws.com/prod/";
-const msEmailValidationPost = authApiEndpoint + "jobManageAllowedEmailList";
-const msUsersGet = authApiEndpoint + "users";
-
-//  smoothstack-signature-api
-const signatureEndpoint =
+//  smoothstack-user-mgt-api
+const usrMgtEndpoint =
   "https://8043o9dkbl.execute-api.us-east-1.amazonaws.com/prod/";
-// " https://njbmha3pnf.execute-api.us-east-1.amazonaws.com/prod/";
-const signatureUserData = signatureEndpoint + "user";
-const signatureConfigData = signatureEndpoint + "config";
-const signatureImageUpload = signatureEndpoint + "profile-image";
+const signatureUserData = usrMgtEndpoint + "ms/user";
+const signatureConfigData = usrMgtEndpoint + "signature/config";
+const signatureImageUpload = usrMgtEndpoint + "resources/profile-image";
+const msUsersGet = usrMgtEndpoint + "ms/user";
+const sfdcUsersGet = usrMgtEndpoint + "sfdc/user";
 
 const TOKEN_TYPE = "Bearer";
 const getUserToken = () => sessionStorage.getItem(SESSION_USER_TOKEN);
@@ -96,28 +89,27 @@ export const saveJobDescription = async (
   }
 };
 
-export const validateMSEmailAccess = async (email: string) => {
-  try {
-    const response: AxiosResponse = await axios.post(
-      `${msEmailValidationPost}?email=${email}`,
-      getAuthenticationHeader
-    );
-    if (response.status && response.status < 300) {
-      return response.data.body?.isAllowed;
-    } else return false;
-  } catch (err) {
-    console.error("Error validating MS Email Access", err);
-    return false;
-  }
-};
-
 // Microsoft Signature
 export const getEmployeeList = async () => {
   try {
-    const response: AxiosResponse = await axios.get(`${msUsersGet}`);
+    const response: AxiosResponse = await axios.get(`${msUsersGet}`, {
+      headers: { Authorization: `${TOKEN_TYPE} ${getUserToken()}` },
+    });
     return response.data;
   } catch (err) {
-    console.error("Error retrieveing employee list", err);
+    console.error("Error retrieving employee list", err);
+    return [];
+  }
+};
+
+export const getSFDCUserList = async () => {
+  try {
+    const response: AxiosResponse = await axios.get(`${sfdcUsersGet}`, {
+      headers: { Authorization: `${TOKEN_TYPE} ${getUserToken()}` },
+    });
+    return response.data;
+  } catch (err) {
+    console.error("Error retrieving sfdc users list", err);
     return [];
   }
 };

@@ -58,6 +58,8 @@ export const DataOverview: React.FC<{
             lastName: emp.surname,
             title: emp.jobTitle,
             phoneNumber: emp.mobilePhone,
+            primaryStatus: emp.primaryStatus,
+            trainPlaceTotalHours: emp.trainPlaceTotalHours,
           };
       });
     setEmployeeDataList(data);
@@ -211,6 +213,12 @@ export const DataOverview: React.FC<{
                   <th onClick={() => handleSorting("profileUrl")}>
                     Profile Image Url
                   </th>
+                  <th onClick={() => handleSoring("primaryStatus")}>
+                    Primary Status
+                  </th>
+                  <th onClick={() => handleSoring("trainPlaceTotalHours")}>
+                    Train & Place Total Hours
+                  </th>
                 </tr>
               </thead>
               <tbody>
@@ -229,6 +237,8 @@ export const DataOverview: React.FC<{
                         empData.badgeUrls?.length || 0,
                         empData.calendarUrl,
                         empData.profileUrl,
+                        empData.primaryStatus,
+                        empData.trainPlaceTotalHours,
                       ].map((item, subIndex) => {
                         if (subIndex === 1)
                           return (
