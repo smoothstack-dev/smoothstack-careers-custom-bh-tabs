@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { atom, useRecoilState } from "recoil";
-import { getEmployeeList } from "../../../helpers/api";
+import { getEmployeeList, getSFDCUserList } from "../../../helpers/api";
 import { useWithImmer } from "../../../helpers/use-with-immer";
 import * as _t from "./types";
 
@@ -19,9 +19,13 @@ export default function useEmployees() {
   const loadEmployeeList = async () => {
     setIsLoadingEmployeeList(true);
     const data = await getEmployeeList();
+    const sfdcData = await getSFDCUserList();
     const constructedData: _t.EmployeeData[] = data
       .filter((d: any) => d.mail)
       .map((d: any) => {
+        const sfdcRec = sfdcData.find(
+          (sfRec: any) => sfRec.primaryEmail === d?.mail
+        );
         const [fn, ls] = d.displayName?.split(" ");
         return {
           mail: (d.mail ?? "").toLowerCase(),
@@ -29,6 +33,8 @@ export default function useEmployees() {
           surname: d.surname ?? ls ?? "",
           jobTitle: d.jobTitle ?? "",
           mobilePhone: d.mobilePhone ?? "",
+          primaryStatus: sfdcRec?.primaryStatus ?? "",
+          trainPlaceTotalHours: sfdcRec?.trainPlaceTotalHours ?? ""
         } as _t.EmployeeData;
       });
     setEmployees(() => {
