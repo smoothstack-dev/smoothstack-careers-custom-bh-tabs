@@ -23,11 +23,6 @@ const sfdcUsersGet = usrMgtEndpoint + "sfdc/user";
 const TOKEN_TYPE = "Bearer";
 const delay = (ms: number) => new Promise((res) => setTimeout(res, ms));
 const getUserToken = () => sessionStorage.getItem(SESSION_USER_TOKEN);
-const getAuthenticationHeader = {
-  headers: {
-    Authorization: `${TOKEN_TYPE} ${getUserToken()}`,
-  },
-};
 
 // Prescreen
 export const getPrescreenData = async (candidateId: string) => {
@@ -61,9 +56,16 @@ export const savePrescreenForm = async (
 // Job Description
 export const getJobDescirptionList = async (queryString: string) => {
   try {
+    let token;
+    while (sessionStorage.getItem(SESSION_USER_TOKEN) === null) {
+      await delay(1000);
+    }
+    token = getUserToken();
     const response: AxiosResponse = await axios.get(
       `${jobDescriptionManagement}?${queryString}`,
-      getAuthenticationHeader
+      {
+        headers: { Authorization: `${TOKEN_TYPE} ${token}` },
+      }
     );
     return response.data;
   } catch (err) {
@@ -81,7 +83,11 @@ export const saveJobDescription = async (
     const response: AxiosResponse = await axios.put(
       `${jobDescriptionManagement}?${queryString}`,
       udpateData,
-      getAuthenticationHeader
+      {
+        headers: {
+          Authorization: `${TOKEN_TYPE} ${getUserToken()}`,
+        },
+      }
     );
     if (response.status && response.status < 300) return true;
     else return false;
