@@ -75,11 +75,11 @@ export const SignatureDesign = () => {
       <img
         src="[INSERT PROFILE_URL]"
         alt=""
-        height={`${picH}`}
-        width={`${picH}`}
+        height={`${picH}px`}
+        width={"auto"}
         style={{
           height: `${picH}px`,
-          width: `${picH}px`,
+          width: "auto",
         }}
       />
     );
