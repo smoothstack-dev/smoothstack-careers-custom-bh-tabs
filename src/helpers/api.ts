@@ -21,6 +21,7 @@ const msUsersGet = usrMgtEndpoint + "ms/user";
 const sfdcUsersGet = usrMgtEndpoint + "sfdc/user";
 
 const TOKEN_TYPE = "Bearer";
+const delay = (ms: number) => new Promise((res) => setTimeout(res, ms));
 const getUserToken = () => sessionStorage.getItem(SESSION_USER_TOKEN);
 const getAuthenticationHeader = {
   headers: {
@@ -66,8 +67,9 @@ export const getJobDescirptionList = async (queryString: string) => {
     );
     return response.data;
   } catch (err) {
-    console.error("Error getting job list", err);
-    throw err;
+    console.error("retry getJobDescirptionList", err);
+    await delay(1500);
+    getJobDescirptionList(queryString);
   }
 };
 
