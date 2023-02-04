@@ -19,7 +19,7 @@ export const JobDetailsManagement: React.FC<{}> = () => {
 
   const [jobCorpType, setJobCorpType] = useState<CORP_TYPE>();
   const [jobList, setJobList] = useState<JobDetailType[]>();
-  const [selectedJob, setSelectedJob] = useState<JobDetailType>();
+  const [selectedJob, setSelectedJob] = useState<JobDetailType | undefined>();
   const [search, setSearch] = useState<string>("");
 
   const [jobDescription, setJobDescription] =
@@ -66,6 +66,7 @@ export const JobDetailsManagement: React.FC<{}> = () => {
             <Dropdown.Item
               onClick={() => {
                 setJobCorpType(CORP_TYPE.APPRENTICESHIP);
+                setSelectedJob(undefined);
               }}
             >
               {CORPORATION[CORP_TYPE.APPRENTICESHIP].label}
@@ -73,6 +74,7 @@ export const JobDetailsManagement: React.FC<{}> = () => {
             <Dropdown.Item
               onClick={() => {
                 setJobCorpType(CORP_TYPE.STAFF_AUG);
+                setSelectedJob(undefined);
               }}
             >
               {CORPORATION[CORP_TYPE.STAFF_AUG].label}

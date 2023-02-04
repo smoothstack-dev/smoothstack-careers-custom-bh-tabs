@@ -78,6 +78,28 @@ export const Preview: React.FC<{
       >
         <tbody>
           <tr>
+            <td colSpan={2}>
+              <div style={AdditionalSectionStyle}>
+                {isGenerateSignatureFrame
+                  ? `[INSERT CALENDAR_FIELD_TOP]`
+                  : previewData.calendarUrl &&
+                    previewData.isMoveLinkToTop && (
+                      <div style={{ height: "80px" }}>
+                        <span>
+                          <a
+                            href={previewData.calendarUrl}
+                            target="_blank"
+                            rel="noreferrer"
+                          >
+                            {previewData.calendarUrlLabel || "Calendar Link"}
+                          </a>
+                        </span>
+                      </div>
+                    )}
+              </div>
+            </td>
+          </tr>
+          <tr>
             <td>
               <div
                 style={{
@@ -210,8 +232,9 @@ export const Preview: React.FC<{
                 </div>
                 <div style={AdditionalSectionStyle}>
                   {isGenerateSignatureFrame
-                    ? `[INSERT CALENDAR_URL]`
-                    : previewData.calendarUrl && (
+                    ? `[INSERT CALENDAR_FIELD_BOTTOM]`
+                    : previewData.calendarUrl &&
+                      !previewData.isMoveLinkToTop && (
                         <span>
                           <a
                             href={previewData.calendarUrl}

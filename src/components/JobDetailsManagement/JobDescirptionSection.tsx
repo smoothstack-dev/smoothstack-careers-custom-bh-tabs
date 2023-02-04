@@ -9,12 +9,14 @@ export const JobDescriptionSection: React.FC<{
   sectionIndex: number;
   updateSections: any;
   updateSectionDetails: any;
+  setShowModal: any;
   salary?: string;
 }> = ({
   section,
   sectionIndex,
   updateSections,
   updateSectionDetails,
+  setShowModal,
   salary,
 }) => {
   return (
@@ -30,6 +32,14 @@ export const JobDescriptionSection: React.FC<{
           onClick={() => updateSections("REMOVE", sectionIndex)}
         >
           Remove Section
+        </Button>
+        <Button
+          variant="outline-primary"
+          className="float-right"
+          size="sm"
+          onClick={() => setShowModal(true)}
+        >
+          Show JD Data
         </Button>
       </div>
       <Droppable droppableId={`section-${sectionIndex}`}>

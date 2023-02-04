@@ -25,9 +25,6 @@ import { Preview } from "./Preview";
 import { SignatureStyleFields } from "./store/types";
 import ReactDOMServer from "react-dom/server";
 import * as API from "./../../helpers/api";
-import * as TfiIcon from "react-icons/tfi";
-import * as HiIcon from "react-icons/hi";
-import * as AiIcon from "react-icons/ai";
 import { cloneDeep } from "lodash";
 
 const SettingContainer = styled.div`
@@ -84,13 +81,10 @@ export const SignatureDesign = () => {
       />
     );
     const phoneNumberSection = convertHtmlToString(
-      <span>
-        <TfiIcon.TfiMobile /> [INSERT PHONE_NUMBER]
-      </span>
+      <span>[INSERT PHONE_NUMBER]</span>
     );
     const companyWebsiteSection = convertHtmlToString(
       <span>
-        <AiIcon.AiOutlineGlobal />{" "}
         <a href="[INSERT COMPANY_WEBSITE_URL]" target="_blank">
           [INSERT COMPANY_WEBSITE_URL_LABEL]
         </a>
@@ -99,10 +93,7 @@ export const SignatureDesign = () => {
     const addressSection = convertHtmlToString(
       <>
         <br />
-        <span>
-          <HiIcon.HiOutlineOfficeBuilding />
-          [INSERT MAILING_ADDRESS]
-        </span>
+        <span>[INSERT MAILING_ADDRESS]</span>
       </>
     );
     const companyLogoSection = convertHtmlToString(
@@ -131,10 +122,19 @@ export const SignatureDesign = () => {
         }}
       />
     );
+
+    const calendarSectionTop = convertHtmlToString(
+      <div style={{ height: "80px" }}>
+        <span>
+          <a href="[INSERT CALENDAR_URL]" target="_blank" rel="noreferrer">
+            [INSERT CALENDAR_URL_LABEL]
+          </a>
+        </span>
+      </div>
+    );
     const calendarSection = convertHtmlToString(
       <span>
-        <AiIcon.AiOutlineGlobal />{" "}
-        <a href="[INSERT CALENDAR_URL]" target="_blank">
+        <a href="[INSERT CALENDAR_URL]" target="_blank" rel="noreferrer">
           [INSERT CALENDAR_URL_LABEL]
         </a>
       </span>
@@ -148,6 +148,7 @@ export const SignatureDesign = () => {
       companyLogoSection,
       badgeSection,
       calendarSection,
+      calendarSectionTop,
     };
     const requestData = {
       ...signatureStyle,

@@ -88,13 +88,14 @@ const ViewOnlySectionDetails: React.FC<{
             <br />
           </>
         )}
-        {sectionDetails.contents && sectionDetails.contentType === "PARAGRAPH" && (
-          <div>
-            {sectionDetails.contents.map((content, pIndex) => {
-              return <p key={`p-${detailId}-${pIndex}`}>{content}</p>;
-            })}
-          </div>
-        )}
+        {sectionDetails.contents &&
+          sectionDetails.contentType === "PARAGRAPH" && (
+            <div>
+              {sectionDetails.contents.map((content, pIndex) => {
+                return <p key={`p-${detailId}-${pIndex}`}>{content}</p>;
+              })}
+            </div>
+          )}
         {sectionDetails.contents && sectionDetails.contentType === "LIST" && (
           <ul>
             {sectionDetails.contents.map((content, listIndex) => {
@@ -324,7 +325,7 @@ const EditSectionDetails: React.FC<{
         return (
           <p>
             {salary
-              ? `Salary: $${salary}`
+              ? `$${salary}`
               : "Salary will be retrieved from Bullhorn and shown on the job website"}
           </p>
         );

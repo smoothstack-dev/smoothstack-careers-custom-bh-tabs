@@ -207,6 +207,12 @@ export const DataOverview: React.FC<{
                   <th onClick={() => handleSorting("badgeUrls")}>
                     Badge Counts
                   </th>
+                  <th onClick={() => handleSorting("isMoveLinkToTop")}>
+                    Calendar Position
+                  </th>
+                  <th onClick={() => handleSorting("calendarUrlLabel")}>
+                    Calendar Label
+                  </th>
                   <th onClick={() => handleSorting("calendarUrl")}>
                     Calendar Url
                   </th>
@@ -235,6 +241,8 @@ export const DataOverview: React.FC<{
                         empData.phoneNumber,
                         empData.note || "",
                         empData.badgeUrls?.length || 0,
+                        empData.isMoveLinkToTop ? "Top" : "Bottom",
+                        empData.calendarUrlLabel,
                         empData.calendarUrl,
                         empData.profileUrl,
                         empData.primaryStatus,
@@ -321,6 +329,7 @@ export function CsvDownloadButton(props: CsvDownloadButtonProps) {
       TeamsProfileUrl: d.teamsProfileUrl || "",
       CalendarUrlLabel: d.calendarUrlLabel || "",
       CalendarUrl: d.calendarUrl || "",
+      CalendarLocation: d.isMoveLinkToTop ? "Top" : "Bottom",
     };
   });
 

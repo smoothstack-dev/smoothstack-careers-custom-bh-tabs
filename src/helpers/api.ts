@@ -97,6 +97,18 @@ export const saveJobDescription = async (
   }
 };
 
+// const batchUpdate = async () => {
+//   let uploadCount = 0;
+//   let data: any = [];
+//   await Promise.all(
+//     data.map(async (d: any) => {
+//       await saveEmployeeSignatureData(d);
+//       uploadCount++;
+//       console.log("Saving...#", uploadCount);
+//     })
+//   );
+// };
+
 // Microsoft Signature
 export const getEmployeeList = async () => {
   try {

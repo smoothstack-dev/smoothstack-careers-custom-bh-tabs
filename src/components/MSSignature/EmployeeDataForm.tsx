@@ -529,6 +529,12 @@ export const EmployeeDataForm: React.FC<{
                           inputType: "switch",
                         },
                         {
+                          field: "isMoveLinkToTop",
+                          label: "Display Calendar Link at the top?",
+                          fieldData: employee.isMoveLinkToTop,
+                          inputType: "switch",
+                        },
+                        {
                           field: "calendarUrlLabel",
                           label: "Calendar URL Label (optional)",
                           fieldData: employee.calendarUrlLabel,

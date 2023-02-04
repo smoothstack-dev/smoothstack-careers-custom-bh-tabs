@@ -17,6 +17,7 @@ export type Signature = {
   note?: string;
   primaryStatus?: string;
   trainPlaceTotalHours?: number;
+  isMoveLinkToTop?: boolean;
 };
 
 // From Microsoft
