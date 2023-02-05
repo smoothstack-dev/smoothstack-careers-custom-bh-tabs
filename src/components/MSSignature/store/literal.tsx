@@ -59,6 +59,7 @@ export const SIGNATURE_IMAGE_CONFIG = {
   cardH: cardH,
   picH: Math.round(cardH * 0.75),
   logoH: Math.round(cardH * 0.13),
+  linkH: 40,
 };
 
 export const FontList: string[] = [

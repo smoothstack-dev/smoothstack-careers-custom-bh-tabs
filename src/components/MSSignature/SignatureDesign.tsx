@@ -60,7 +60,7 @@ export const SignatureDesign = () => {
   const handleSave = async () => {
     setIsSaving(true);
     setBtnText("Saving your changes....");
-    const { picH } = SIGNATURE_IMAGE_CONFIG;
+    const { picH, linkH } = SIGNATURE_IMAGE_CONFIG;
     const signatureLayout = ReactDOMServer.renderToString(
       <Preview
         data={MOCK_SIGNATURE}
@@ -69,16 +69,27 @@ export const SignatureDesign = () => {
       />
     );
     const profileImageSection = convertHtmlToString(
-      <img
-        src="[INSERT PROFILE_URL]"
-        alt=""
-        height={`${picH}`}
-        width={`${picH}`}
-        style={{
-          height: `${picH}px`,
-          width: `${picH}px`,
-        }}
-      />
+      <td>
+        <div
+          style={{
+            height: `${picH}px`,
+            maxWidth: `${picH}px`,
+            marginRight: "5px",
+            overflow: "hidden",
+          }}
+        >
+          <img
+            src="[INSERT PROFILE_URL]"
+            alt=""
+            height={`${picH}`}
+            width={`${picH}`}
+            style={{
+              height: `${picH}px`,
+              width: `${picH}px`,
+            }}
+          />
+        </div>
+      </td>
     );
     const phoneNumberSection = convertHtmlToString(
       <span>[INSERT PHONE_NUMBER]</span>
@@ -124,7 +135,7 @@ export const SignatureDesign = () => {
     );
 
     const calendarSectionTop = convertHtmlToString(
-      <div style={{ height: "80px" }}>
+      <div style={{ height: `${linkH}px` }}>
         <span>
           <a href="[INSERT CALENDAR_URL]" target="_blank" rel="noreferrer">
             [INSERT CALENDAR_URL_LABEL]

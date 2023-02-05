@@ -12,7 +12,7 @@ export const Preview: React.FC<{
   signatureStyle: _t.SignatureStyles;
   isGenerateSignatureFrame?: boolean;
 }> = ({ data: previewData, signatureStyle, isGenerateSignatureFrame }) => {
-  const { picH } = SIGNATURE_IMAGE_CONFIG;
+  const { picH, linkH } = SIGNATURE_IMAGE_CONFIG;
 
   const CardContainerStyle = {
     display: "flex",
@@ -84,7 +84,7 @@ export const Preview: React.FC<{
                   ? `[INSERT CALENDAR_FIELD_TOP]`
                   : previewData.calendarUrl &&
                     previewData.isMoveLinkToTop && (
-                      <div style={{ height: "80px" }}>
+                      <div style={{ height: `${linkH}px` }}>
                         <span>
                           <a
                             href={previewData.calendarUrl}
@@ -100,21 +100,19 @@ export const Preview: React.FC<{
             </td>
           </tr>
           <tr>
-            <td>
-              <div
-                style={{
-                  height: `${picH}px`,
-                  maxWidth: `${picH}px`,
-                  marginRight: "5px",
-                  overflow: "hidden",
-                }}
-              >
-                {/* Profile Section Img */}
-                {isGenerateSignatureFrame ? (
-                  `[INSERT PROFILE_IMG]`
-                ) : (
-                  <>
-                    {previewData && previewData.profileUrl && (
+            {isGenerateSignatureFrame
+              ? `[INSERT PROFILE_IMG]`
+              : previewData &&
+                previewData.profileUrl && (
+                  <td>
+                    <div
+                      style={{
+                        height: `${picH}px`,
+                        maxWidth: `${picH}px`,
+                        marginRight: "5px",
+                        overflow: "hidden",
+                      }}
+                    >
                       <img
                         src={
                           previewData.profileUrl.includes(PROFILE_IMAGE_S3_URL)
@@ -128,11 +126,9 @@ export const Preview: React.FC<{
                           display: "block",
                         }}
                       />
-                    )}
-                  </>
+                    </div>
+                  </td>
                 )}
-              </div>
-            </td>
             <td style={{ textAlign: "initial", height: "fit-content" }}>
               {/* Name and Title */}
               <span style={FirstNameSectionStyle}>
