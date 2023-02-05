@@ -49,7 +49,11 @@ export const DataOverview: React.FC<{
         const empData = empDataList.find(
           (ed: any) => emp.mail.toUpperCase() === ed.primaryEmail?.toUpperCase()
         );
-        if (empData) return empData;
+        if (empData) {
+          empData.primaryStatus = emp.primaryStatus;
+          empData.trainPlaceTotalHours = emp.trainPlaceTotalHours;
+          return empData;
+        }
         else
           return {
             isActive: false,
@@ -246,7 +250,7 @@ export const DataOverview: React.FC<{
                         empData.calendarUrl,
                         empData.profileUrl,
                         empData.primaryStatus,
-                        empData.trainPlaceTotalHours,
+                        empData.trainPlaceTotalHours === -1 ? "" : empData.trainPlaceTotalHours,
                       ].map((item, subIndex) => {
                         if (subIndex === 1)
                           return (

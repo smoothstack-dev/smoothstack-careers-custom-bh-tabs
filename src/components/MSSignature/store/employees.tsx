@@ -24,7 +24,7 @@ export default function useEmployees() {
       .filter((d: any) => d.mail)
       .map((d: any) => {
         const sfdcRec = sfdcData.find(
-          (sfRec: any) => sfRec.primaryEmail === d?.mail
+          (sfRec: any) => (sfRec.primaryEmail ?? "").toUpperCase() === (d?.mail ?? "").toUpperCase()
         );
         const [fn, ls] = d.displayName?.split(" ");
         return {
@@ -34,7 +34,7 @@ export default function useEmployees() {
           jobTitle: d.jobTitle ?? "",
           mobilePhone: d.mobilePhone ?? "",
           primaryStatus: sfdcRec?.primaryStatus ?? "",
-          trainPlaceTotalHours: sfdcRec?.trainPlaceTotalHours ?? ""
+          trainPlaceTotalHours: sfdcRec?.trainPlaceTotalHours ?? -1
         } as _t.EmployeeData;
       });
     setEmployees(() => {
