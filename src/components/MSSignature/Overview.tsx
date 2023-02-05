@@ -63,7 +63,7 @@ export const DataOverview: React.FC<{
             title: emp.jobTitle,
             phoneNumber: emp.mobilePhone,
             primaryStatus: emp.primaryStatus,
-            trainPlaceTotalHours: emp.trainPlaceTotalHours
+            trainPlaceTotalHours: emp.trainPlaceTotalHours,
           };
       });
     setEmployeeDataList(data);
@@ -100,7 +100,6 @@ export const DataOverview: React.FC<{
               (y as any)[sortingField].toUpperCase()
                 ? 1
                 : -1;
-          
           else
             compare =
               (x as any)[sortingField] > (y as any)[sortingField] ? 1 : -1;
