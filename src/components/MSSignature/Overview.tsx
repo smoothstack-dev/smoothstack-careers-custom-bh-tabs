@@ -209,6 +209,12 @@ export const DataOverview: React.FC<{
                   <th onClick={() => handleSorting("phoneNumber")}>
                     Phone Number
                   </th>
+                  <th onClick={() => handleSorting("primaryStatus")}>
+                    Primary Status
+                  </th>
+                  <th onClick={() => handleSorting("trainPlaceTotalHours")}>
+                    Train & Place Total Hours
+                  </th>
                   <th onClick={() => handleSorting("note")}>Note</th>
                   <th onClick={() => handleSorting("badgeUrls")}>
                     Badge Counts
@@ -218,12 +224,6 @@ export const DataOverview: React.FC<{
                   </th>
                   <th onClick={() => handleSorting("profileUrl")}>
                     Profile Image Url
-                  </th>
-                  <th onClick={() => handleSorting("primaryStatus")}>
-                    Primary Status
-                  </th>
-                  <th onClick={() => handleSorting("trainPlaceTotalHours")}>
-                    Train & Place Total Hours
                   </th>
                 </tr>
               </thead>
@@ -239,12 +239,12 @@ export const DataOverview: React.FC<{
                         !!empData.isActive ? "Yes" : "No",
                         empData.title,
                         empData.phoneNumber,
+                        empData.primaryStatus,
+                        empData.trainPlaceTotalHours === -1 ? "" : empData.trainPlaceTotalHours,
                         empData.note || "",
                         empData.badgeUrls?.length || 0,
                         empData.calendarUrl,
                         empData.profileUrl,
-                        empData.primaryStatus,
-                        empData.trainPlaceTotalHours === -1 ? "" : empData.trainPlaceTotalHours,
                       ].map((item, subIndex) => {
                         if (subIndex === 1)
                           return (
