@@ -104,21 +104,18 @@ export const SignatureDesign = () => {
 
     const landlinePhoneNumberSection = convertHtmlToString(
       <>
-        <br />
         <span>[INSERT LANDLINE_PHONE_NUMBER] | Landline</span>
       </>
     );
 
     const textPhoneNumberSection = convertHtmlToString(
       <>
-        <br />
         <span>[INSERT TEXT_PHONE_NUMBER] | Text Only</span>
       </>
     );
 
     const addressSection = convertHtmlToString(
       <>
-        <br />
         <span>[INSERT MAILING_ADDRESS]</span>
       </>
     );

@@ -160,9 +160,9 @@ export const Preview: React.FC<{
                 ) : (
                   <>
                     {previewData.phoneNumber &&
-                      (previewData.displayPhoneNumber
-                        ? previewData.displayPhoneNumber
-                        : true) && (
+                      (previewData.displayPhoneNumber === undefined
+                        ? true
+                        : previewData.displayPhoneNumber) && (
                         <>
                           <span>
                             {Helpers.formatePhoneNumber(
