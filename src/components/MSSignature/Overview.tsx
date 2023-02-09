@@ -50,7 +50,6 @@ export const DataOverview: React.FC<{
           (ed: any) => emp.mail.toUpperCase() === ed.primaryEmail?.toUpperCase()
         );
         if (empData) {
-          empData.title = empData.title ?? "";
           empData.phoneNumber = empData.phoneNumber ?? "";
           empData.primaryStatus = emp.primaryStatus;
           empData.trainPlaceTotalHours = emp.trainPlaceTotalHours;
