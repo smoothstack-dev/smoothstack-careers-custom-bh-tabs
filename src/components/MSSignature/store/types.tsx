@@ -6,7 +6,12 @@ export type Signature = {
   lastName: string;
   middleNameInitial?: string;
   title: string;
+  displayPhoneNumber?: boolean;
   phoneNumber: string;
+  displayTextPhoneNumber?: boolean;
+  textPhoneNumber?: string;
+  displayLandlinePhoneNumber?: boolean;
+  landlinePhoneNumber?: string;
   avatarUrl?: string;
   uploadedProfileUrl?: string;
   profileUrl?: string;

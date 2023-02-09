@@ -12,6 +12,7 @@ export const MOCK_SIGNATURE: _t.Signature = {
   displayMailingAddress: true,
   profileUrl:
     "https://smoothstack.com/wp-content/uploads/2023/01/image-placeholder.png",
+  displayPhoneNumber: true,
   phoneNumber: "123-456-7890",
   calendarUrlLabel: "Calendar Link",
   calendarUrl: "https://calender.link",

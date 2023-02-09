@@ -166,7 +166,7 @@ export const EmployeeDataForm: React.FC<{
     field: string,
     label: string,
     value: string | boolean | undefined,
-    inputType?: "switch" | "textarea"
+    inputType?: "switch" | "textarea" | "divider"
   ) => {
     return (
       <Form.Group className="mb-3" controlId={field}>
@@ -207,6 +207,12 @@ export const EmployeeDataForm: React.FC<{
                     }}
                     rows={(value?.toString().length || 0) / 80 + 2}
                   />
+                </>
+              );
+            case "divider":
+              return (
+                <>
+                  <hr />
                 </>
               );
             default:
@@ -315,6 +321,13 @@ export const EmployeeDataForm: React.FC<{
     } else {
       setImageError("please try again");
     }
+  };
+
+  const dividerObj = {
+    field: "divider",
+    label: "divider",
+    fieldData: undefined,
+    inputType: "divider",
   };
 
   return (
@@ -515,6 +528,13 @@ export const EmployeeDataForm: React.FC<{
                         //   label: "Teams Profile URL",
                         //   fieldData: employee.teamsProfileUrl,
                         // },
+                        dividerObj,
+                        {
+                          field: "displayPhoneNumber",
+                          label: "Display phone number and website link?",
+                          fieldData: !!employee.displayPhoneNumber,
+                          inputType: "switch",
+                        },
                         {
                           field: "phoneNumber",
                           label: "Phone Number (Enter numbers only)",
@@ -522,6 +542,36 @@ export const EmployeeDataForm: React.FC<{
                             employee.phoneNumber
                           ),
                         },
+                        dividerObj,
+                        {
+                          field: "displayLandlinePhoneNumber",
+                          label: "Display landline only phone number?",
+                          fieldData: !!employee.displayLandlinePhoneNumber,
+                          inputType: "switch",
+                        },
+                        {
+                          field: "landlinePhoneNumber",
+                          label:
+                            "Landline Only Phon Number (Enter numbers only)",
+                          fieldData: Helpers.filterWithNumberOnly(
+                            employee.landlinePhoneNumber || ""
+                          ),
+                        },
+                        dividerObj,
+                        {
+                          field: "displayTextPhoneNumber",
+                          label: "Display text only phone number?",
+                          fieldData: !!employee.displayTextPhoneNumber,
+                          inputType: "switch",
+                        },
+                        {
+                          field: "textPhoneNumber",
+                          label: "Text Only Phone Number (Enter numbers only)",
+                          fieldData: Helpers.filterWithNumberOnly(
+                            employee.textPhoneNumber || ""
+                          ),
+                        },
+                        dividerObj,
                         {
                           field: "displayMailingAddress",
                           label: "Display company address?",

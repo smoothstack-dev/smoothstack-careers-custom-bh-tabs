@@ -159,24 +159,54 @@ export const Preview: React.FC<{
                   `[INSERT ADDITIONAL_FIELDS]`
                 ) : (
                   <>
-                    {previewData.phoneNumber && (
-                      <span>
-                        {Helpers.formatePhoneNumber(previewData.phoneNumber)}
-                      </span>
-                    )}
-                    {signatureStyle.companyWebsiteUrlLabel &&
-                      previewData.phoneNumber && <> | </>}
-                    {signatureStyle.companyWebsiteUrl && (
-                      <span>
-                        <a
-                          href={signatureStyle.companyWebsiteUrl}
-                          target="_blank"
-                          rel="noreferrer"
-                        >
-                          {signatureStyle.companyWebsiteUrlLabel}
-                        </a>
-                      </span>
-                    )}
+                    {previewData.phoneNumber &&
+                      previewData.displayPhoneNumber && (
+                        <>
+                          <span>
+                            {Helpers.formatePhoneNumber(
+                              previewData.phoneNumber
+                            )}
+                          </span>
+                          {signatureStyle.companyWebsiteUrlLabel && (
+                            <>
+                              <span> | </span>
+                              <span>
+                                <a
+                                  href={signatureStyle.companyWebsiteUrl}
+                                  target="_blank"
+                                  rel="noreferrer"
+                                >
+                                  {signatureStyle.companyWebsiteUrlLabel}
+                                </a>
+                              </span>
+                            </>
+                          )}
+                        </>
+                      )}
+                    {previewData.landlinePhoneNumber &&
+                      previewData.displayLandlinePhoneNumber && (
+                        <>
+                          <span style={BreakStyleMedium} />
+                          <span>
+                            {Helpers.formatePhoneNumber(
+                              previewData.landlinePhoneNumber
+                            )}
+                          </span>
+                          <span> | Landline</span>
+                        </>
+                      )}
+                    {previewData.textPhoneNumber &&
+                      previewData.displayTextPhoneNumber && (
+                        <>
+                          <span style={BreakStyleMedium} />
+                          <span>
+                            {Helpers.formatePhoneNumber(
+                              previewData.textPhoneNumber
+                            )}
+                          </span>
+                          <span> | Text Only</span>
+                        </>
+                      )}
                     {signatureStyle.mailingAddress &&
                       previewData.displayMailingAddress && (
                         <>

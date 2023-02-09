@@ -101,12 +101,28 @@ export const SignatureDesign = () => {
         </a>
       </span>
     );
+
+    const landlinePhoneNumberSection = convertHtmlToString(
+      <>
+        <br />
+        <span>[INSERT LANDLINE_PHONE_NUMBER] | Landline</span>
+      </>
+    );
+
+    const textPhoneNumberSection = convertHtmlToString(
+      <>
+        <br />
+        <span>[INSERT TEXT_PHONE_NUMBER] | Text Only</span>
+      </>
+    );
+
     const addressSection = convertHtmlToString(
       <>
         <br />
         <span>[INSERT MAILING_ADDRESS]</span>
       </>
     );
+
     const companyLogoSection = convertHtmlToString(
       <a href="[INSERT COMPANY_WEBSITE_URL]" target="_blank" rel="noreferrer">
         <img
@@ -160,6 +176,8 @@ export const SignatureDesign = () => {
       badgeSection,
       calendarSection,
       calendarSectionTop,
+      textPhoneNumberSection,
+      landlinePhoneNumberSection,
     };
     const requestData = {
       ...signatureStyle,
