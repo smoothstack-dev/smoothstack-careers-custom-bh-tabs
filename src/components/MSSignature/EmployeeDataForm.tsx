@@ -532,7 +532,9 @@ export const EmployeeDataForm: React.FC<{
                         {
                           field: "displayPhoneNumber",
                           label: "Display phone number and website link?",
-                          fieldData: !!employee.displayPhoneNumber,
+                          fieldData: employee.displayPhoneNumber
+                            ? employee.displayPhoneNumber
+                            : true,
                           inputType: "switch",
                         },
                         {
