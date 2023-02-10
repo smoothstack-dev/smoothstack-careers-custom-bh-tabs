@@ -325,6 +325,8 @@ export function CsvDownloadButton(props: CsvDownloadButtonProps) {
       Enabled: d.isActive ? "Yes" : "No",
       title: d.title || "",
       PhoneNumber: d.phoneNumber || "",
+      PrimaryStatus: d.primaryStatus || "",
+      TrainAndPlaceStatus: d.trainPlaceTotalHours === -1 ? "" : d.trainPlaceTotalHours,
       Note: d.note || "",
       DisplayedProfileUrl: d.profileUrl || "",
       AvatarUrl: d.avatarUrl || "",
