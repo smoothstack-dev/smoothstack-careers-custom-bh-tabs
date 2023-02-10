@@ -50,7 +50,6 @@ export const DataOverview: React.FC<{
           (ed: any) => emp.mail.toUpperCase() === ed.primaryEmail?.toUpperCase()
         );
         if (empData) {
-          empData.title = empData.title ?? "";
           empData.phoneNumber = empData.phoneNumber ?? "";
           empData.primaryStatus = emp.primaryStatus;
           empData.trainPlaceTotalHours = emp.trainPlaceTotalHours;
@@ -209,6 +208,12 @@ export const DataOverview: React.FC<{
                   <th onClick={() => handleSorting("phoneNumber")}>
                     Phone Number
                   </th>
+                  <th onClick={() => handleSorting("primaryStatus")}>
+                    Primary Status
+                  </th>
+                  <th onClick={() => handleSorting("trainPlaceTotalHours")}>
+                    Train & Place Total Hours
+                  </th>
                   <th onClick={() => handleSorting("note")}>Note</th>
                   <th onClick={() => handleSorting("badgeUrls")}>
                     Badge Counts
@@ -225,12 +230,6 @@ export const DataOverview: React.FC<{
                   <th onClick={() => handleSorting("profileUrl")}>
                     Profile Image Url
                   </th>
-                  <th onClick={() => handleSorting("primaryStatus")}>
-                    Primary Status
-                  </th>
-                  <th onClick={() => handleSorting("trainPlaceTotalHours")}>
-                    Train & Place Total Hours
-                  </th>
                 </tr>
               </thead>
               <tbody>
@@ -245,14 +244,14 @@ export const DataOverview: React.FC<{
                         !!empData.isActive ? "Yes" : "No",
                         empData.title,
                         empData.phoneNumber,
+                        empData.primaryStatus,
+                        empData.trainPlaceTotalHours === -1 ? "" : empData.trainPlaceTotalHours,
                         empData.note || "",
                         empData.badgeUrls?.length || 0,
                         empData.isMoveLinkToTop ? "Top" : "Bottom",
                         empData.calendarUrlLabel,
                         empData.calendarUrl,
                         empData.profileUrl,
-                        empData.primaryStatus,
-                        empData.trainPlaceTotalHours === -1 ? "" : empData.trainPlaceTotalHours,
                       ].map((item, subIndex) => {
                         if (subIndex === 1)
                           return (
