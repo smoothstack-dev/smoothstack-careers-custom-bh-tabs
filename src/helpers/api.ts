@@ -18,7 +18,7 @@ const signatureUserData = usrMgtEndpoint + "signature/user";
 const signatureConfigData = usrMgtEndpoint + "signature/config";
 const signatureImageUpload = usrMgtEndpoint + "resources/profile-image";
 const msUsersGet = usrMgtEndpoint + "ms/user";
-const sfdcUsersGet = usrMgtEndpoint + "sfdc/user";
+const sfdcUsersGet = usrMgtEndpoint + "sfdc/user?includeInactive=true";
 
 const TOKEN_TYPE = "Bearer";
 const delay = (ms: number) => new Promise((res) => setTimeout(res, ms));
