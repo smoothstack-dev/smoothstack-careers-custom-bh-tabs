@@ -20,6 +20,9 @@ const signatureImageUpload = usrMgtEndpoint + "resources/profile-image";
 const msUsersGet = usrMgtEndpoint + "ms/user";
 const sfdcUsersGet = usrMgtEndpoint + "sfdc/user?includeInactive=true";
 
+const mintedUrl = "https://owl-backend-production.herokuapp.com/getNFTs";
+const organization = "smoothstack";
+
 const TOKEN_TYPE = "Bearer";
 const delay = (ms: number) => new Promise((res) => setTimeout(res, ms));
 const getUserToken = () => sessionStorage.getItem(SESSION_USER_TOKEN);
@@ -237,6 +240,23 @@ export const uploadProfileImage = async (
     return `${PROFILE_IMAGE_S3_URL}${response.data.fileName}`;
   } catch (err) {
     console.error("Error saving signature config data");
+    throw new Error();
+  }
+};
+
+export const getMintedData = async (email: string) => {
+  try {
+    const response: AxiosResponse = await axios.get(
+      `${mintedUrl}?email=${email}&organization=${organization}`,
+      {
+        headers: {
+          "x-api-key": "removed", // TODO: Create new API that calls minted internally
+        },
+      }
+    );
+    return response.data;
+  } catch (err) {
+    console.error("Error getting minted avatar data");
     throw new Error();
   }
 };

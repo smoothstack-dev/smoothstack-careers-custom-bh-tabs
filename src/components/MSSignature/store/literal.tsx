@@ -17,9 +17,18 @@ export const MOCK_SIGNATURE: _t.Signature = {
   calendarUrlLabel: "Calendar Link",
   calendarUrl: "https://calender.link",
   badgeUrls: [
-    "https://storage.googleapis.com/minted-nfts/smoothstack/memberships/images/0.png",
-    "https://storage.googleapis.com/minted-nfts/smoothstack/skills/images/0.png",
-    "https://storage.googleapis.com/minted-nfts/smoothstack/avatars/images/1.png",
+    {
+      url: "https://storage.googleapis.com/minted-nfts/smoothstack/memberships/images/0.png",
+      isActive: true,
+    },
+    {
+      url: "https://storage.googleapis.com/minted-nfts/smoothstack/skills/images/0.png",
+      isActive: true,
+    },
+    {
+      url: "https://storage.googleapis.com/minted-nfts/smoothstack/avatars/images/1.png",
+      isActive: true,
+    },
   ],
 };
 

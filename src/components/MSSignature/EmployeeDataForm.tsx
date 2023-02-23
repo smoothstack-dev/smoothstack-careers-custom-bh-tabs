@@ -2,7 +2,7 @@ import React, { ChangeEvent, useEffect, useCallback, useState } from "react";
 import { Button, Col, Container, Form, Row, Spinner } from "react-bootstrap";
 import { Preview } from "./Preview";
 import useSignature from "./store/signature";
-import { EmployeeData, Signature } from "./store/types";
+import { Badge, EmployeeData, Signature } from "./store/types";
 import { getEmployeeSignatureData } from "../../helpers/api";
 import useSignatureStyle from "./store/signatureStyle";
 import * as API from "./../../helpers/api";
@@ -26,11 +26,14 @@ export const EmployeeDataForm: React.FC<{
   const [error, setError] = useState<string>("");
   const [imageError, setImageError] = useState<string>("");
   const [imageSelection, setImageSelection] = useState<
-    "No Image" | "Avatar" | "Uploaded Profile"
+    "No Image" | "Custom Avatar" | "Uploaded Profile" | "Minted Avatar"
   >("No Image");
   const [uploadedImage, setUploadedImage] = useState<any>();
   const [profileImageUrl, setProfileImageUrl] = useState<string | undefined>();
-
+  const [mintedAvatarUrl, setMintedAvatarUrl] = useState<string | undefined>();
+  const [mintedBadgeUrls, setMintedBadgeUrls] = useState<
+    Array<Badge> | undefined
+  >();
   const fileInputId = "upload-file-btn";
 
   const resetStates = () => {
@@ -68,9 +71,13 @@ export const EmployeeDataForm: React.FC<{
           ) {
             setImageSelection("Uploaded Profile");
           }
-          if (data.profileUrl === data.avatarUrl) setImageSelection("Avatar");
+          if (data.profileUrl === data.avatarUrl)
+            setImageSelection("Custom Avatar");
+          if (data.profileUrl === data.mintedAvatarUrl)
+            setImageSelection("Minted Avatar");
         }
       }
+      handleMintedDataUpload(primaryEmail, data);
     } catch {
       setLoadingEmployeeData(false);
       setSelectedSignature(defaultData);
@@ -124,6 +131,80 @@ export const EmployeeDataForm: React.FC<{
     return "";
   };
 
+  const handleMintedDataUpload = async (primaryEmail: string, data: any) => {
+    if (primaryEmail) {
+      const mintedData = await API.getMintedData(primaryEmail);
+      const mintedAvatar = mintedData.data.nfts.find((avatar: any) => {
+        if (
+          avatar.attributes.find((attribute: any) => {
+            return (
+              attribute.trait_type === "Type" && attribute.value === "Avatar"
+            );
+          })
+        ) {
+          return true;
+        }
+        return false;
+      });
+      const mintedBadges = mintedData.data.nfts.filter((badge: any) => {
+        if (
+          badge.attributes.find((attribute: any) => {
+            return (
+              attribute.trait_type === "Feature" && attribute.value === "Badge"
+            );
+          })
+        ) {
+          return true;
+        }
+        return false;
+      });
+      if (mintedAvatar) {
+        setMintedAvatarUrl(mintedAvatar.imageUri ?? "");
+      }
+      if (mintedBadges) {
+        if (data && data.mintedBadgeUrls) {
+          const empMintedBadgeUrls = data.mintedBadgeUrls.map(
+            (badge: Badge) => {
+              return badge.url;
+            }
+          );
+          const currMintedBadges = data.mintedBadgeUrls.filter(
+            (badge: Badge) => {
+              return mintedBadges
+                .map((importedBadge: any) => {
+                  return importedBadge.imageUri;
+                })
+                .includes(badge.url);
+            }
+          );
+          const newMintedBadges = mintedBadges
+            .filter((url: any) => {
+              return !empMintedBadgeUrls.includes(url.imageUri);
+            })
+            .map((url: any) => {
+              const badge: Badge = {
+                url: url.imageUri,
+                isActive: false,
+              };
+              return badge;
+            });
+          const badges = currMintedBadges.concat(newMintedBadges);
+          setMintedBadgeUrls(badges);
+          return;
+        }
+        setMintedBadgeUrls(
+          mintedBadges.map((url: any) => {
+            const badge: Badge = {
+              url: url.imageUri,
+              isActive: false,
+            };
+            return badge;
+          })
+        );
+      }
+    }
+  };
+
   const handleSave = async () => {
     try {
       setIsSaving(true);
@@ -135,10 +216,15 @@ export const EmployeeDataForm: React.FC<{
       }
       if (employeeRecord) {
         // filter badge urls
-        employeeRecord.badgeUrls =
-          employeeRecord.badgeUrls
-            ?.filter((bd) => !!bd && bd !== null && bd !== "")
-            .map((bd) => bd.trim()) || undefined;
+        employeeRecord.badgeUrls = employeeRecord.badgeUrls
+          ?.filter((bd) => !!bd && bd !== null && bd.url !== "")
+          .map((bd) => {
+            const badge: Badge = {
+              url: bd.url,
+              isActive: bd.isActive || false,
+            };
+            return badge || undefined;
+          });
 
         // format phone number
         employeeRecord.phoneNumber = Helpers.formatePhoneNumber(
@@ -239,54 +325,117 @@ export const EmployeeDataForm: React.FC<{
 
   const createBadgeSet = () => {
     return (
-      <Form.Group className="mb-3" controlId="badgeUrls">
-        <Form.Label>
-          <strong>
-            Badge URLs (optional). Please separate badge urls with enter
-          </strong>
-        </Form.Label>
-        {employee?.badgeUrls?.map((badge, index) => {
-          return (
-            <p style={{ display: "flex" }}>
-              <Form.Control
-                value={badge.toString() || ""}
-                onChange={(e) => {
-                  setBtnText("Save Changes");
-                  const badgeInput = e.target.value;
-                  let updatedBadgeUrls = cloneDeep(employee.badgeUrls || []);
-                  if (index < updatedBadgeUrls.length)
-                    updatedBadgeUrls[index] = badgeInput;
-                  updateSignature("badgeUrls", updatedBadgeUrls);
-                }}
-              />
-              <Button
-                variant="link"
-                onClick={() => {
-                  setBtnText("Save Changes");
-                  let updatedBadgeUrls = cloneDeep(employee?.badgeUrls || []);
-                  if (index > -1 && index < updatedBadgeUrls.length)
-                    updatedBadgeUrls.splice(index, 1);
-                  updateSignature("badgeUrls", [...updatedBadgeUrls]);
-                }}
-              >
-                Remove
-              </Button>
-            </p>
-          );
-        })}
-        <p>
-          <Button
-            variant="light"
-            onClick={() => {
-              setBtnText("Save Changes");
-              let updatedBadgeUrls = cloneDeep(employee?.badgeUrls || []);
-              updateSignature("badgeUrls", [...updatedBadgeUrls, ""]);
-            }}
-          >
-            Add new badge entry
-          </Button>
-        </p>
-      </Form.Group>
+      <div>
+        <Form.Group className="mb-3" controlId="badgeUrls">
+          <Form.Label>
+            <strong>
+              Custom Badge URLs (optional). Please separate badge urls with
+              enter
+            </strong>
+          </Form.Label>
+          {employee?.badgeUrls?.map((badge, index) => {
+            return (
+              <div>
+                <Row>
+                  <Col md={6}>
+                    <Form.Control
+                      value={badge.url?.toString() || ""}
+                      onChange={(e) => {
+                        setBtnText("Save Changes");
+                        const badgeInput = e.target.value;
+                        let updatedBadgeUrls = cloneDeep(
+                          employee?.badgeUrls || []
+                        );
+                        if (index < updatedBadgeUrls.length)
+                          badge = {
+                            url: badgeInput,
+                            isActive: badge.isActive || false,
+                          };
+                        updatedBadgeUrls[index] = badge;
+                        updateSignature("badgeUrls", updatedBadgeUrls);
+                      }}
+                    />
+                  </Col>
+                  <Col md={4} className="d-flex align-items-center">
+                    <Form.Switch
+                      label="Enable Badge"
+                      checked={badge.isActive}
+                      onChange={() => {
+                        let updatedBadgeUrls = cloneDeep(
+                          employee?.badgeUrls || []
+                        );
+                        updatedBadgeUrls[index] = {
+                          url: badge.url,
+                          isActive: !badge.isActive,
+                        };
+                        updateSignature("badgeUrls", updatedBadgeUrls);
+                      }}
+                    />
+                  </Col>
+                  <Col md={2}>
+                    <Button
+                      variant="link"
+                      onClick={() => {
+                        setBtnText("Save Changes");
+                        let updatedBadgeUrls = cloneDeep(
+                          employee?.badgeUrls || []
+                        );
+                        if (index > -1 && index < updatedBadgeUrls.length)
+                          updatedBadgeUrls.splice(index, 1);
+                        updateSignature("badgeUrls", [...updatedBadgeUrls]);
+                      }}
+                    >
+                      Remove
+                    </Button>
+                  </Col>
+                </Row>
+                <br />
+              </div>
+            );
+          })}
+          <p>
+            <Button
+              variant="light"
+              onClick={() => {
+                setBtnText("Save Changes");
+                let updatedBadgeUrls = cloneDeep(employee?.badgeUrls || []);
+                updateSignature("badgeUrls", [...updatedBadgeUrls, ""]);
+              }}
+            >
+              Add new badge entry
+            </Button>
+          </p>
+        </Form.Group>
+        <Form.Group>
+          <Form.Label>
+            <strong>Minted Badges</strong>
+          </Form.Label>
+          {mintedBadgeUrls?.map((badge, index) => {
+            return (
+              <Row>
+                <Col md={6}>
+                  <img src={badge.url} alt="" height={"100px"} width="auto" />
+                </Col>
+                <Col md={6} className="d-flex align-items-center">
+                  <Form.Switch
+                    label="Enable Badge"
+                    checked={badge.isActive}
+                    onChange={() => {
+                      let updatedBadgeUrls = cloneDeep(mintedBadgeUrls || []);
+                      updatedBadgeUrls[index] = {
+                        url: badge.url,
+                        isActive: !badge.isActive,
+                      };
+                      setMintedBadgeUrls(updatedBadgeUrls);
+                      updateSignature("mintedBadgeUrls", updatedBadgeUrls);
+                    }}
+                  />
+                </Col>
+              </Row>
+            );
+          })}
+        </Form.Group>
+      </div>
     );
   };
 
@@ -358,10 +507,26 @@ export const EmployeeDataForm: React.FC<{
                     </div>
                   )}
                   <br />
-                  <Container>
+                  <div>
                     <Row>
                       <Col md={5}>
-                        <strong>Avatar Preview</strong>
+                        <strong>Minted Avatar Preview</strong>
+                        {mintedAvatarUrl && mintedAvatarUrl !== "" ? (
+                          <img
+                            src={mintedAvatarUrl}
+                            alt={""}
+                            height={"100px"}
+                            width="auto"
+                            style={{
+                              display: "block",
+                            }}
+                          />
+                        ) : (
+                          <p>Minted Avatar Not Found</p>
+                        )}
+                      </Col>
+                      <Col md={7}>
+                        <strong>Custom Avatar Preview</strong>
                         {employee.avatarUrl && employee.avatarUrl !== "" ? (
                           <img
                             src={employee.avatarUrl}
@@ -382,14 +547,18 @@ export const EmployeeDataForm: React.FC<{
                           onChange={(e) => {
                             setBtnText("Save Changes");
                             updateSignature("avatarUrl", e.target.value);
-                            if (imageSelection === "Avatar") {
+                            if (imageSelection === "Custom Avatar") {
                               setImageSelection("No Image");
                               updateSignature("profileUrl", "");
                             }
                           }}
                         />
                       </Col>
-                      <Col md={7}>
+                    </Row>
+                  </div>
+                  <div style={{ marginTop: "30px" }}>
+                    <Row>
+                      <Col md={6}>
                         <strong>Profile Picture</strong>
                         {profileImageUrl && profileImageUrl !== "" ? (
                           <img
@@ -447,54 +616,58 @@ export const EmployeeDataForm: React.FC<{
                         )}
                         {imageError && imageError !== "" && <p>{imageError}</p>}
                       </Col>
+                      <Col md={6}></Col>
                     </Row>
-                  </Container>
+                  </div>
                   <div style={{ marginTop: "30px" }}>
-                    <p>
-                      <strong>Microsoft Teams' Profile Image</strong>
-                      <div>
-                        {[
-                          {
-                            label: "No Image",
-                            value: "",
-                            display: true,
-                          },
-                          {
-                            label: "Uploaded Profile",
-                            value: profileImageUrl,
-                            display: !!profileImageUrl,
-                          },
-                          {
-                            label: "Avatar",
-                            value: employee?.avatarUrl,
-                            display:
-                              employee.avatarUrl && employee.avatarUrl !== "",
-                          },
-                        ].map((btnConfig, index) => {
-                          return btnConfig.display ? (
-                            <Button
-                              variant={
-                                employee.teamsProfileUrl === btnConfig.value
-                                  ? "primary"
-                                  : "outline-primary"
-                              }
-                              key={`image-option-${index}`}
-                              style={{ marginRight: "10px" }}
-                              onClick={() => {
-                                updateSignature(
-                                  "teamsProfileUrl",
-                                  btnConfig.value
-                                );
-                              }}
-                            >
-                              {btnConfig.label}
-                            </Button>
-                          ) : (
-                            <></>
-                          );
-                        })}
-                      </div>
-                    </p>
+                    <strong>Microsoft Teams' Profile Image</strong>
+                    <div>
+                      {[
+                        {
+                          label: "No Image",
+                          value: "",
+                          display: true,
+                        },
+                        {
+                          label: "Uploaded Profile",
+                          value: profileImageUrl,
+                          display: !!profileImageUrl,
+                        },
+                        {
+                          label: "Custom Avatar",
+                          value: employee?.avatarUrl,
+                          display:
+                            employee.avatarUrl && employee.avatarUrl !== "",
+                        },
+                        {
+                          label: "Minted Avatar",
+                          value: mintedAvatarUrl,
+                          display: mintedAvatarUrl && mintedAvatarUrl !== "",
+                        },
+                      ].map((btnConfig, index) => {
+                        return btnConfig.display ? (
+                          <Button
+                            variant={
+                              employee.teamsProfileUrl === btnConfig.value
+                                ? "primary"
+                                : "outline-primary"
+                            }
+                            key={`image-option-${index}`}
+                            style={{ marginRight: "10px" }}
+                            onClick={() => {
+                              updateSignature(
+                                "teamsProfileUrl",
+                                btnConfig.value
+                              );
+                            }}
+                          >
+                            {btnConfig.label}
+                          </Button>
+                        ) : (
+                          <></>
+                        );
+                      })}
+                    </div>
                   </div>
                 </Col>
                 <Col md={6}>
@@ -555,7 +728,7 @@ export const EmployeeDataForm: React.FC<{
                         {
                           field: "landlinePhoneNumber",
                           label:
-                            "Landline Only Phon Number (Enter numbers only)",
+                            "Landline Only Phone Number (Enter numbers only)",
                           fieldData: Helpers.filterWithNumberOnly(
                             employee.landlinePhoneNumber || ""
                           ),
@@ -608,56 +781,56 @@ export const EmployeeDataForm: React.FC<{
                     </div>
                     {/* Profile Pic Selection */}
                     <div>
-                      <p>
-                        <strong>Select an image for signature profile</strong>
-                        {/* disabled={
+                      <strong>Select an image for signature profile</strong>
+                      {/* disabled={
                             !!profileImageUrl &&
                             (!employee.avatarUrl || employee.avatarUrl === "")
                           } */}
-                        <div>
-                          {[
-                            {
-                              label: "No Image",
-                              value: "",
-                              display: true,
-                            },
-                            {
-                              label: "Uploaded Profile",
-                              value: profileImageUrl,
-                              display: !!profileImageUrl,
-                            },
-                            {
-                              label: "Avatar",
-                              value: employee?.avatarUrl,
-                              display:
-                                employee.avatarUrl && employee.avatarUrl !== "",
-                            },
-                          ].map((btnConfig, index) => {
-                            return btnConfig.display ? (
-                              <Button
-                                variant={
-                                  imageSelection === btnConfig.label
-                                    ? "primary"
-                                    : "outline-primary"
-                                }
-                                key={`image-option-${index}`}
-                                style={{ marginRight: "10px" }}
-                                onClick={() => {
-                                  updateSignature(
-                                    "profileUrl",
-                                    btnConfig.value
-                                  );
-                                  setImageSelection(btnConfig.label as any);
-                                }}
-                              >
-                                {btnConfig.label}
-                              </Button>
-                            ) : (
-                              <></>
-                            );
-                          })}
-                        </div>
-                      </p>
+                      <div>
+                        {[
+                          {
+                            label: "No Image",
+                            value: "",
+                            display: true,
+                          },
+                          {
+                            label: "Uploaded Profile",
+                            value: profileImageUrl,
+                            display: !!profileImageUrl,
+                          },
+                          {
+                            label: "Custom Avatar",
+                            value: employee?.avatarUrl,
+                            display:
+                              employee.avatarUrl && employee.avatarUrl !== "",
+                          },
+                          {
+                            label: "Minted Avatar",
+                            value: mintedAvatarUrl,
+                            display: mintedAvatarUrl && mintedAvatarUrl !== "",
+                          },
+                        ].map((btnConfig, index) => {
+                          return btnConfig.display ? (
+                            <Button
+                              variant={
+                                imageSelection === btnConfig.label
+                                  ? "primary"
+                                  : "outline-primary"
+                              }
+                              key={`image-option-${index}`}
+                              style={{ marginRight: "10px" }}
+                              onClick={() => {
+                                updateSignature("profileUrl", btnConfig.value);
+                                setImageSelection(btnConfig.label as any);
+                              }}
+                            >
+                              {btnConfig.label}
+                            </Button>
+                          ) : (
+                            <></>
+                          );
+                        })}
+                      </div>
                     </div>
                     {/* Badge Section */}
                     <div>{createBadgeSet()}</div>
