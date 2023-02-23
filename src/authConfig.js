@@ -15,10 +15,10 @@ export const msalConfig = {
     clientId: "e9c3461f-65a0-4db3-b07c-89d8676ad56c",
     authority:
       "https://login.microsoftonline.com/7824f42c-45bd-47d8-8d15-275c536fa0a2",
-    redirectUri:
-      "https://smoothstack.auth.us-east-1.amazoncognito.com/oauth2/authorize?client_id=5o06nvi1kbdbcd8qb10fob49r7&response_type=token&scope=aws.cognito.signin.user.admin+email+openid&redirect_uri=http%3A%2F%2Flocalhost%3A4001",
     // redirectUri:
-      // "https://smoothstack.auth.us-east-1.amazoncognito.com/oauth2/authorize?client_id=5o06nvi1kbdbcd8qb10fob49r7&response_type=token&scope=aws.cognito.signin.user.admin+email+openid&redirect_uri=https%3A%2F%2Fmanage.smoothstack.com",
+    //   "https://smoothstack.auth.us-east-1.amazoncognito.com/oauth2/authorize?client_id=5o06nvi1kbdbcd8qb10fob49r7&response_type=token&scope=aws.cognito.signin.user.admin+email+openid&redirect_uri=http%3A%2F%2Flocalhost%3A4001",
+    redirectUri:
+      "https://smoothstack.auth.us-east-1.amazoncognito.com/oauth2/authorize?client_id=5o06nvi1kbdbcd8qb10fob49r7&response_type=token&scope=aws.cognito.signin.user.admin+email+openid&redirect_uri=https%3A%2F%2Fmanage.smoothstack.com",
   },
   cache: {
     cacheLocation: "sessionStorage", // This configures where your cache will be stored
