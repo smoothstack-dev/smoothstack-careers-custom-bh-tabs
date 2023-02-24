@@ -24,14 +24,14 @@ export const MOCK_SIGNATURE: _t.Signature = {
 };
 
 export const INITIAL_SIGNATURE_STYLE: _t.SignatureStyles = {
-  companyLogoUrl: "https://smoothstack.com/smoothstack-2020-logo/",
+  companyLogoUrl: `${PROFILE_IMAGE_S3_URL}Smoothstack-2020-Logo-72.png`,
   companyWebsiteUrlLabel: "smoothstack.com",
   companyWebsiteUrl: "https://smoothstack.com",
   profileDefaultUrl:
     "https://smoothstack.com/wp-content/uploads/2018/07/cropped-favicon.png",
   mailingAddress: "8200 Greensboro Drive, Suite 900 McLean Virginia 22102",
   profileSize: 175,
-  badgeSize: 23,
+  badgeSize: 30,
   companyLogoSize: 23,
   employeeFirstName: {
     font: "Arial",
