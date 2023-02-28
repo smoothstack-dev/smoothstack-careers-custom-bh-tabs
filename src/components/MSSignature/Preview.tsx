@@ -69,16 +69,7 @@ export const Preview: React.FC<{
   };
 
   let badgeUrls: _t.Badge[] = [];
-  if (previewData.badgeUrls) {
-    badgeUrls = previewData?.badgeUrls?.concat(
-      previewData?.mintedBadgeUrls ?? []
-    );
-  } else if (previewData.mintedBadgeUrls) {
-    badgeUrls = previewData?.mintedBadgeUrls?.concat(
-      previewData?.badgeUrls ?? []
-    );
-  }
-
+  badgeUrls = badgeUrls.concat((previewData.badgeUrls ?? []), (previewData.mintedBadgeUrls ?? []));
   if (!previewData) return <>No Data to Show</>;
   return (
     <div style={CardContainerStyle}>

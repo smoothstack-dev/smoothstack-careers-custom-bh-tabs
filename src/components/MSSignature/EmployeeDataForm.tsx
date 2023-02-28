@@ -38,6 +38,7 @@ export const EmployeeDataForm: React.FC<{
 
   const resetStates = () => {
     setError("");
+    setMintedAvatarUrl("");
     setUploadedImage(undefined);
     setProfileImageUrl("");
     setImageSelection("No Image");

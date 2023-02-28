@@ -19,9 +19,7 @@ const signatureConfigData = usrMgtEndpoint + "signature/config";
 const signatureImageUpload = usrMgtEndpoint + "resources/profile-image";
 const msUsersGet = usrMgtEndpoint + "ms/user";
 const sfdcUsersGet = usrMgtEndpoint + "sfdc/user?includeInactive=true";
-
-const mintedUrl = "https://owl-backend-production.herokuapp.com/getNFTs";
-const organization = "smoothstack";
+const nftsGet = usrMgtEndpoint + "resources/nfts";
 
 const TOKEN_TYPE = "Bearer";
 const delay = (ms: number) => new Promise((res) => setTimeout(res, ms));
@@ -244,19 +242,19 @@ export const uploadProfileImage = async (
   }
 };
 
-export const getMintedData = async (email: string) => {
+export const getMintedData = async (primaryEmail: string) => {
   try {
     const response: AxiosResponse = await axios.get(
-      `${mintedUrl}?email=${email}&organization=${organization}`,
+      `${nftsGet}?primaryEmail=${primaryEmail}`,
       {
         headers: {
-          "x-api-key": "removed", // TODO: Create new API that calls minted internally
+          Authorization: `${TOKEN_TYPE} ${getUserToken()}`,
         },
       }
     );
     return response.data;
   } catch (err) {
-    console.error("Error getting minted avatar data");
+    console.error("Error getting minted nfts");
     throw new Error();
   }
 };
