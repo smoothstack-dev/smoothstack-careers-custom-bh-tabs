@@ -266,6 +266,7 @@ export const Preview: React.FC<{
                               />
                             );
                           }
+                          return (null)
                         })}
                 </div>
                 <div style={AdditionalSectionStyle}>
