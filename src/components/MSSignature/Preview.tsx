@@ -68,6 +68,11 @@ export const Preview: React.FC<{
     marginBottom: "0em",
   };
 
+  let badgeUrls: _t.Badge[] = [];
+  badgeUrls = badgeUrls.concat(
+    previewData.badgeUrls ?? [],
+    previewData.mintedBadgeUrls ?? []
+  );
   if (!previewData) return <>No Data to Show</>;
   return (
     <div style={CardContainerStyle}>
@@ -244,18 +249,23 @@ export const Preview: React.FC<{
                 <div style={{ maxWidth: `${signatureStyle.badgeSize * 10}px` }}>
                   {isGenerateSignatureFrame
                     ? `[INSERT BADGE_IMG]`
-                    : previewData.badgeUrls
-                        ?.filter((badge) => badge && badge !== "")
+                    : badgeUrls
+                        ?.filter((badge) => badge && badge.url !== "")
                         .map((badge) => {
-                          return (
-                            <img
-                              src={badge}
-                              alt=""
-                              height={`${signatureStyle.badgeSize}px`}
-                              width={`${signatureStyle.badgeSize}px`}
-                              style={{ marginLeft: "1px", marginBottom: "1px" }}
-                            />
-                          );
+                          if (badge.isActive) {
+                            return (
+                              <img
+                                src={badge.url}
+                                alt=""
+                                height={`${signatureStyle.badgeSize}px`}
+                                width={`${signatureStyle.badgeSize}px`}
+                                style={{
+                                  marginLeft: "1px",
+                                  marginBottom: "1px",
+                                }}
+                              />
+                            );
+                          }
                         })}
                 </div>
                 <div style={AdditionalSectionStyle}>

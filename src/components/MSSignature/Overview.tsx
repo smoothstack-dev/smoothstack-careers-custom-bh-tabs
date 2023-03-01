@@ -55,8 +55,7 @@ export const DataOverview: React.FC<{
           empData.primaryStatus = emp.primaryStatus;
           empData.trainPlaceTotalHours = emp.trainPlaceTotalHours;
           return empData;
-        }
-        else
+        } else
           return {
             isActive: false,
             primaryEmail: emp.mail,
@@ -246,7 +245,9 @@ export const DataOverview: React.FC<{
                         empData.title,
                         empData.phoneNumber,
                         empData.primaryStatus,
-                        empData.trainPlaceTotalHours === -1 ? "" : empData.trainPlaceTotalHours,
+                        empData.trainPlaceTotalHours === -1
+                          ? ""
+                          : empData.trainPlaceTotalHours,
                         empData.note || "",
                         empData.badgeUrls?.length || 0,
                         empData.isMoveLinkToTop ? "Top" : "Bottom",
@@ -327,7 +328,8 @@ export function CsvDownloadButton(props: CsvDownloadButtonProps) {
       title: d.title || "",
       PhoneNumber: d.phoneNumber || "",
       PrimaryStatus: d.primaryStatus || "",
-      TrainAndPlaceStatus: d.trainPlaceTotalHours === -1 ? "" : d.trainPlaceTotalHours,
+      TrainAndPlaceStatus:
+        d.trainPlaceTotalHours === -1 ? "" : d.trainPlaceTotalHours,
       Note: d.note || "",
       DisplayedProfileUrl: d.profileUrl || "",
       AvatarUrl: d.avatarUrl || "",

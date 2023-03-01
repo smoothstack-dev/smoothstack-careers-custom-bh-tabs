@@ -13,12 +13,14 @@ export type Signature = {
   displayLandlinePhoneNumber?: boolean;
   landlinePhoneNumber?: string;
   avatarUrl?: string;
+  defaultAvatar?: string;
   uploadedProfileUrl?: string;
   profileUrl?: string;
   teamsProfileUrl?: string;
   calendarUrlLabel?: string;
   calendarUrl?: string;
-  badgeUrls?: string[];
+  badgeUrls?: Badge[];
+  mintedBadgeUrls?: Badge[];
   note?: string;
   primaryStatus?: string;
   trainPlaceTotalHours?: number;
@@ -35,6 +37,11 @@ export type EmployeeData = {
   mobilePhone: string;
   primaryStatus?: string;
   trainPlaceTotalHours?: number;
+};
+
+export type Badge = {
+  url: string;
+  isActive: boolean;
 };
 
 export type SignatureStyleFields =

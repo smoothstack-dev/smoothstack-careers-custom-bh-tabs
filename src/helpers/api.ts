@@ -19,6 +19,7 @@ const signatureConfigData = usrMgtEndpoint + "signature/config";
 const signatureImageUpload = usrMgtEndpoint + "resources/profile-image";
 const msUsersGet = usrMgtEndpoint + "ms/user";
 const sfdcUsersGet = usrMgtEndpoint + "sfdc/user?includeInactive=true";
+const nftsGet = usrMgtEndpoint + "resources/nfts";
 
 const TOKEN_TYPE = "Bearer";
 const delay = (ms: number) => new Promise((res) => setTimeout(res, ms));
@@ -237,6 +238,23 @@ export const uploadProfileImage = async (
     return `${PROFILE_IMAGE_S3_URL}${response.data.fileName}`;
   } catch (err) {
     console.error("Error saving signature config data");
+    throw new Error();
+  }
+};
+
+export const getMintedData = async (primaryEmail: string) => {
+  try {
+    const response: AxiosResponse = await axios.get(
+      `${nftsGet}?primaryEmail=${primaryEmail}`,
+      {
+        headers: {
+          Authorization: `${TOKEN_TYPE} ${getUserToken()}`,
+        },
+      }
+    );
+    return response.data;
+  } catch (err) {
+    console.error("Error getting minted nfts");
     throw new Error();
   }
 };
