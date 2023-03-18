@@ -46,6 +46,80 @@ export const EmployeeDataForm: React.FC<{
 
   // Retrieve Existing Employee Signature Data
   const handleGetEmployeeData = useCallback(async () => {
+    const handleMintedDataUpload = async (primaryEmail: string, data: any) => {
+      if (primaryEmail) {
+        const mintedData = await API.getMintedData(primaryEmail);
+        const mintedAvatar = mintedData.data.nfts.find((avatar: any) => {
+          if (
+            avatar.attributes.find((attribute: any) => {
+              return (
+                attribute.trait_type === "Type" && attribute.value === "Avatar"
+              );
+            })
+          ) {
+            return true;
+          }
+          return false;
+        });
+        const mintedBadges = mintedData.data.nfts.filter((badge: any) => {
+          if (
+            badge.attributes.find((attribute: any) => {
+              return (
+                attribute.trait_type === "Feature" &&
+                attribute.value === "Badge"
+              );
+            })
+          ) {
+            return true;
+          }
+          return false;
+        });
+        if (mintedAvatar) {
+          setMintedAvatarUrl(mintedAvatar.imageUri ?? "");
+        }
+        if (mintedBadges) {
+          if (data && data.mintedBadgeUrls) {
+            const empMintedBadgeUrls = data.mintedBadgeUrls.map(
+              (badge: Badge) => {
+                return badge.url;
+              }
+            );
+            const currMintedBadges = data.mintedBadgeUrls.filter(
+              (badge: Badge) => {
+                return mintedBadges
+                  .map((importedBadge: any) => {
+                    return importedBadge.imageUri;
+                  })
+                  .includes(badge.url);
+              }
+            );
+            const newMintedBadges = mintedBadges
+              .filter((url: any) => {
+                return !empMintedBadgeUrls.includes(url.imageUri);
+              })
+              .map((url: any) => {
+                const badge: Badge = {
+                  url: url.imageUri,
+                  isActive: false,
+                };
+                return badge;
+              });
+            const badges = currMintedBadges.concat(newMintedBadges);
+            setMintedBadgeUrls(badges);
+            return;
+          }
+          setMintedBadgeUrls(
+            mintedBadges.map((url: any) => {
+              const badge: Badge = {
+                url: url.imageUri,
+                isActive: false,
+              };
+              return badge;
+            })
+          );
+        }
+      }
+    };
     if (!selectedEmployee) return;
     const primaryEmail = selectedEmployee.mail;
     const defaultData: Signature = {
@@ -74,7 +148,7 @@ export const EmployeeDataForm: React.FC<{
           }
           if (data.profileUrl === data.avatarUrl)
             setImageSelection("Custom Avatar");
-          if (data.profileUrl === data.mintedAvatarUrl)
+          if (data.profileUrl === data.defaultAvatar)
             setImageSelection("Minted Avatar");
         }
       }
@@ -132,80 +206,6 @@ export const EmployeeDataForm: React.FC<{
     return "";
   };
 
-  const handleMintedDataUpload = async (primaryEmail: string, data: any) => {
-    if (primaryEmail) {
-      const mintedData = await API.getMintedData(primaryEmail);
-      const mintedAvatar = mintedData.data.nfts.find((avatar: any) => {
-        if (
-          avatar.attributes.find((attribute: any) => {
-            return (
-              attribute.trait_type === "Type" && attribute.value === "Avatar"
-            );
-          })
-        ) {
-          return true;
-        }
-        return false;
-      });
-      const mintedBadges = mintedData.data.nfts.filter((badge: any) => {
-        if (
-          badge.attributes.find((attribute: any) => {
-            return (
-              attribute.trait_type === "Feature" && attribute.value === "Badge"
-            );
-          })
-        ) {
-          return true;
-        }
-        return false;
-      });
-      if (mintedAvatar) {
-        setMintedAvatarUrl(mintedAvatar.imageUri ?? "");
-      }
-      if (mintedBadges) {
-        if (data && data.mintedBadgeUrls) {
-          const empMintedBadgeUrls = data.mintedBadgeUrls.map(
-            (badge: Badge) => {
-              return badge.url;
-            }
-          );
-          const currMintedBadges = data.mintedBadgeUrls.filter(
-            (badge: Badge) => {
-              return mintedBadges
-                .map((importedBadge: any) => {
-                  return importedBadge.imageUri;
-                })
-                .includes(badge.url);
-            }
-          );
-          const newMintedBadges = mintedBadges
-            .filter((url: any) => {
-              return !empMintedBadgeUrls.includes(url.imageUri);
-            })
-            .map((url: any) => {
-              const badge: Badge = {
-                url: url.imageUri,
-                isActive: false,
-              };
-              return badge;
-            });
-          const badges = currMintedBadges.concat(newMintedBadges);
-          setMintedBadgeUrls(badges);
-          return;
-        }
-        setMintedBadgeUrls(
-          mintedBadges.map((url: any) => {
-            const badge: Badge = {
-              url: url.imageUri,
-              isActive: false,
-            };
-            return badge;
-          })
-        );
-      }
-    }
-  };
-
   const handleSave = async () => {
     try {
       setIsSaving(true);
@@ -238,6 +238,11 @@ export const EmployeeDataForm: React.FC<{
         }
         if (imageSelection === "Uploaded Profile")
           employeeRecord.profileUrl = employeeRecord.uploadedProfileUrl;
+
+        if (imageSelection === "Minted Avatar") {
+          employeeRecord.defaultAvatar = mintedAvatarUrl;
+        }
+        employeeRecord.signatureProfileImage = imageSelection;
       }
       await API.saveEmployeeSignatureData(employeeRecord);
       setIsSaving(false);

@@ -215,6 +215,9 @@ export const DataOverview: React.FC<{
                     Train & Place Total Hours
                   </th>
                   <th onClick={() => handleSorting("note")}>Note</th>
+                  <th onClick={() => handleSorting("signatureProfileImage")}>
+                    Signature Profile Image
+                  </th>
                   <th onClick={() => handleSorting("badgeUrls")}>
                     Badge Counts
                   </th>
@@ -226,9 +229,6 @@ export const DataOverview: React.FC<{
                   </th>
                   <th onClick={() => handleSorting("calendarUrl")}>
                     Calendar Url
-                  </th>
-                  <th onClick={() => handleSorting("profileUrl")}>
-                    Profile Image Url
                   </th>
                 </tr>
               </thead>
@@ -249,11 +249,11 @@ export const DataOverview: React.FC<{
                           ? ""
                           : empData.trainPlaceTotalHours,
                         empData.note || "",
+                        empData.signatureProfileImage,
                         empData.badgeUrls?.length || 0,
                         empData.isMoveLinkToTop ? "Top" : "Bottom",
                         empData.calendarUrlLabel,
                         empData.calendarUrl,
-                        empData.profileUrl,
                       ].map((item, subIndex) => {
                         if (subIndex === 1)
                           return (
@@ -331,7 +331,7 @@ export function CsvDownloadButton(props: CsvDownloadButtonProps) {
       TrainAndPlaceStatus:
         d.trainPlaceTotalHours === -1 ? "" : d.trainPlaceTotalHours,
       Note: d.note || "",
-      DisplayedProfileUrl: d.profileUrl || "",
+      SignatureProfileImage: d.signatureProfileImage || "",
       AvatarUrl: d.avatarUrl || "",
       UploadedProfileUrl: d.uploadedProfileUrl || "",
       BadgesCount: d.badgeUrls ? d.badgeUrls.length : 0,
