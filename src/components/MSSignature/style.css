@@ -1,22 +1,23 @@
 .fieldLabel {
-    margin-bottom: 8px;
+  margin-bottom: 8px;
 }
 
 .btn-primary {
-    background: linear-gradient(to right, rgb(117, 33, 167) , rgb(50, 70, 221));
-    border-color: #7521a7;
+  background: linear-gradient(to right, rgb(117, 33, 167), rgb(50, 70, 221));
+  border-color: #7521a7;
 }
 
 .btn-primary:hover {
   border-color: #7521a7;
 }
 
-.btn-check:checked+.btn-outline-primary {
-  background: linear-gradient(to right, rgb(117, 33, 167) , rgb(50, 70, 221));
+.btn-check:checked + .btn-outline-primary {
+  background: linear-gradient(to right, rgb(117, 33, 167), rgb(50, 70, 221));
   border-color: #7521a7;
 }
 
-.btn-check:focus + .btn, .btn:focus {
+.btn-check:focus + .btn,
+.btn:focus {
   outline: 0 !important;
   box-shadow: 0 0 0 0.25rem rgb(117, 33, 167, 0.25) !important;
   border-color: rgb(117, 33, 167) !important;
@@ -29,32 +30,15 @@
 }
 
 .nav-tabs > .nav-item > button {
-    background-color: rgb(117, 33, 167);
-  
-    /* Create the gradient. */
-    background-image: linear-gradient(to right, rgb(117, 33, 167) , rgb(50, 70, 221));
-    
-    /* Set the background size and repeat properties. */
-    background-size: 100%;
-    background-repeat: repeat;
-  
-    background-clip: text;
-  
-    /* Use the text as a mask for the background. */
-    /* This will show the gradient as a text color rather than element bg. */
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent; 
-    -moz-background-clip: text;
-    -moz-text-fill-color: transparent;
-  }
-
-.gradient-text {
-  /* Fallback: Set a background color. */
   background-color: rgb(117, 33, 167);
-  
+
   /* Create the gradient. */
-  background-image: linear-gradient(to right, rgb(117, 33, 167) , rgb(50, 70, 221));
-  
+  background-image: linear-gradient(
+    to right,
+    rgb(117, 33, 167),
+    rgb(50, 70, 221)
+  );
+
   /* Set the background size and repeat properties. */
   background-size: 100%;
   background-repeat: repeat;
@@ -64,26 +48,52 @@
   /* Use the text as a mask for the background. */
   /* This will show the gradient as a text color rather than element bg. */
   -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent; 
+  -webkit-text-fill-color: transparent;
+  -moz-background-clip: text;
+  -moz-text-fill-color: transparent;
+}
+
+.gradient-text {
+  /* Fallback: Set a background color. */
+  background-color: rgb(117, 33, 167);
+
+  /* Create the gradient. */
+  background-image: linear-gradient(
+    to right,
+    rgb(117, 33, 167),
+    rgb(50, 70, 221)
+  );
+
+  /* Set the background size and repeat properties. */
+  background-size: 100%;
+  background-repeat: repeat;
+
+  background-clip: text;
+
+  /* Use the text as a mask for the background. */
+  /* This will show the gradient as a text color rather than element bg. */
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
   -moz-background-clip: text;
   -moz-text-fill-color: transparent;
 }
 
 .btn-outline-primary {
-      /* Fallback: Set a background color. */
+  /* Fallback: Set a background color. */
   color: rgb(117, 33, 167);
   border-color: rgb(117, 33, 167);
 }
 
 .btn-outline-primary:hover {
-  background: linear-gradient(to right, rgb(117, 33, 167) , rgb(50, 70, 221));
+  background: linear-gradient(to right, rgb(117, 33, 167), rgb(50, 70, 221));
   border-color: rgb(117, 33, 167);
 }
 
 .form-check-input:checked {
   background-color: transparent;
   border-color: rgb(117, 33, 167);
-  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='%23fff'/%3e%3c/svg%3e"), linear-gradient(to right, rgb(117, 33, 167) , rgb(50, 70, 221)) !important;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='%23fff'/%3e%3c/svg%3e"),
+    linear-gradient(to right, rgb(117, 33, 167), rgb(50, 70, 221)) !important;
 }
 
 .form-check-input:focus {
@@ -98,7 +108,8 @@
 
 .form-check-input:indeterminate {
   border-color: rgb(117, 33, 167);
-  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='rgba%280, 0, 0, 0.25%29'/%3e%3c/svg%3e"), linear-gradient(to right, rgb(117, 33, 167) , rgb(50, 70, 221)) !important;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='rgba%280, 0, 0, 0.25%29'/%3e%3c/svg%3e"),
+    linear-gradient(to right, rgb(117, 33, 167), rgb(50, 70, 221)) !important;
 }
 
 .form-control:focus {
