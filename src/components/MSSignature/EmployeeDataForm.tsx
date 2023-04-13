@@ -1,5 +1,6 @@
 import React, { ChangeEvent, useEffect, useCallback, useState } from "react";
 import { Button, Col, Container, Form, Row, Spinner } from "react-bootstrap";
+import { GrClose } from 'react-icons/gr';
 import { Preview } from "./Preview";
 import useSignature from "./store/signature";
 import { Badge, EmployeeData, Signature } from "./store/types";
@@ -392,7 +393,7 @@ export const EmployeeDataForm: React.FC<{
                         updateSignature("badgeUrls", [...updatedBadgeUrls]);
                       }}
                     >
-                      <span className="gradient-text">Remove</span>
+                      <GrClose></GrClose>
                     </Button>
                   </Col>
                 </Row>
@@ -617,8 +618,9 @@ export const EmployeeDataForm: React.FC<{
                             }}
                             variant={"link"}
                             disabled={isSaving}
+                            style={{textDecoration: "none"}}
                           >
-                            remove image
+                            <GrClose></GrClose>
                           </Button>
                         )}
                         {imageError && imageError !== "" && <p>{imageError}</p>}
@@ -678,7 +680,7 @@ export const EmployeeDataForm: React.FC<{
                   </div>
                 </Col>
                 <Col md={6}>
-                  <div style={{ maxHeight: "480px", overflowY: "scroll" }}>
+                  <div className="px-2" style={{ maxHeight: "480px", overflowY: "scroll", maxWidth: "100%", overflowX: "hidden"}}>
                     {" "}
                     <div>
                       {[
