@@ -466,8 +466,9 @@ const DesignSection: React.FC<{
         variant="link"
         onClick={() => handleSetToDefault()}
         disabled={isSaving}
+        style={{textDecoration: "none"}}
       >
-        Reset to Default
+        <span className="gradient-text">Reset to Default</span>
       </Button>
     </div>
   );

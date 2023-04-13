@@ -381,6 +381,7 @@ export const EmployeeDataForm: React.FC<{
                   <Col md={2}>
                     <Button
                       variant="link"
+                      style={{textDecoration: "none"}}
                       onClick={() => {
                         setBtnText("Save Changes");
                         let updatedBadgeUrls = cloneDeep(
@@ -391,7 +392,7 @@ export const EmployeeDataForm: React.FC<{
                         updateSignature("badgeUrls", [...updatedBadgeUrls]);
                       }}
                     >
-                      Remove
+                      <span className="gradient-text">Remove</span>
                     </Button>
                   </Col>
                 </Row>
@@ -864,8 +865,9 @@ export const EmployeeDataForm: React.FC<{
                 onClick={() => handleGetEmployeeData()}
                 variant={"link"}
                 disabled={isSaving}
+                style={{textDecoration: "none"}}
               >
-                Reset
+                <span className="gradient-text">Reset</span>
               </Button>
               <Button onClick={() => handleSave()} disabled={isSaving}>
                 {btnText}
