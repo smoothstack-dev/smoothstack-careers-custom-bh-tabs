@@ -8,30 +8,30 @@ import useUser from "./store/user";
  * Renders a sign-out button
  */
 export const MSLoginBtn = () => {
-    const { instance } = useMsal();
-    const {isAuthenticated, isCheckingUser} = useUser();
-    const handleMSBtnClick = () => {
-        if (isAuthenticated) {
-            // log out
-            sessionStorage.clear()
-            instance.logoutRedirect({
-                postLogoutRedirectUri: "/",
-            });
-        } else {
-            instance.loginRedirect(loginRequest).catch(e => {
-                console.error(e);
-            });
-        }
+  const { instance } = useMsal();
+  const { isAuthenticated, isCheckingUser } = useUser();
+  const handleMSBtnClick = () => {
+    if (isAuthenticated) {
+      // log out
+      sessionStorage.clear();
+      instance.logoutRedirect({
+        postLogoutRedirectUri: "/",
+      });
+    } else {
+      instance.loginRedirect(loginRequest).catch((e) => {
+        console.error(e);
+      });
     }
-    return (
-        <h6 className="float-right header-text warning-msg">
-        <Button
-          variant="outline-primary"
-          onClick={() =>handleMSBtnClick()}
-          disabled={isCheckingUser}
-        >
-          {isCheckingUser ? "Loading" : isAuthenticated ? "Sign Out": "Sign In"}
-        </Button>
-      </h6>
-    )
-}
+  };
+  return (
+    <h6 className="header-text warning-msg my-auto">
+      <Button
+        variant="outline-primary"
+        onClick={() => handleMSBtnClick()}
+        disabled={isCheckingUser}
+      >
+        {isCheckingUser ? "Loading" : isAuthenticated ? "Sign Out" : "Sign In"}
+      </Button>
+    </h6>
+  );
+};
