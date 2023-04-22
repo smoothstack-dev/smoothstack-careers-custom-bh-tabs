@@ -20,10 +20,11 @@ const signatureImageUpload = usrMgtEndpoint + "resources/profile-image";
 const msUsersGet = usrMgtEndpoint + "ms/user";
 const sfdcUsersGet = usrMgtEndpoint + "sfdc/user?includeInactive=true";
 const nftsGet = usrMgtEndpoint + "resources/nfts";
+const msProfileImageUpload = usrMgtEndpoint + "resources/ms-profile-image";
 
 const TOKEN_TYPE = "Bearer";
 const delay = (ms: number) => new Promise((res) => setTimeout(res, ms));
-const getUserToken = () => sessionStorage.getItem(SESSION_USER_TOKEN);
+const getUserToken = () => {return "eyJraWQiOiJJQmNMYlVLUzZDbHZ5T0syYlg4SlJBMm91SmxIbDg5YlNPQjlKREhcL3Zxdz0iLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiJhZjM4ZTU3Zi02MTgzLTQ3OTYtODcxNy1iNzk0MjE1NGNjNTEiLCJjb2duaXRvOmdyb3VwcyI6WyJ1cy1lYXN0LTFfWkFLeVpaRFZLX01TQXp1cmVBRCJdLCJpc3MiOiJodHRwczpcL1wvY29nbml0by1pZHAudXMtZWFzdC0xLmFtYXpvbmF3cy5jb21cL3VzLWVhc3QtMV9aQUt5WlpEVksiLCJ2ZXJzaW9uIjoyLCJjbGllbnRfaWQiOiI1bzA2bnZpMWtiZGJjZDhxYjEwZm9iNDlyNyIsInRva2VuX3VzZSI6ImFjY2VzcyIsInNjb3BlIjoiYXdzLmNvZ25pdG8uc2lnbmluLnVzZXIuYWRtaW4gb3BlbmlkIGVtYWlsIiwiYXV0aF90aW1lIjoxNjgxODM0MTE5LCJleHAiOjE2ODE4Mzc3MTksImlhdCI6MTY4MTgzNDExOSwianRpIjoiMjhhNWU2M2ItZGI4Ny00YzRlLWEyMWEtZDZmZjk2MDBiNDhkIiwidXNlcm5hbWUiOiJtc2F6dXJlYWRfY2hsb2Uuam9obnNvbkBzbW9vdGhzdGFjay5jb20ifQ.IVOVX9Jg4uh0awvipdC-Ar0yrKRwsr1YtW8mO6OHX4Gheq7cNGRHZuGal5n6k6BBjWjQdqm4omQ3ejaQc7V9XNpzZxdtCIXgBFgqMcIaXH8CUIta-toHnHKHBGbn8QMki0U12bXGziFKeGmaPuxCRPlOGXNbmlWa34NVUSQebKrOAifRI_QxaRx6HlrMfLMrUp0LFabXfalKcYKOn2dktOnUUQX2Viie7coJv4vlCVhIxkL98v0SKjPsqGlgEcdIuAbvfha4y_BmIY5ZHAUN5ZjouiyGstql1CkB5t5uwXEgfjOeYo99K99CD5-asFojkHeYunYA3VQ3mZcVEXlTYQ"};
 
 // Prescreen
 export const getPrescreenData = async (candidateId: string) => {
@@ -255,6 +256,28 @@ export const getMintedData = async (primaryEmail: string) => {
     return response.data;
   } catch (err) {
     console.error("Error getting minted nfts");
+    throw new Error();
+  }
+};
+
+
+export const uploadMsProfileImage = async (
+  file: FormData,
+  primaryEmail: string
+) => {
+  try {
+    const response: AxiosResponse = await axios.put(
+      `${msProfileImageUpload}?primaryEmail=${primaryEmail}`,
+      file,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+          Authorization: `${TOKEN_TYPE} ${getUserToken()}`,
+        },
+      }
+    );
+  } catch (err) {
+    console.error("Error uploading profile image to Microsoft");
     throw new Error();
   }
 };

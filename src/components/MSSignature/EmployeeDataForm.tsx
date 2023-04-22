@@ -206,6 +206,18 @@ export const EmployeeDataForm: React.FC<{
     return "";
   };
 
+  const loadMsProfilePic = async (url: string) => {
+    if (employee?.primaryEmail) {
+      const image: any = await fetch(url);
+      let formData = new FormData();
+      formData.append("image", image);
+      const uploadedProfileUrl = await API.uploadMsProfileImage(
+        formData,
+        employee.primaryEmail
+      );
+    }
+  }
+
   const handleSave = async () => {
     try {
       setIsSaving(true);
@@ -243,6 +255,9 @@ export const EmployeeDataForm: React.FC<{
           employeeRecord.defaultAvatar = mintedAvatarUrl;
         }
         employeeRecord.signatureProfileImage = imageSelection;
+        
+        // Upload profile pic
+        loadMsProfilePic(employeeRecord.teamsProfileUrl || "");
       }
       await API.saveEmployeeSignatureData(employeeRecord);
       setIsSaving(false);
