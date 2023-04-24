@@ -15,7 +15,7 @@
 
 .App-header {
   position: fixed;
-  min-height:60px;
+  min-height: 60px;
   top: 0;
   width: 100%;
   background-color: rgb(245, 245, 245);
@@ -46,7 +46,7 @@
   }
 }
 
-.date-picker{
+.date-picker {
   max-width: 7em;
 }
 
@@ -54,14 +54,13 @@ td {
   vertical-align: middle;
 }
 
-.header-logo{
+.header-logo {
   max-height: 1em;
 }
 
-.header-text{
+.header-text {
   position: fixed;
   right: 5%;
-  top:2%
 }
 
 .question-title {

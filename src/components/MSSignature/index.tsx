@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import "./style.css";
-import { Container, Spinner, Tab, Tabs } from "react-bootstrap";
+import { Col, Container, Nav, Row, Spinner, Tab, Tabs } from "react-bootstrap";
 import { SignatureDesign } from "./SignatureDesign";
 import { EmployeeSettings } from "./EmployeeSettings";
 import useSignatureStyle from "./store/signatureStyle";
