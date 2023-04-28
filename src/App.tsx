@@ -67,9 +67,9 @@ const App: React.FC = () => {
             </MSAuth>
           </Route>
           <Route path="/mssignature">
-            <MSAuth>
+            {/* <MSAuth> */}
               <MSSignature />
-            </MSAuth>
+            {/* </MSAuth> */}
           </Route>
           <Route path="/">
             <MSAuth>

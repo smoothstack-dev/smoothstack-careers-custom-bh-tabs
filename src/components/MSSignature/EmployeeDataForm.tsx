@@ -28,6 +28,9 @@ export const EmployeeDataForm: React.FC<{
   const [imageSelection, setImageSelection] = useState<
     "No Image" | "Custom Avatar" | "Uploaded Profile" | "Minted Avatar"
   >("No Image");
+  const [msImageSelection, setMsImageSelection] = useState<
+  "No Image" | "Custom Avatar" | "Uploaded Profile" | "Minted Avatar"
+>("No Image");
   const [uploadedImage, setUploadedImage] = useState<any>();
   const [profileImageUrl, setProfileImageUrl] = useState<string | undefined>();
   const [mintedAvatarUrl, setMintedAvatarUrl] = useState<string | undefined>();
@@ -208,10 +211,9 @@ export const EmployeeDataForm: React.FC<{
 
   const loadMsProfilePic = async (url: string) => {
     if (employee?.primaryEmail) {
-      const image: any = await fetch(url);
       let formData = new FormData();
-      formData.append("image", image);
-      const uploadedProfileUrl = await API.uploadMsProfileImage(
+      formData.append("url", url);
+      await API.uploadMsProfileImage(
         formData,
         employee.primaryEmail
       );
@@ -247,6 +249,9 @@ export const EmployeeDataForm: React.FC<{
         // update profileUrl
         if (uploadedImage) {
           employeeRecord.uploadedProfileUrl = newImageUrl;
+          if (msImageSelection === "Uploaded Profile") {
+            employeeRecord.teamsProfileUrl = newImageUrl;
+          }
         }
         if (imageSelection === "Uploaded Profile")
           employeeRecord.profileUrl = employeeRecord.uploadedProfileUrl;
@@ -262,7 +267,6 @@ export const EmployeeDataForm: React.FC<{
       await API.saveEmployeeSignatureData(employeeRecord);
       setIsSaving(false);
       setBtnText("Saved");
-      // handleGetEmployeeData();
     } catch {
       setIsSaving(false);
       setBtnText("Smething went wrong, please click to save it again");
@@ -680,6 +684,7 @@ export const EmployeeDataForm: React.FC<{
                                 "teamsProfileUrl",
                                 btnConfig.value
                               );
+                              setMsImageSelection(btnConfig.label as any)
                             }}
                           >
                             {btnConfig.label}
