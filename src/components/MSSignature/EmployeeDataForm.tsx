@@ -1,6 +1,6 @@
 import React, { ChangeEvent, useEffect, useCallback, useState } from "react";
 import { Button, Col, Container, Form, Row, Spinner } from "react-bootstrap";
-import { GrClose } from 'react-icons/gr';
+import { GrClose } from "react-icons/gr";
 import { Preview } from "./Preview";
 import useSignature from "./store/signature";
 import { Badge, EmployeeData, Signature } from "./store/types";
@@ -30,8 +30,8 @@ export const EmployeeDataForm: React.FC<{
     "No Image" | "Custom Avatar" | "Uploaded Profile" | "Minted Avatar"
   >("No Image");
   const [msImageSelection, setMsImageSelection] = useState<
-  "No Image" | "Custom Avatar" | "Uploaded Profile" | "Minted Avatar"
->("No Image");
+    "No Image" | "Custom Avatar" | "Uploaded Profile" | "Minted Avatar"
+  >("No Image");
   const [uploadedImage, setUploadedImage] = useState<any>();
   const [profileImageUrl, setProfileImageUrl] = useState<string | undefined>();
   const [mintedAvatarUrl, setMintedAvatarUrl] = useState<string | undefined>();
@@ -214,12 +214,9 @@ export const EmployeeDataForm: React.FC<{
     if (employee?.primaryEmail) {
       let formData = new FormData();
       formData.append("url", url);
-      await API.uploadMsProfileImage(
-        formData,
-        employee.primaryEmail
-      );
+      await API.uploadMsProfileImage(formData, employee.primaryEmail);
     }
-  }
+  };
 
   const handleSave = async () => {
     try {
@@ -261,7 +258,7 @@ export const EmployeeDataForm: React.FC<{
           employeeRecord.defaultAvatar = mintedAvatarUrl;
         }
         employeeRecord.signatureProfileImage = imageSelection;
-        
+
         // Upload profile pic
         loadMsProfilePic(employeeRecord.teamsProfileUrl || "");
       }
@@ -401,7 +398,7 @@ export const EmployeeDataForm: React.FC<{
                   <Col md={2}>
                     <Button
                       variant="link"
-                      style={{textDecoration: "none"}}
+                      style={{ textDecoration: "none" }}
                       onClick={() => {
                         setBtnText("Save Changes");
                         let updatedBadgeUrls = cloneDeep(
@@ -637,7 +634,7 @@ export const EmployeeDataForm: React.FC<{
                             }}
                             variant={"link"}
                             disabled={isSaving}
-                            style={{textDecoration: "none"}}
+                            style={{ textDecoration: "none" }}
                           >
                             <GrClose></GrClose>
                           </Button>
@@ -687,7 +684,7 @@ export const EmployeeDataForm: React.FC<{
                                 "teamsProfileUrl",
                                 btnConfig.value
                               );
-                              setMsImageSelection(btnConfig.label as any)
+                              setMsImageSelection(btnConfig.label as any);
                             }}
                           >
                             {btnConfig.label}
@@ -700,7 +697,15 @@ export const EmployeeDataForm: React.FC<{
                   </div>
                 </Col>
                 <Col md={6}>
-                  <div className="px-2" style={{ maxHeight: "480px", overflowY: "scroll", maxWidth: "100%", overflowX: "hidden"}}>
+                  <div
+                    className="px-2"
+                    style={{
+                      maxHeight: "480px",
+                      overflowY: "scroll",
+                      maxWidth: "100%",
+                      overflowX: "hidden",
+                    }}
+                  >
                     {" "}
                     <div>
                       {[
@@ -887,7 +892,7 @@ export const EmployeeDataForm: React.FC<{
                 onClick={() => handleGetEmployeeData()}
                 variant={"link"}
                 disabled={isSaving}
-                style={{textDecoration: "none"}}
+                style={{ textDecoration: "none" }}
               >
                 <span className="gradient-text">Reset</span>
               </Button>

@@ -260,7 +260,6 @@ export const getMintedData = async (primaryEmail: string) => {
   }
 };
 
-
 export const uploadMsProfileImage = async (
   file: FormData,
   primaryEmail: string
