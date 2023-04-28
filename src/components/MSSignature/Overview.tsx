@@ -148,13 +148,14 @@ export const DataOverview: React.FC<{
               />
               <Button
                 variant="link"
+                style={{ textDecoration: "none" }}
                 onClick={() => {
                   setSearch("");
                   setSortingField(undefined);
                   setIsAscending(true);
                 }}
               >
-                clear
+                <span className="gradient-text">Clear</span>
               </Button>
             </Col>
             <Col md={5}></Col>
@@ -350,8 +351,9 @@ export function CsvDownloadButton(props: CsvDownloadButtonProps) {
         variant="link"
         onClick={() => csvLinkRef.current?.link.click()}
         disabled={isDisabled}
+        style={{ textDecoration: "none" }}
       >
-        Download CSV
+        <span className="gradient-text">Download CSV</span>
       </Button>
       <CSVLink
         data={csvData}
