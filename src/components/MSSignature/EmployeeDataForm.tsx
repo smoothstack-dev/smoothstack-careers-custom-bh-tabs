@@ -649,11 +649,6 @@ export const EmployeeDataForm: React.FC<{
                     <div>
                       {[
                         {
-                          label: "No Image",
-                          value: "",
-                          display: true,
-                        },
-                        {
                           label: "Uploaded Profile",
                           value: profileImageUrl,
                           display: !!profileImageUrl,
@@ -822,6 +817,11 @@ export const EmployeeDataForm: React.FC<{
                           } */}
                       <div>
                         {[
+                          {
+                            label: "No Image",
+                            value: "",
+                            display: true,
+                          },
                           {
                             label: "Uploaded Profile",
                             value: profileImageUrl,
