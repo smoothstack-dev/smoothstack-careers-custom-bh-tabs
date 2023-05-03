@@ -33,7 +33,7 @@ export const MOCK_SIGNATURE: _t.Signature = {
 };
 
 export const INITIAL_SIGNATURE_STYLE: _t.SignatureStyles = {
-  companyLogoUrl: `${PROFILE_IMAGE_S3_URL}Smoothstack-2020-Logo-72.png`,
+  companyLogoUrl: `${PROFILE_IMAGE_S3_URL}new_smoothstack_logo.png`,
   companyWebsiteUrlLabel: "smoothstack.com",
   companyWebsiteUrl: "https://smoothstack.com",
   profileDefaultUrl:
