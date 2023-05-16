@@ -1,6 +1,6 @@
 import React, { ChangeEvent, useEffect, useCallback, useState } from "react";
 import { Button, Col, Container, Form, Row, Spinner } from "react-bootstrap";
-import { GrClose } from 'react-icons/gr';
+import { GrClose } from "react-icons/gr";
 import { Preview } from "./Preview";
 import useSignature from "./store/signature";
 import { Badge, EmployeeData, Signature } from "./store/types";
@@ -27,6 +27,9 @@ export const EmployeeDataForm: React.FC<{
   const [error, setError] = useState<string>("");
   const [imageError, setImageError] = useState<string>("");
   const [imageSelection, setImageSelection] = useState<
+    "No Image" | "Custom Avatar" | "Uploaded Profile" | "Minted Avatar"
+  >("No Image");
+  const [msImageSelection, setMsImageSelection] = useState<
     "No Image" | "Custom Avatar" | "Uploaded Profile" | "Minted Avatar"
   >("No Image");
   const [uploadedImage, setUploadedImage] = useState<any>();
@@ -207,6 +210,14 @@ export const EmployeeDataForm: React.FC<{
     return "";
   };
 
+  const loadMsProfilePic = async (url: string) => {
+    if (employee?.primaryEmail) {
+      let formData = new FormData();
+      formData.append("url", url);
+      await API.uploadMsProfileImage(formData, employee.primaryEmail);
+    }
+  };
+
   const handleSave = async () => {
     try {
       setIsSaving(true);
@@ -236,6 +247,9 @@ export const EmployeeDataForm: React.FC<{
         // update profileUrl
         if (uploadedImage) {
           employeeRecord.uploadedProfileUrl = newImageUrl;
+          if (msImageSelection === "Uploaded Profile") {
+            employeeRecord.teamsProfileUrl = newImageUrl;
+          }
         }
         if (imageSelection === "Uploaded Profile")
           employeeRecord.profileUrl = employeeRecord.uploadedProfileUrl;
@@ -244,11 +258,13 @@ export const EmployeeDataForm: React.FC<{
           employeeRecord.defaultAvatar = mintedAvatarUrl;
         }
         employeeRecord.signatureProfileImage = imageSelection;
+
+        // Upload profile pic
+        loadMsProfilePic(employeeRecord.teamsProfileUrl || "");
       }
       await API.saveEmployeeSignatureData(employeeRecord);
       setIsSaving(false);
       setBtnText("Saved");
-      // handleGetEmployeeData();
     } catch {
       setIsSaving(false);
       setBtnText("Smething went wrong, please click to save it again");
@@ -382,7 +398,7 @@ export const EmployeeDataForm: React.FC<{
                   <Col md={2}>
                     <Button
                       variant="link"
-                      style={{textDecoration: "none"}}
+                      style={{ textDecoration: "none" }}
                       onClick={() => {
                         setBtnText("Save Changes");
                         let updatedBadgeUrls = cloneDeep(
@@ -618,7 +634,7 @@ export const EmployeeDataForm: React.FC<{
                             }}
                             variant={"link"}
                             disabled={isSaving}
-                            style={{textDecoration: "none"}}
+                            style={{ textDecoration: "none" }}
                           >
                             <GrClose></GrClose>
                           </Button>
@@ -632,11 +648,6 @@ export const EmployeeDataForm: React.FC<{
                     <strong>Microsoft Teams' Profile Image</strong>
                     <div>
                       {[
-                        {
-                          label: "No Image",
-                          value: "",
-                          display: true,
-                        },
                         {
                           label: "Uploaded Profile",
                           value: profileImageUrl,
@@ -668,6 +679,7 @@ export const EmployeeDataForm: React.FC<{
                                 "teamsProfileUrl",
                                 btnConfig.value
                               );
+                              setMsImageSelection(btnConfig.label as any);
                             }}
                           >
                             {btnConfig.label}
@@ -680,7 +692,15 @@ export const EmployeeDataForm: React.FC<{
                   </div>
                 </Col>
                 <Col md={6}>
-                  <div className="px-2" style={{ maxHeight: "480px", overflowY: "scroll", maxWidth: "100%", overflowX: "hidden"}}>
+                  <div
+                    className="px-2"
+                    style={{
+                      maxHeight: "480px",
+                      overflowY: "scroll",
+                      maxWidth: "100%",
+                      overflowX: "hidden",
+                    }}
+                  >
                     {" "}
                     <div>
                       {[
@@ -867,7 +887,7 @@ export const EmployeeDataForm: React.FC<{
                 onClick={() => handleGetEmployeeData()}
                 variant={"link"}
                 disabled={isSaving}
-                style={{textDecoration: "none"}}
+                style={{ textDecoration: "none" }}
               >
                 <span className="gradient-text">Reset</span>
               </Button>

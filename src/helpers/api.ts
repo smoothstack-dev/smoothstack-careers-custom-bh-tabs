@@ -20,6 +20,7 @@ const signatureImageUpload = usrMgtEndpoint + "resources/profile-image";
 const msUsersGet = usrMgtEndpoint + "ms/user";
 const sfdcUsersGet = usrMgtEndpoint + "sfdc/user?includeInactive=true";
 const nftsGet = usrMgtEndpoint + "resources/nfts";
+const msProfileImageUpload = usrMgtEndpoint + "resources/ms-profile-image";
 
 const TOKEN_TYPE = "Bearer";
 const delay = (ms: number) => new Promise((res) => setTimeout(res, ms));
@@ -255,6 +256,27 @@ export const getMintedData = async (primaryEmail: string) => {
     return response.data;
   } catch (err) {
     console.error("Error getting minted nfts");
+    throw new Error();
+  }
+};
+
+export const uploadMsProfileImage = async (
+  file: FormData,
+  primaryEmail: string
+) => {
+  try {
+    const response: AxiosResponse = await axios.put(
+      `${msProfileImageUpload}?primaryEmail=${primaryEmail}`,
+      file,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+          Authorization: `${TOKEN_TYPE} ${getUserToken()}`,
+        },
+      }
+    );
+  } catch (err) {
+    console.error("Error uploading profile image to Microsoft");
     throw new Error();
   }
 };
