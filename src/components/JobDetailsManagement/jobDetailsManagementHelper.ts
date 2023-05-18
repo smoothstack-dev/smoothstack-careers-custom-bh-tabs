@@ -46,37 +46,43 @@ export type JobDescriptionDetailsType = {
 };
 
 export const getJobDescirptionListHelper = async (corpType: CORP_TYPE) => {
-  let params: any = {};
-  params.query = `(isDeleted:0)`;
-  params.fields = [
-    "id",
-    "title",
-    "isPublic",
-    "isDeleted",
-    "customTextBlock2",
-    "salary",
-  ];
-  if (corpType === CORP_TYPE.APPRENTICESHIP)
-    params.fields.push("customTextBlock1");
+  let jobs;
+  if (corpType === CORP_TYPE.APPRENTICESHIP) {
+    jobs = await API.getSFDCJobs();
+  } else {
+    let params: any = {};
+    params.query = `(isDeleted:0)`;
+    params.fields = [
+      "id",
+      "title",
+      "isPublic",
+      "isDeleted",
+      "customTextBlock2",
+      "salary",
+    ];
+    params.corpType = CORPORATION[corpType].corpId;
 
-  params.corpType = CORPORATION[corpType].corpId;
-
-  let queryArray = [];
-  for (let key in params) {
-    queryArray.push(`${key}=${params[key]}`);
+    let queryArray = [];
+    for (let key in params) {
+      queryArray.push(`${key}=${params[key]}`);
+    }
+    let queryString: string = queryArray.join("&");
+    jobs = (await API.getJobDescirptionList(queryString)).body;
   }
-  let queryString: string = queryArray.join("&");
 
-  const jobDescriptionList = await API.getJobDescirptionList(queryString);
-  return jobDescriptionList.body.map((job: any) => {
+  return jobs.map((job: any) => {
     return {
-      id: job.id,
-      title: job.title,
-      isPublic: job.isPublic,
-      label: `#${job.id} ${job.title}`,
-      description: job.customTextBlock2,
-      challengeInfo: job.customTextBlock1,
-      salary: job.salary ? numberWithCommas(+job.salary) : undefined,
+      id: job.id ?? job.Job_ID__c,
+      title: job.title ?? job.Job_Title__c,
+      isPublic:
+        job.isPublic ?? (job.Publishing_Status__c === "Published" ? 1 : 0),
+      label: `#${job.id ?? job.Job_ID__c} ${job.title ?? job.Job_Title__c}`,
+      description: job.customTextBlock2 ?? job.Job_Details_JSON__c,
+      challengeInfo: job.customTextBlock1 ?? job.Coding_Challenge_Info__c,
+      ...(job.salary && { salary: numberWithCommas(+job.salary) }),
+      ...(job.Year_1_Salary__c && {
+        salary: numberWithCommas(job.Year_1_Salary__c),
+      }),
     } as JobDetailType;
   });
 };
@@ -87,19 +93,24 @@ export const saveJobDescirptionListHelper = async (
   jobId: number
 ) => {
   const jsonJobDescription = JSON.stringify({ sections: jobDescription });
-  let params: any = {};
-  params.corpType = CORPORATION[corpType].corpId;
-  params.jobId = jobId;
 
-  let queryArray = [];
-  for (let key in params) {
-    queryArray.push(`${key}=${params[key]}`);
+  if (corpType === CORP_TYPE.APPRENTICESHIP) {
+    const updateData = { Job_Details_JSON__c: jsonJobDescription };
+    await API.saveSFDCJobDetails(jobId, updateData);
+  } else {
+    let params: any = {};
+    params.corpType = CORPORATION[corpType].corpId;
+    params.jobId = jobId;
+
+    let queryArray = [];
+    for (let key in params) {
+      queryArray.push(`${key}=${params[key]}`);
+    }
+    let queryString: string = queryArray.join("&");
+
+    const updateData = { customTextBlock2: jsonJobDescription };
+    return await API.saveJobDescription(queryString, updateData);
   }
-  let queryString: string = queryArray.join("&");
-
-  const updateData = { customTextBlock2: jsonJobDescription };
-
-  return await API.saveJobDescription(queryString, updateData);
 };
 
 export const saveJobChallengeInfoHelper = async (
@@ -109,19 +120,9 @@ export const saveJobChallengeInfoHelper = async (
   const jsonJobDescription = JSON.stringify({
     details: jobChallenge,
   });
-  let params: any = {};
-  params.corpType = CORPORATION[CORP_TYPE.APPRENTICESHIP].corpId;
-  params.jobId = jobId;
+  const updateData = { Coding_Challenge_Info__c: jsonJobDescription };
 
-  let queryArray = [];
-  for (let key in params) {
-    queryArray.push(`${key}=${params[key]}`);
-  }
-  let queryString: string = queryArray.join("&");
-
-  const updateData = { customTextBlock1: jsonJobDescription };
-
-  return await API.saveJobDescription(queryString, updateData);
+  return await API.saveSFDCJobDetails(jobId, updateData);
 };
 
 export const generateJobDescriptionObject = (
