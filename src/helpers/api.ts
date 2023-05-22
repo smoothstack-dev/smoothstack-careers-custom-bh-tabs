@@ -7,7 +7,8 @@ import { FORM, FORM_TYPE, PrescreenForm, TechScreenForm } from "../types/forms";
 // smoothstack-careers-api
 const careerApiEndpoint =
   "https://1syp4w9c5h.execute-api.us-east-1.amazonaws.com/prod/";
-const sfdcCareersApiEndpoint = "https://704k2n7od3.execute-api.us-east-1.amazonaws.com/prod/";
+const sfdcCareersApiEndpoint =
+  "https://704k2n7od3.execute-api.us-east-1.amazonaws.com/prod/";
 const prescreenUrl = careerApiEndpoint + "prescreen";
 const prescreenPost = careerApiEndpoint + "form-events";
 const jobDescriptionManagement = careerApiEndpoint + "jobDescriptionDetail";
@@ -306,7 +307,7 @@ export const uploadMsProfileImage = async (
   primaryEmail: string
 ) => {
   try {
-    const response: AxiosResponse = await axios.put(
+    await axios.put(
       `${msProfileImageUpload}?primaryEmail=${primaryEmail}`,
       file,
       {
