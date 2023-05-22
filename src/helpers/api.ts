@@ -5,11 +5,12 @@ import { SignatureStyles } from "../components/MSSignature/store/types";
 import { FORM, FORM_TYPE, PrescreenForm, TechScreenForm } from "../types/forms";
 
 // smoothstack-careers-api
-const carearApiEndpoint =
+const careerApiEndpoint =
   "https://1syp4w9c5h.execute-api.us-east-1.amazonaws.com/prod/";
-const prescreenUrl = carearApiEndpoint + "prescreen";
-const prescreenPost = carearApiEndpoint + "form-events";
-const jobDescriptionManagement = carearApiEndpoint + "jobDescriptionDetail";
+const sfdcCareersApiEndpoint = "https://704k2n7od3.execute-api.us-east-1.amazonaws.com/prod/";
+const prescreenUrl = careerApiEndpoint + "prescreen";
+const prescreenPost = careerApiEndpoint + "form-events";
+const jobDescriptionManagement = careerApiEndpoint + "jobDescriptionDetail";
 
 //  smoothstack-user-mgt-api
 const usrMgtEndpoint =
@@ -74,6 +75,46 @@ export const getJobDescirptionList = async (queryString: string) => {
     console.error("retry getJobDescirptionList", err);
     await delay(1500);
     getJobDescirptionList(queryString);
+  }
+};
+
+export const getSFDCJobs = async () => {
+  try {
+    let token;
+    while (sessionStorage.getItem(SESSION_USER_TOKEN) === null) {
+      await delay(1000);
+    }
+    token = getUserToken();
+    const response: AxiosResponse = await axios.get(
+      sfdcCareersApiEndpoint + "jobs",
+      {
+        headers: { Authorization: `${TOKEN_TYPE} ${token}` },
+      }
+    );
+    return response.data;
+  } catch (err) {
+    console.error("retry getSFDCJobs", err);
+    await delay(1500);
+    getSFDCJobs();
+  }
+};
+
+export const saveSFDCJobDetails = async (jobId: number, updateData: any) => {
+  try {
+    const response: AxiosResponse = await axios.put(
+      `${sfdcCareersApiEndpoint}jobs/${jobId}`,
+      updateData,
+      {
+        headers: {
+          Authorization: `${TOKEN_TYPE} ${getUserToken()}`,
+        },
+      }
+    );
+    if (response.status && response.status < 300) return true;
+    else return false;
+  } catch (err) {
+    console.error("Error updating job description", err);
+    return false;
   }
 };
 
