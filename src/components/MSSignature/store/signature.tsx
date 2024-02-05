@@ -12,11 +12,22 @@ export default function useSignature() {
     useRecoilState(signatureStore)
   );
 
-  const updateSignature = (key: string, value: any) => {
+  const updateSignature = (
+    updates: { key: keyof _t.Signature; value: any }[]
+  ) => {
     setSignature((draft) => {
-      let updatedSignature = { ...signature, [key]: value } as _t.Signature;
-      if (key === "profileUrl" && (!value || value === ""))
-        delete updatedSignature.profileUrl;
+      let updatedSignature = { ...signature } as _t.Signature;
+
+      updates.forEach(({ key, value }) => {
+        // Update the specified key with the provided value
+        updatedSignature = { ...updatedSignature, [key]: value };
+
+        // If the key is "profileUrl" and the value is empty, remove the "profileUrl" property
+        if (key === "profileUrl" && (!value || value === ""))
+          delete updatedSignature.profileUrl;
+      });
+
+      // Update the state with the modified signature
       return updatedSignature;
     });
   };

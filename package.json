@@ -27,6 +27,7 @@
     "react": "^16.13.1",
     "react-beautiful-dnd": "^13.1.0",
     "react-bootstrap": "^2.4.0",
+    "react-bootstrap-typeahead": "^5.2.2",
     "react-color": "^2.19.3",
     "react-csv": "^2.2.2",
     "react-datepicker": "^4.8.0",
@@ -69,6 +70,7 @@
   "devDependencies": {
     "@types/lodash": "^4.14.182",
     "@types/react-beautiful-dnd": "^13.1.2",
+    "@types/react-bootstrap-typeahead": "^5.1.13",
     "@types/react-color": "^3.0.6"
   }
 }

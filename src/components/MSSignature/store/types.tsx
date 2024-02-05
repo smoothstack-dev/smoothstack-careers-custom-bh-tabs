@@ -1,6 +1,8 @@
 export type Signature = {
   isActive: boolean;
   displayMailingAddress?: boolean;
+  displayCustomAddress?: boolean;
+  customAddress?: string;
   primaryEmail: string;
   firstName: string;
   lastName: string;

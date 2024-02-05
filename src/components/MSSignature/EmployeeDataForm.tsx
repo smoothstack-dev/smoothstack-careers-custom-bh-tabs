@@ -1,5 +1,6 @@
 import React, { ChangeEvent, useEffect, useCallback, useState } from "react";
 import { Button, Col, Container, Form, Row, Spinner } from "react-bootstrap";
+import { AsyncTypeahead } from "react-bootstrap-typeahead";
 import { GrClose } from "react-icons/gr";
 import { Preview } from "./Preview";
 import useSignature from "./store/signature";
@@ -10,11 +11,16 @@ import * as API from "./../../helpers/api";
 import { cloneDeep } from "lodash";
 import * as Helpers from "./helpers";
 import { PROFILE_IMAGE_S3_URL } from "./store/literal";
+import * as _t from "./store/types";
 
 export const EmployeeDataForm: React.FC<{
   selectedEmployee: EmployeeData | undefined;
 }> = ({ selectedEmployee }) => {
+  const PLACES_API_URL = "https://places.googleapis.com/v1/places:searchText";
+  const GOOGLE_API_KEY = "AIzaSyCJQ2BXySZUO8PosRDyx34_3cxdepKbkBs";
   const [isSaving, setIsSaving] = useState<boolean>(false);
+  const [isAddressSearching, setIsAddressSearching] = useState<boolean>(false);
+  const [addressOptions, setAddressOptions] = useState<any[]>([]);
   const {
     signature: employee,
     setSelectedSignature,
@@ -39,6 +45,55 @@ export const EmployeeDataForm: React.FC<{
     Array<Badge> | undefined
   >();
   const fileInputId = "upload-file-btn";
+  const [isCompanyAddressChecked, setIsCompanyAddressChecked] =
+    useState<boolean>(employee?.displayMailingAddress ?? false);
+  const [isCustomAddressChecked, setIsCustomAddressChecked] = useState<boolean>(
+    employee?.displayCustomAddress ?? false
+  );
+
+  const isChecked = (val: boolean, field: string) => {
+    switch (field) {
+      case "displayMailingAddress":
+        return isCompanyAddressChecked;
+      case "displayCustomAddress":
+        return isCustomAddressChecked;
+      default:
+        return val;
+    }
+  };
+  const handleCheckChange = (val: boolean, field: keyof _t.Signature) => {
+    if (!["displayMailingAddress", "displayCustomAddress"].includes(field)) {
+      updateSignature([{ key: field, value: !val }]);
+    } else {
+      if (!val) {
+        if (field === "displayMailingAddress") {
+          setIsCompanyAddressChecked(true);
+          setIsCustomAddressChecked(false);
+          updateSignature([
+            { key: "displayCustomAddress", value: false },
+            { key: "displayMailingAddress", value: true },
+          ]);
+        }
+        if (field === "displayCustomAddress") {
+          setIsCustomAddressChecked(true);
+          setIsCompanyAddressChecked(false);
+          updateSignature([
+            { key: "displayMailingAddress", value: false },
+            { key: "displayCustomAddress", value: true },
+          ]);
+        }
+      } else {
+        if (field === "displayMailingAddress") {
+          setIsCompanyAddressChecked(false);
+          updateSignature([{ key: "displayMailingAddress", value: false }]);
+        }
+        if (field === "displayCustomAddress") {
+          setIsCustomAddressChecked(false);
+          updateSignature([{ key: "displayCustomAddress", value: false }]);
+        }
+      }
+    }
+  };
 
   const resetStates = () => {
     setError("");
@@ -46,6 +101,29 @@ export const EmployeeDataForm: React.FC<{
     setUploadedImage(undefined);
     setProfileImageUrl("");
     setImageSelection("No Image");
+  };
+
+  const handleAddressSearch = (textQuery: string) => {
+    setIsAddressSearching(true);
+
+    fetch(PLACES_API_URL, {
+      method: "POST",
+      headers: {
+        "X-Goog-Api-Key": GOOGLE_API_KEY,
+        "X-Goog-FieldMask": "places.formattedAddress",
+      },
+      body: JSON.stringify({ textQuery }),
+    })
+      .then((resp) => resp.json())
+      .then(({ places }) => {
+        const addresses = places?.map((p: any) => {
+          // Remove Country portion of address
+          const components = p.formattedAddress.split(", ");
+          return { formattedAddress: components.slice(0, -1).join(", ") };
+        });
+        setAddressOptions(addresses);
+        setIsAddressSearching(false);
+      });
   };
 
   // Retrieve Existing Employee Signature Data
@@ -176,6 +254,13 @@ export const EmployeeDataForm: React.FC<{
     handleGetEmployeeData,
   ]);
 
+  useEffect(() => {
+    if (employee) {
+      setIsCompanyAddressChecked(!!employee.displayMailingAddress);
+      setIsCustomAddressChecked(!!employee.displayCustomAddress);
+    }
+  }, [employee]);
+
   // Save new selected image to local state
   const handleImageUpload = async (e: ChangeEvent<HTMLInputElement>) => {
     setImageError("");
@@ -190,7 +275,7 @@ export const EmployeeDataForm: React.FC<{
         const objLink = URL.createObjectURL(e.target.files[0]);
         setUploadedImage(e.target.files[0]);
         setProfileImageUrl(objLink);
-        updateSignature("profileUrl", objLink);
+        updateSignature([{ key: "profileUrl", value: objLink }]);
         setImageSelection("Uploaded Profile");
       }
     }
@@ -272,10 +357,10 @@ export const EmployeeDataForm: React.FC<{
   };
 
   const createFieldSet = (
-    field: string,
+    field: keyof _t.Signature,
     label: string,
     value: string | boolean | undefined,
-    inputType?: "switch" | "textarea" | "divider"
+    inputType?: "switch" | "textarea" | "address-typeahead" | "divider"
   ) => {
     return (
       <Form.Group className="mb-3" controlId={field}>
@@ -288,14 +373,10 @@ export const EmployeeDataForm: React.FC<{
                     type="switch"
                     id={field}
                     label={label}
-                    checked={!!value}
+                    checked={isChecked(!!value, field)}
                     onChange={(e) => {
                       setBtnText("Save Changes");
-                      if (!!value) {
-                        updateSignature(field, false);
-                      } else {
-                        updateSignature(field, true);
-                      }
+                      handleCheckChange(!!value, field);
                     }}
                   />
                 </strong>
@@ -312,9 +393,44 @@ export const EmployeeDataForm: React.FC<{
                     value={value?.toString() || ""}
                     onChange={(e) => {
                       setBtnText("Save Changes");
-                      updateSignature(field, e.target.value);
+                      updateSignature([{ key: field, value: e.target.value }]);
                     }}
                     rows={(value?.toString().length || 0) / 80 + 2}
+                  />
+                </>
+              );
+            case "address-typeahead":
+              return (
+                <>
+                  <Form.Label>
+                    <strong>{label}:</strong>
+                  </Form.Label>
+                  <AsyncTypeahead
+                    filterBy={() => true}
+                    id="async-example"
+                    labelKey="formattedAddress"
+                    isLoading={isAddressSearching}
+                    minLength={0}
+                    defaultInputValue={value?.toString() ?? ""}
+                    onInputChange={(e) => {
+                      updateSignature([{ key: field, value: e }]);
+                      if (e) {
+                        handleAddressSearch(e);
+                      }
+                    }}
+                    onSearch={() => {}}
+                    onChange={(e) => {
+                      if (e[0]?.formattedAddress) {
+                        updateSignature([
+                          { key: field, value: e[0].formattedAddress },
+                        ]);
+                      }
+                    }}
+                    options={addressOptions}
+                    placeholder="Search for an address"
+                    renderMenuItemChildren={(option: {
+                      formattedAddress: string;
+                    }) => <span>{option.formattedAddress}</span>}
                   />
                 </>
               );
@@ -335,7 +451,7 @@ export const EmployeeDataForm: React.FC<{
                     value={value?.toString() || ""}
                     onChange={(e) => {
                       setBtnText("Save Changes");
-                      updateSignature(field, e.target.value);
+                      updateSignature([{ key: field, value: e.target.value }]);
                     }}
                   />
                 </>
@@ -375,7 +491,9 @@ export const EmployeeDataForm: React.FC<{
                             isActive: badge.isActive || false,
                           };
                         updatedBadgeUrls[index] = badge;
-                        updateSignature("badgeUrls", updatedBadgeUrls);
+                        updateSignature([
+                          { key: "badgeUrls", value: updatedBadgeUrls },
+                        ]);
                       }}
                     />
                   </Col>
@@ -391,7 +509,9 @@ export const EmployeeDataForm: React.FC<{
                           url: badge.url,
                           isActive: !badge.isActive,
                         };
-                        updateSignature("badgeUrls", updatedBadgeUrls);
+                        updateSignature([
+                          { key: "badgeUrls", value: updatedBadgeUrls },
+                        ]);
                       }}
                     />
                   </Col>
@@ -406,7 +526,9 @@ export const EmployeeDataForm: React.FC<{
                         );
                         if (index > -1 && index < updatedBadgeUrls.length)
                           updatedBadgeUrls.splice(index, 1);
-                        updateSignature("badgeUrls", [...updatedBadgeUrls]);
+                        updateSignature([
+                          { key: "badgeUrls", value: [...updatedBadgeUrls] },
+                        ]);
                       }}
                     >
                       <GrClose></GrClose>
@@ -423,7 +545,9 @@ export const EmployeeDataForm: React.FC<{
               onClick={() => {
                 setBtnText("Save Changes");
                 let updatedBadgeUrls = cloneDeep(employee?.badgeUrls || []);
-                updateSignature("badgeUrls", [...updatedBadgeUrls, ""]);
+                updateSignature([
+                  { key: "badgeUrls", value: [...updatedBadgeUrls, ""] },
+                ]);
               }}
             >
               Add new badge entry
@@ -451,7 +575,9 @@ export const EmployeeDataForm: React.FC<{
                         isActive: !badge.isActive,
                       };
                       setMintedBadgeUrls(updatedBadgeUrls);
-                      updateSignature("mintedBadgeUrls", updatedBadgeUrls);
+                      updateSignature([
+                        { key: "mintedBadgeUrls", value: updatedBadgeUrls },
+                      ]);
                     }}
                   />
                 </Col>
@@ -486,10 +612,12 @@ export const EmployeeDataForm: React.FC<{
       setUploadedImage(undefined);
       if (employee?.uploadedProfileUrl) {
         setProfileImageUrl(employee.uploadedProfileUrl);
-        updateSignature("profileUrl", employee.uploadedProfileUrl);
+        updateSignature([
+          { key: "profileUrl", value: employee.uploadedProfileUrl },
+        ]);
       } else {
         setProfileImageUrl(undefined);
-        updateSignature("profileUrl", "");
+        updateSignature([{ key: "profileUrl", value: "" }]);
       }
     } else {
       setImageError("please try again");
@@ -570,10 +698,14 @@ export const EmployeeDataForm: React.FC<{
                           value={employee.avatarUrl || ""}
                           onChange={(e) => {
                             setBtnText("Save Changes");
-                            updateSignature("avatarUrl", e.target.value);
+                            updateSignature([
+                              { key: "avatarUrl", value: e.target.value },
+                            ]);
                             if (imageSelection === "Custom Avatar") {
                               setImageSelection("No Image");
-                              updateSignature("profileUrl", "");
+                              updateSignature([
+                                { key: "profileUrl", value: "" },
+                              ]);
                             }
                           }}
                         />
@@ -675,10 +807,12 @@ export const EmployeeDataForm: React.FC<{
                             key={`image-option-${index}`}
                             style={{ marginRight: "10px" }}
                             onClick={() => {
-                              updateSignature(
-                                "teamsProfileUrl",
-                                btnConfig.value
-                              );
+                              updateSignature([
+                                {
+                                  key: "teamsProfileUrl",
+                                  value: btnConfig.value,
+                                },
+                              ]);
                               setMsImageSelection(btnConfig.label as any);
                             }}
                           >
@@ -784,6 +918,18 @@ export const EmployeeDataForm: React.FC<{
                           inputType: "switch",
                         },
                         {
+                          field: "displayCustomAddress",
+                          label: "Display custom address?",
+                          fieldData: employee.displayCustomAddress,
+                          inputType: "switch",
+                        },
+                        {
+                          field: "customAddress",
+                          label: "Custom Address",
+                          fieldData: employee.customAddress,
+                          inputType: "address-typeahead",
+                        },
+                        {
                           field: "isMoveLinkToTop",
                           label: "Display Calendar Link at the top?",
                           fieldData: employee.isMoveLinkToTop,
@@ -799,7 +945,7 @@ export const EmployeeDataForm: React.FC<{
                           label: "Calendar URL (optional)",
                           fieldData: employee.calendarUrl,
                         },
-                      ].map((item) => {
+                      ].map((item: any) => {
                         return createFieldSet(
                           item.field,
                           item.label,
@@ -849,7 +995,9 @@ export const EmployeeDataForm: React.FC<{
                               key={`image-option-${index}`}
                               style={{ marginRight: "10px" }}
                               onClick={() => {
-                                updateSignature("profileUrl", btnConfig.value);
+                                updateSignature([
+                                  { key: "profileUrl", value: btnConfig.value },
+                                ]);
                                 setImageSelection(btnConfig.label as any);
                               }}
                             >

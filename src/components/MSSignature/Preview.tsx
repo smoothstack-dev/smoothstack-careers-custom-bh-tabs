@@ -222,6 +222,14 @@ export const Preview: React.FC<{
                           <span>{signatureStyle.mailingAddress}</span>
                         </>
                       )}
+                    {previewData.customAddress &&
+                      previewData.displayCustomAddress && (
+                        <>
+                          {" "}
+                          <span style={BreakStyleMedium} />
+                          <span>{previewData.customAddress}</span>
+                        </>
+                      )}
                   </>
                 )}
               </div>
