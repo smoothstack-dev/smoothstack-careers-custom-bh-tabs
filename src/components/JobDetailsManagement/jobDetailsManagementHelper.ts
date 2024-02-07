@@ -67,7 +67,7 @@ export const getJobDescirptionListHelper = async (corpType: CORP_TYPE) => {
       queryArray.push(`${key}=${params[key]}`);
     }
     let queryString: string = queryArray.join("&");
-    jobs = (await API.getJobDescirptionList(queryString)).body;
+    jobs = (await API.getJobDescriptionList(queryString)).body;
   }
 
   return jobs.map((job: any) => {

@@ -16,8 +16,6 @@ import * as _t from "./store/types";
 export const EmployeeDataForm: React.FC<{
   selectedEmployee: EmployeeData | undefined;
 }> = ({ selectedEmployee }) => {
-  const PLACES_API_URL = "https://places.googleapis.com/v1/places:searchText";
-  const GOOGLE_API_KEY = "AIzaSyCJQ2BXySZUO8PosRDyx34_3cxdepKbkBs";
   const [isSaving, setIsSaving] = useState<boolean>(false);
   const [isAddressSearching, setIsAddressSearching] = useState<boolean>(false);
   const [addressOptions, setAddressOptions] = useState<any[]>([]);
@@ -103,28 +101,17 @@ export const EmployeeDataForm: React.FC<{
     setImageSelection("No Image");
   };
 
-  const handleAddressSearch = (textQuery: string) => {
+  const handleAddressSearch = useCallback(async (textQuery: string) => {
     setIsAddressSearching(true);
-
-    fetch(PLACES_API_URL, {
-      method: "POST",
-      headers: {
-        "X-Goog-Api-Key": GOOGLE_API_KEY,
-        "X-Goog-FieldMask": "places.formattedAddress",
-      },
-      body: JSON.stringify({ textQuery }),
-    })
-      .then((resp) => resp.json())
-      .then(({ places }) => {
-        const addresses = places?.map((p: any) => {
-          // Remove Country portion of address
-          const components = p.formattedAddress.split(", ");
-          return { formattedAddress: components.slice(0, -1).join(", ") };
-        });
-        setAddressOptions(addresses);
-        setIsAddressSearching(false);
-      });
-  };
+    const { places } = await API.searchAddress(textQuery);
+    const addresses = places?.map((p: any) => {
+      // Remove Country portion of address
+      const components = p.formattedAddress.split(", ");
+      return { formattedAddress: components.slice(0, -1).join(", ") };
+    });
+    setAddressOptions(addresses);
+    setIsAddressSearching(false);
+  }, []);
 
   // Retrieve Existing Employee Signature Data
   const handleGetEmployeeData = useCallback(async () => {
@@ -410,15 +397,13 @@ export const EmployeeDataForm: React.FC<{
                     id="async-example"
                     labelKey="formattedAddress"
                     isLoading={isAddressSearching}
-                    minLength={0}
+                    minLength={4}
                     defaultInputValue={value?.toString() ?? ""}
                     onInputChange={(e) => {
                       updateSignature([{ key: field, value: e }]);
-                      if (e) {
-                        handleAddressSearch(e);
-                      }
                     }}
-                    onSearch={() => {}}
+                    onSearch={handleAddressSearch}
+                    useCache={true}
                     onChange={(e) => {
                       if (e[0]?.formattedAddress) {
                         updateSignature([
