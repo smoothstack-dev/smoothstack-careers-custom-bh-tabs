@@ -23,6 +23,7 @@ const msUsersGet = usrMgtEndpoint + "ms/user";
 const sfdcUsersGet = usrMgtEndpoint + "sfdc/user?includeInactive=true";
 const nftsGet = usrMgtEndpoint + "resources/nfts";
 const msProfileImageUpload = usrMgtEndpoint + "resources/ms-profile-image";
+const addressSearch = usrMgtEndpoint + "google/addressSearch";
 
 const TOKEN_TYPE = "Bearer";
 const delay = (ms: number) => new Promise((res) => setTimeout(res, ms));
@@ -58,7 +59,7 @@ export const savePrescreenForm = async (
 };
 
 // Job Description
-export const getJobDescirptionList = async (queryString: string) => {
+export const getJobDescriptionList = async (queryString: string) => {
   try {
     let token;
     while (sessionStorage.getItem(SESSION_USER_TOKEN) === null) {
@@ -75,7 +76,7 @@ export const getJobDescirptionList = async (queryString: string) => {
   } catch (err) {
     console.error("retry getJobDescirptionList", err);
     await delay(1500);
-    getJobDescirptionList(queryString);
+    getJobDescriptionList(queryString);
   }
 };
 
@@ -319,6 +320,23 @@ export const uploadMsProfileImage = async (
     );
   } catch (err) {
     console.error("Error uploading profile image to Microsoft");
+    throw new Error();
+  }
+};
+
+export const searchAddress = async (queryText: string) => {
+  try {
+    const response: AxiosResponse = await axios.get(
+      `${addressSearch}?searchText=${queryText}`,
+      {
+        headers: {
+          Authorization: `${TOKEN_TYPE} ${getUserToken()}`,
+        },
+      }
+    );
+    return response.data;
+  } catch (err) {
+    console.error("Error searching addresses by query text");
     throw new Error();
   }
 };
