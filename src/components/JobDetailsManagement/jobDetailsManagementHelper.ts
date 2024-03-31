@@ -45,41 +45,24 @@ export type JobDescriptionDetailsType = {
   videoUrl?: string;
 };
 
-export const getJobDescirptionListHelper = async (corpType: CORP_TYPE) => {
+export const getJobDescriptionListHelper = async (corpType: CORP_TYPE) => {
   let jobs;
   if (corpType === CORP_TYPE.APPRENTICESHIP) {
-    jobs = await API.getSFDCJobs();
-  } else {
-    let params: any = {};
-    params.query = `(isDeleted:0)`;
-    params.fields = [
-      "id",
-      "title",
-      "isPublic",
-      "isDeleted",
-      "customTextBlock2",
-      "salary",
-    ];
-    params.corpType = CORPORATION[corpType].corpId;
-
-    let queryArray = [];
-    for (let key in params) {
-      queryArray.push(`${key}=${params[key]}`);
-    }
-    let queryString: string = queryArray.join("&");
-    jobs = (await API.getJobDescriptionList(queryString)).body;
+    jobs = await API.getHTDJobs();
+  } else if (corpType === CORP_TYPE.STAFF_AUG) {
+    jobs = await API.getSAJobs();
   }
 
   return jobs.map((job: any) => {
     return {
-      id: job.id ?? job.Job_ID__c,
-      title: job.title ?? job.Job_Title__c,
-      isPublic:
-        job.isPublic ?? (job.Publishing_Status__c === "Published" ? 1 : 0),
-      label: `#${job.id ?? job.Job_ID__c} ${job.title ?? job.Job_Title__c}`,
-      description: job.customTextBlock2 ?? job.Job_Details_JSON__c,
-      challengeInfo: job.customTextBlock1 ?? job.Coding_Challenge_Info__c,
-      ...(job.salary && { salary: numberWithCommas(+job.salary) }),
+      id: job.Job_ID__c ?? job.Requisition__c,
+      title: job.Job_Title__c,
+      isPublic: job.Publishing_Status__c === "Published" ? 1 : 0,
+      label: `#${job.Job_ID__c ?? job.Requisition__c} ${
+        job.title ?? job.Job_Title__c
+      }`,
+      description: job.Job_Details_JSON__c,
+      challengeInfo: job.Coding_Challenge_Info__c,
       ...(job.Year_1_Salary__c && {
         salary: numberWithCommas(job.Year_1_Salary__c),
       }),
@@ -87,29 +70,17 @@ export const getJobDescirptionListHelper = async (corpType: CORP_TYPE) => {
   });
 };
 
-export const saveJobDescirptionListHelper = async (
+export const saveJobDescriptionListHelper = async (
   corpType: CORP_TYPE,
   jobDescription: JobDescriptionDetailsType[][],
-  jobId: number
+  jobId: any
 ) => {
   const jsonJobDescription = JSON.stringify({ sections: jobDescription });
-
+  const updateData = { Job_Details_JSON__c: jsonJobDescription };
   if (corpType === CORP_TYPE.APPRENTICESHIP) {
-    const updateData = { Job_Details_JSON__c: jsonJobDescription };
-    await API.saveSFDCJobDetails(jobId, updateData);
-  } else {
-    let params: any = {};
-    params.corpType = CORPORATION[corpType].corpId;
-    params.jobId = jobId;
-
-    let queryArray = [];
-    for (let key in params) {
-      queryArray.push(`${key}=${params[key]}`);
-    }
-    let queryString: string = queryArray.join("&");
-
-    const updateData = { customTextBlock2: jsonJobDescription };
-    return await API.saveJobDescription(queryString, updateData);
+    await API.saveHTDJobDetails(jobId, updateData);
+  } else if (corpType === CORP_TYPE.STAFF_AUG) {
+    await API.saveSAJobDetails(jobId, updateData);
   }
 };
 
@@ -122,7 +93,7 @@ export const saveJobChallengeInfoHelper = async (
   });
   const updateData = { Coding_Challenge_Info__c: jsonJobDescription };
 
-  return await API.saveSFDCJobDetails(jobId, updateData);
+  return await API.saveHTDJobDetails(jobId, updateData);
 };
 
 export const generateJobDescriptionObject = (

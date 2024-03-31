@@ -4,7 +4,7 @@ import { Button, Modal } from "react-bootstrap";
 import {
   CORP_TYPE,
   JobDescriptionDetailsType,
-  saveJobDescirptionListHelper,
+  saveJobDescriptionListHelper,
 } from "./jobDetailsManagementHelper";
 import { cloneDeep } from "lodash";
 import { JobDescriptionSection } from "./JobDescirptionSection";
@@ -25,7 +25,7 @@ export const JobDescirpiton: React.FC<{
 
   const handleSaveJobDescription = async () => {
     setSavingJobDescription(true);
-    await saveJobDescirptionListHelper(jobCorpType, jobDescription, jobId);
+    await saveJobDescriptionListHelper(jobCorpType, jobDescription, jobId);
     setSavingJobDescription(false);
     setSavingJobDescriptionMsg("Saved!");
   };
