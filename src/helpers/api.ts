@@ -58,29 +58,7 @@ export const savePrescreenForm = async (
   }
 };
 
-// Job Description
-export const getJobDescriptionList = async (queryString: string) => {
-  try {
-    let token;
-    while (sessionStorage.getItem(SESSION_USER_TOKEN) === null) {
-      await delay(1000);
-    }
-    token = getUserToken();
-    const response: AxiosResponse = await axios.get(
-      `${jobDescriptionManagement}?${queryString}`,
-      {
-        headers: { Authorization: `${TOKEN_TYPE} ${token}` },
-      }
-    );
-    return response.data;
-  } catch (err) {
-    console.error("retry getJobDescirptionList", err);
-    await delay(1500);
-    getJobDescriptionList(queryString);
-  }
-};
-
-export const getSFDCJobs = async () => {
+export const getHTDJobs = async () => {
   try {
     let token;
     while (sessionStorage.getItem(SESSION_USER_TOKEN) === null) {
@@ -90,21 +68,63 @@ export const getSFDCJobs = async () => {
     const response: AxiosResponse = await axios.get(
       sfdcCareersApiEndpoint + "jobs",
       {
+        params: { active: true },
         headers: { Authorization: `${TOKEN_TYPE} ${token}` },
       }
     );
     return response.data;
   } catch (err) {
-    console.error("retry getSFDCJobs", err);
+    console.error("retry getHTDJobs", err);
     await delay(1500);
-    getSFDCJobs();
+    getHTDJobs();
   }
 };
 
-export const saveSFDCJobDetails = async (jobId: number, updateData: any) => {
+export const getSAJobs = async () => {
+  try {
+    let token;
+    while (sessionStorage.getItem(SESSION_USER_TOKEN) === null) {
+      await delay(1000);
+    }
+    token = getUserToken();
+    const response: AxiosResponse = await axios.get(
+      sfdcCareersApiEndpoint + "staffAug/jobs",
+      {
+        params: { active: true },
+        headers: { Authorization: `${TOKEN_TYPE} ${token}` },
+      }
+    );
+    return response.data;
+  } catch (err) {
+    console.error("retry getSAJobs", err);
+    await delay(1500);
+    getSAJobs();
+  }
+};
+
+export const saveHTDJobDetails = async (jobId: number, updateData: any) => {
   try {
     const response: AxiosResponse = await axios.put(
       `${sfdcCareersApiEndpoint}jobs/${jobId}`,
+      updateData,
+      {
+        headers: {
+          Authorization: `${TOKEN_TYPE} ${getUserToken()}`,
+        },
+      }
+    );
+    if (response.status && response.status < 300) return true;
+    else return false;
+  } catch (err) {
+    console.error("Error updating job description", err);
+    return false;
+  }
+};
+
+export const saveSAJobDetails = async (jobId: string, updateData: any) => {
+  try {
+    const response: AxiosResponse = await axios.put(
+      `${sfdcCareersApiEndpoint}staffAug/jobs/${jobId}`,
       updateData,
       {
         headers: {

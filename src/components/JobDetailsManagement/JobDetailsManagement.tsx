@@ -4,7 +4,7 @@ import {
   CORPORATION,
   CORP_TYPE,
   JobDetailType,
-  getJobDescirptionListHelper,
+  getJobDescriptionListHelper,
   generateJobDescriptionObject,
   generateJobChallengeObject,
   JobDescriptionDetailsType,
@@ -28,7 +28,7 @@ export const JobDetailsManagement: React.FC<{}> = () => {
 
   const loadJobList = async (corpType: CORP_TYPE) => {
     setLoadingJobList(true);
-    const response = await getJobDescirptionListHelper(corpType);
+    const response = await getJobDescriptionListHelper(corpType);
     setJobList(response);
     setLoadingJobList(false);
   };
