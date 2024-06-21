@@ -32,7 +32,7 @@ const App: React.FC = () => {
     <>
       <div className="App-header float-div">
         <img
-          src="https://smoothstack.com/smoothstack-2020-logo/"
+          src="https://dwkfogbh8lfl9.cloudfront.net/smoothstack_logo_purple_alt.png"
           className="float-left header-logo"
           alt="Smoothstack Logo"
         />

@@ -33,7 +33,7 @@ export const MOCK_SIGNATURE: _t.Signature = {
 };
 
 export const INITIAL_SIGNATURE_STYLE: _t.SignatureStyles = {
-  companyLogoUrl: `${PROFILE_IMAGE_S3_URL}Smoothstack-2020-Logo-72.png`,
+  companyLogoUrl: `${PROFILE_IMAGE_S3_URL}smoothstack_logo_purple_alt.png`,
   companyWebsiteUrlLabel: "smoothstack.com",
   companyWebsiteUrl: "https://smoothstack.com",
   profileDefaultUrl:
@@ -46,13 +46,13 @@ export const INITIAL_SIGNATURE_STYLE: _t.SignatureStyles = {
     font: "Arial",
     size: 16,
     weight: "bold",
-    color: "#7521a7",
+    color: "#5134D1",
   },
   employeeLastName: {
     font: "Arial",
     size: 16,
     weight: "bold",
-    color: "#3246dd",
+    color: "#5134D1",
   },
   title: { font: "Arial", size: 12, weight: "bold", color: "#000000" },
   additionalFields: {
